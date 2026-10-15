@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Cân task B2 Bảo trì</title>
+<title>Cân task B2 Bảo trì (nội bộ)</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
 <style>
@@ -110,7 +110,7 @@ input[type=date]{background:var(--panel);border:1px solid var(--line);border-rad
 
   <section class="panel">
     <div class="row">
-      <input type="password" id="tok" placeholder="Dán token Bearer của Work (wshr)" autocomplete="off" aria-label="Token">
+      <input type="password" id="tok" placeholder="Đang dùng token dùng chung (dán token riêng vào đây nếu muốn)" autocomplete="off" aria-label="Token">
       <label class="chk"><input type="checkbox" id="rem"> Ghi nhớ trên máy này</label>
       <button class="btn" id="load">Tải dữ liệu mới nhất</button>
     </div>
@@ -226,7 +226,9 @@ function shiftPill(sf){if(!sf)return '<span class="pill p-rm">chưa có lịch</
 const unavailable=sf=>!!sf&&(sf.off||sf.leave);
 function toast(t){const e=$('toast');e.textContent=t;e.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>e.hidden=true,2400)}
 try{const t=localStorage.getItem('b2tok');if(t){$('tok').value=t;$('rem').checked=true}}catch(e){}
-const tok=()=>$('tok').value.trim().replace(/^Bearer\s+/i,'');
+// BẢN NỘI BỘ: có sẵn token dùng chung. KHÔNG đưa file này lên GitHub / web công khai.
+const DEFAULT_TOKEN='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjQxMDI0MTk1OTksImlzcyI6Imh0dHA6Ly93c2hyLmhhc2FraS52bi9hcGkvYXV0aC9sb2dpbiIsImF1ZCI6IndzaHItcHJvZHVjdGlvbiIsImFwcCI6Im9kcyIsInN1YiI6MCwiaWF0IjoxNzc4NTY4NzU1LCJuYmYiOjE3Nzg1Njg3NTUsImp0aSI6InA3bERYNkpJY0pJb1BQeVIifQ.dE1kJ4t7pg04m_C42DZtUK8JroGE5rk4-f6U83Kh1hI';
+const tok=()=>($('tok').value.trim()||DEFAULT_TOKEN).replace(/^Bearer\s+/i,'');
 async function api(path){const r=await fetch(API+path,{headers:{Authorization:'Bearer '+tok(),'x-locale':'vi'}});if(r.status===401||r.status===403)throw new Error('Token sai hoặc hết hạn ('+r.status+')');const j=await r.json();if(j&&j.error&&!j.data)throw new Error(j.message||'Lỗi API');return j}
 async function apiRetry(path,n=3){let e;for(let i=0;i<n;i++){try{return await api(path)}catch(x){e=x;if(/Token/.test(x.message))throw x;await new Promise(r=>setTimeout(r,800*(i+1)))}}throw e}
 // tải tất cả trang (6 luồng), thử lại trang lỗi, chỉ dừng khi gặp trang thật sự ít hơn 100 dòng
@@ -568,6 +570,7 @@ $('mTest').onclick=()=>{const t=mList()[0];if(t)mRun([t])};
 $('mGo').onclick=()=>{if(M.running)return;const L=mList();if(!L.length){toast('Không còn task nào cần cập nhật');return}
   const b=$('mConf');b.hidden=false;b.className='note';b.innerHTML=`Sẽ ghi người thực hiện cho <b>${L.length} task</b> trên Work. <button class="btn" id="mYes" style="margin-left:6px">Xác nhận cập nhật ${L.length} task</button> <button class="btn sec" id="mNo">Huỷ</button>`;
   $('mYes').onclick=()=>{b.textContent='Đang cập nhật…';mRun(L)};$('mNo').onclick=()=>b.hidden=true};
+setTimeout(()=>{if(DEFAULT_TOKEN&&$('main').hidden)$('load').click()},300);
 </script>
 </body>
 </html>
