@@ -68,6 +68,11 @@ td select{max-width:220px;font-size:12.5px;padding:4px 6px}
 .dd td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}.dd td.n button{background:none;border:0;color:var(--accent);font:inherit;font-weight:600;cursor:pointer;padding:0;text-decoration:underline dotted}.dd td.n.z{color:var(--muted)}
 .dd tr.zh td{background:var(--head);font-weight:600}.dd tr.tot td{font-weight:700;border-top:2px solid var(--line)}.dd small{color:var(--muted)}
 input[type=date]{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 8px;color:var(--ink)}
+.charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,460px),1fr));gap:12px}
+.chart{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:12px 14px;display:grid;gap:6px;min-width:0}
+.chart h3{margin:0;font-size:14px}.chart .sub{margin:0;font-size:12px}
+.chart svg{display:block;width:100%;height:auto;overflow:visible}.chart svg text{fill:var(--ink);font-size:11px;font-family:var(--f)}.chart svg .m{fill:var(--muted)}
+.lg{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted)}.lg i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
 .tabs{display:flex;gap:4px;border-bottom:1px solid var(--line)}
 .tabs button{background:none;border:0;border-bottom:2px solid transparent;padding:8px 14px;cursor:pointer;font-weight:600;color:var(--muted)}
 .tabs button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent)}
@@ -130,12 +135,19 @@ input[type=date]{background:var(--panel);border:1px solid var(--line);border-rad
         <label class="chk">Ngày báo cáo <input type="date" id="dA"></label>
         <label class="chk">Ngày mai <input type="date" id="dB"></label>
         <select id="dWho" aria-label="Tính theo"><option value="cur">Theo người đang giao trên Work</option><option value="new">Theo người sau khi cân / điều phối</option></select>
+        <select id="dZ" aria-label="Zone"><option value="">Tất cả Zone</option><option>Zone 1</option><option>Zone 2</option><option>Zone 3</option></select>
         <select id="dTr" aria-label="Nghiệp vụ"><option value="">Tất cả nghiệp vụ</option><option value="KT">Điện / Điện Lạnh</option><option value="IT">IT Helpdesk</option></select>
         <span style="margin-left:auto" class="row"><button class="btn" id="dCopy">Sao chép báo cáo (Zalo)</button><button class="btn sec" id="dCsv">Tải CSV</button></span>
       </div>
       <div class="sub" id="dLoad" style="margin:0"></div>
       <div class="kpis" id="dK"></div>
-      <div class="tbl dd" style="max-height:none"><table><thead><tr><th>Nhân viên</th><th id="hSA">Ca hôm nay</th><th id="hSB">Ca ngày mai</th><th style="text-align:right" id="hDone">Đã làm hôm nay</th><th style="text-align:right">Còn treo · quá hạn</th><th style="text-align:right" id="hA">Còn treo · hạn hôm nay</th><th style="text-align:right">Tổng còn treo</th><th style="text-align:right" id="hB">Ngày mai làm*</th></tr></thead><tbody id="dBody"></tbody></table></div>
+      <div class="charts">
+        <section class="chart"><h3>Task hạn hôm nay theo Zone</h3><p class="sub" id="c1n"></p><div id="c1"></div></section>
+        <section class="chart"><h3>Hạn hôm nay theo nhân viên</h3><p class="sub">Xong · còn treo hạn hôm nay · quá hạn còn treo</p><div id="c2"></div></section>
+        <section class="chart"><h3>Hoàn thành theo giờ</h3><p class="sub" id="c3n"></p><div id="c3"></div></section>
+        <section class="chart"><h3>Task còn treo theo số ngày trễ</h3><p class="sub" id="c4n"></p><div id="c4"></div></section>
+      </div>
+      <div class="tbl dd" style="max-height:none"><table><thead><tr><th>Nhân viên</th><th id="hSA">Ca hôm nay</th><th id="hSB">Ca ngày mai</th><th style="text-align:right" id="hDA">Hạn hôm nay · đã xong</th><th style="text-align:right" id="hA">Hạn hôm nay · còn treo</th><th style="text-align:right" id="hDone">Đã làm hôm nay (mọi hạn)</th><th style="text-align:right">Quá hạn · còn treo</th><th style="text-align:right">Tổng còn treo</th><th style="text-align:right" id="hB">Ngày mai làm*</th></tr></thead><tbody id="dBody"></tbody></table></div>
       <div class="sub" style="margin:0"><b>Đã làm</b> = task con ở bước B2 chuyển sang hoàn thành (finished_at) trong ngày báo cáo, tính cho mọi người được giao. <b>Còn treo</b> = task B2 chưa xong có hạn (date_end) trước hoặc đúng ngày báo cáo. *<b>Ngày mai làm</b> = task hạn ngày mai + task đã xếp ở tab Điều phối (không đếm trùng). Số ô: task · chi nhánh · giờ ước tính (gồm 30′ di chuyển mỗi chi nhánh). Bấm vào số để xem chi tiết.</div>
       <section class="panel" id="dDet" hidden></section>
     </section>
@@ -434,43 +446,76 @@ async function loadDone(){DONEINFO={st:'run'};if(!$('viewDue').hidden)dRender();
     DONEINFO={st:'ok',n:u.size,at:new Date()}}catch(e){DONEINFO={st:'er',msg:e.message}}
   if(!$('viewDue').hidden)dRender()}
 let DSEL=null;
-function dBuckets(){const A=$('dA').value,B=$('dB').value,who=$('dWho').value,tr=$('dTr').value;const P={};
-  ROSTER.filter(r=>!tr||r.tr===tr).forEach(r=>P[r.id]={done:[],late:[],a:[],hang:[],b:[],plan:[],tom:[]});
+function dBuckets(){const A=$('dA').value,B=$('dB').value,who=$('dWho').value,tr=$('dTr').value,dz=$('dZ').value;const P={};
+  ROSTER.filter(r=>(!tr||r.tr===tr)&&(!dz||r.zone===dz)).forEach(r=>P[r.id]={doneA:[],done:[],late:[],a:[],hang:[],b:[],plan:[],tom:[]});
   TASKS.filter(t=>!tr||t.tr===tr).forEach(t=>{(who==='cur'?t.cur:t.new).forEach(i=>{const o=P[i];if(!o)return;
     if(t.dl&&t.dl<A)o.late.push(t);if(t.dl===A)o.a.push(t);if(t.dl===B)o.b.push(t)});
     t.new.forEach(i=>{if(P[i]&&PLAN[t.tid])P[i].plan.push(t)})});
-  DONE.filter(d=>d.day===A&&(!tr||d.tr===tr)).forEach(d=>d.ids.forEach(i=>P[i]&&P[i].done.push(d)));
+  DONE.filter(d=>d.day===A&&(!tr||d.tr===tr)).forEach(d=>d.ids.forEach(i=>{if(!P[i])return;P[i].done.push(d);if(d.dl===A)P[i].doneA.push(d)}));
   Object.values(P).forEach(o=>{o.hang=[...o.late,...o.a];o.tom=[...new Set([...o.b,...o.plan])]});return P}
 const dH=l=>{const st=new Set(l.filter(t=>!t.remote).map(t=>t.store));return {n:l.length,st:st.size,h:(l.reduce((a,t)=>a+t.est,0)+TRAVEL*st.size)/60}};
-function dCell(l,id,k){if(!l.length)return '<td class="n z">–</td>';const o=dH(l);return `<td class="n"><button data-d="${id}|${k}">${o.n}</button> <small>· ${o.st} CN${k==='done'?'':' · '+o.h.toFixed(1)+'h'}</small></td>`}
-const KS=['done','late','a','hang','tom'];
+function dCell(l,id,k){if(!l.length)return '<td class="n z">–</td>';const o=dH(l);return `<td class="n"><button data-d="${id}|${k}">${o.n}</button> <small>· ${o.st} CN${k==='done'||k==='doneA'?'':' · '+o.h.toFixed(1)+'h'}</small></td>`}
+const KS=['doneA','a','done','late','hang','tom'];
 const uniqT=l=>[...new Map(l.map(t=>[t.tid,t])).values()];
 function dSum(P,ids){const o={};KS.forEach(k=>o[k]=uniqT(ids.flatMap(i=>P[i][k])));return o}
 function dRender(){const P=dBuckets(),A=$('dA').value,B=$('dB').value;
-  $('hDone').textContent=`Đã làm ${fmtD(A)}`;$('hSA').textContent=`Ca ${fmtD(A)}`;$('hSB').textContent=`Ca ${fmtD(B)}`;$('hA').textContent=`Còn treo · hạn ${fmtD(A)}`;$('hB').textContent=`Ngày mai ${fmtD(B)} làm*`;
+  $('hDone').textContent=`Đã làm ${fmtD(A)} (mọi hạn)`;$('hDA').textContent=`Hạn ${fmtD(A)} · đã xong`;$('hSA').textContent=`Ca ${fmtD(A)}`;$('hSB').textContent=`Ca ${fmtD(B)}`;$('hA').textContent=`Hạn ${fmtD(A)} · còn treo`;$('hB').textContent=`Ngày mai ${fmtD(B)} làm*`;
   $('dLoad').innerHTML=DONEINFO.st==='run'?esc(DONEINFO.msg||'Đang tải task đã hoàn thành…'):DONEINFO.st==='er'?`<span class="er">Không tải được task đã hoàn thành: ${esc(DONEINFO.msg)}</span> <button class="icon" id="dRetry">Thử lại</button>`:DONEINFO.st==='ok'?`Số "đã làm" lấy từ ${DONEINFO.n} đơn (đang mở + tạo trong ${DONE_DAYS} ngày gần nhất), cập nhật lúc ${DONEINFO.at.toLocaleTimeString('vi-VN')}. <button class="icon" id="dRetry">Tải lại số đã làm</button>`:'';
   $('dLoad').innerHTML+=SCHEDINFO.st==='er'?` · <span class="er">Không tải được lịch ca: ${esc(SCHEDINFO.msg)}</span> <button class="icon" id="sRetry">Thử lại</button>`:SCHEDINFO.st==='run'?' · Đang tải lịch ca…':'';
   if($('dRetry'))$('dRetry').onclick=loadDone;if($('sRetry'))$('sRetry').onclick=loadSched;
-  const T=dSum(P,Object.keys(P));const dueA=T.done.filter(d=>d.dl===A).length,rate=dueA+T.a.length?Math.round(dueA/(dueA+T.a.length)*100):null;
+  const T=dSum(P,Object.keys(P));const dueA=T.doneA.length,rate=dueA+T.a.length?Math.round(dueA/(dueA+T.a.length)*100):null;
   const ontime=T.done.filter(d=>!d.dl||d.day<=d.dl).length;
-  $('dK').innerHTML=[[DONEINFO.st==='ok'?T.done.length:'…',`task đã làm ${fmtD(A)}${DONEINFO.st==='ok'&&T.done.length?` · ${ontime} đúng hạn, ${T.done.length-ontime} trễ`:''}`],[T.hang.length,`task còn treo (${T.late.length} quá hạn · ${T.a.length} hạn ${fmtD(A)})`],
-    [T.tom.length,`task ngày mai ${fmtD(B)} (${uniqT(Object.values(P).flatMap(o=>o.b)).length} theo hạn · ${uniqT(Object.values(P).flatMap(o=>o.plan)).length} đã xếp)`],[rate==null?'–':rate+'%',`hoàn thành task hạn ${fmtD(A)} (${dueA}/${dueA+T.a.length})`]]
+  const ok=DONEINFO.st==='ok',dA=T.doneA.length;
+  $('dK').innerHTML=[[ok?dA:'…',`task hạn ${fmtD(A)} đã xong`],[T.a.length,`task hạn ${fmtD(A)} còn treo`],[ok&&rate!=null?rate+'%':'–',`hoàn thành task hạn ${fmtD(A)}${ok?` (${dA}/${dA+T.a.length})`:''}`],
+    [ok?T.done.length:'…',`task đã làm ${fmtD(A)} (mọi hạn)${ok&&T.done.length?` · ${T.done.length-ontime} xong trễ hạn`:''}`],[T.late.length,`task quá hạn còn treo`],
+    [T.tom.length,`task ngày mai ${fmtD(B)} (${uniqT(Object.values(P).flatMap(o=>o.b)).length} theo hạn · ${uniqT(Object.values(P).flatMap(o=>o.plan)).length} đã xếp)`]]
     .map(([b,x])=>`<div class="kpi"><b>${b}</b><span>${x}</span></div>`).join('');
   let h='';['Zone 1','Zone 2','Zone 3'].forEach(z=>{const ppl=ROSTER.filter(r=>r.zone===z&&P[r.id]);if(!ppl.length)return;const Z=dSum(P,ppl.map(r=>r.id));
     h+=`<tr class="zh"><td>${z} · ${ppl.length} người</td><td colspan="2" class="sub">${ppl.filter(r=>{const x=shiftOf(r.id,A);return x&&!unavailable(x)}).length} người làm hôm nay · ${ppl.filter(r=>{const x=shiftOf(r.id,B);return x&&!unavailable(x)}).length} người làm ngày mai</td>${KS.map(k=>`<td class="n">${Z[k].length||'–'}</td>`).join('')}</tr>`;
     ppl.sort((a,b)=>a.tr.localeCompare(b.tr)||P[b.id].done.length-P[a.id].done.length||P[b.id].hang.length-P[a.id].hang.length).forEach(r=>{const o=P[r.id];
       h+=`<tr><td>${esc(r.name)} <small>${r.tr==='IT'?'IT':r.skill==='Điện'?'Điện':'Đ.Lạnh'}</small></td><td>${shiftPill(shiftOf(r.id,A))}</td><td>${shiftPill(shiftOf(r.id,B))}</td>${KS.map(k=>dCell(o[k],r.id,k)).join('')}</tr>`})});
   h+=`<tr class="tot"><td>Toàn đội</td><td></td><td></td>${KS.map(k=>`<td class="n">${T[k].length}</td>`).join('')}</tr>`;
-  $('dBody').innerHTML=h;if(DSEL)dDetail(...DSEL,P)}
-const DLAB={done:'đã làm',late:'còn treo · quá hạn',a:'còn treo · hạn hôm nay',hang:'tổng còn treo',tom:'ngày mai làm',b:'hạn ngày mai',plan:'đã xếp ngày mai'};
-function dDetail(id,k,P){P=P||dBuckets();const l=(P[id]||{})[k]||[];DSEL=[id,k];const d=$('dDet');d.hidden=false;const isD=k==='done';
+  $('dBody').innerHTML=h;dCharts(P,T,A);if(DSEL)dDetail(...DSEL,P)}
+const DLAB={doneA:'hạn hôm nay đã xong',done:'đã làm (mọi hạn)',late:'còn treo · quá hạn',a:'còn treo · hạn hôm nay',hang:'tổng còn treo',tom:'ngày mai làm',b:'hạn ngày mai',plan:'đã xếp ngày mai'};
+function dDetail(id,k,P){P=P||dBuckets();const l=(P[id]||{})[k]||[];DSEL=[id,k];const d=$('dDet');d.hidden=false;const isD=k==='done'||k==='doneA';
   d.innerHTML=`<div class="row" style="justify-content:space-between"><h2>${esc(BYID[id].name)} · ${l.length} task ${DLAB[k]}</h2><button class="icon" id="dX">Đóng</button></div>`+
   (l.length?`<div class="tbl" style="max-height:none"><table><thead><tr><th>Chi nhánh</th><th>Mã task</th><th>Hạng mục</th><th>Hạn</th>${isD?'<th>Hoàn thành lúc</th>':''}<th>Cùng làm</th><th>Ước tính</th></tr></thead><tbody>${grpStores(l).map(([st,ts])=>ts.map((t,i)=>`<tr>${i?'':`<td rowspan="${ts.length}" class="cn">${esc(st)}<small>${esc(t.addr)}</small></td>`}<td><a class="mono" href="https://work.hasaki.vn/tasks?task_id=${t.tid}" target="_blank" rel="noopener">${esc(t.code)}</a></td><td class="what">${esc(t.name)}<small>${esc(t.hm)}${t.pri==3?' · <span class="pill p-urg">Gấp</span>':''}${t.lanh?' · <span class="pill p-it">Lạnh</span>':''}</small></td><td class="mono">${t.dl?fmtD(t.dl):'–'}${!isD&&t.od>0?` <span class="pill p-late">trễ ${t.od}n</span>`:''}</td>${isD?`<td class="mono">${esc(t.fin.slice(11,16))}${t.dl&&t.day>t.dl?' <span class="pill p-late">trễ hạn</span>':''}</td>`:''}<td>${esc((isD?t.ids:($('dWho').value==='cur'?t.cur:t.new)).filter(x=>x!=id).map(x=>BYID[x]?.name||x).join(', ')||'–')}</td><td class="num">${t.est}′</td></tr>`).join('')).join('')}</tbody></table></div>`:'<div class="empty">Không có task.</div>');
   $('dX').onclick=()=>{DSEL=null;d.hidden=true};d.scrollIntoView({behavior:'smooth',block:'nearest'})}
 $('dBody').addEventListener('click',e=>{const b=e.target.closest('button[data-d]');if(!b)return;const [id,k]=b.dataset.d.split('|');dDetail(+id,k)});
-['dA','dB','dWho','dTr'].forEach(i=>$(i).onchange=dRender);
+['dA','dB','dWho','dTr','dZ'].forEach(i=>$(i).onchange=dRender);
+/* ---------- biểu đồ báo cáo ---------- */
+const C_OK='var(--accent)',C_HANG='var(--urg)',C_LATE='var(--late)',C_IT='var(--it)';
+const lg=items=>`<div class="lg">${items.map(([c,t])=>`<span><i style="background:${c}"></i>${esc(t)}</span>`).join('')}</div>`;
+// thanh ngang xếp chồng: rows=[{label,vals:[..]}], series=[[màu,tên]]
+function hStack(rows,series,{labelW=150,rowH=22}={}){if(!rows.length)return '<p class="sub">Không có dữ liệu.</p>';
+  const W=640,max=Math.max(1,...rows.map(r=>r.vals.reduce((a,b)=>a+b,0))),pw=W-labelW-44,H=rows.length*rowH+4;
+  const g=rows.map((r,i)=>{let x=labelW;const y=i*rowH+3,tot=r.vals.reduce((a,b)=>a+b,0);
+    const segs=r.vals.map((v,k)=>{if(!v)return '';const w=v/max*pw,el=`<rect x="${x.toFixed(1)}" y="${y}" width="${Math.max(1,w).toFixed(1)}" height="${rowH-7}" rx="3" fill="${series[k][0]}"><title>${esc(r.label)} · ${esc(series[k][1])}: ${v}</title></rect>`;x+=w;return el}).join('');
+    return `<text x="${labelW-6}" y="${y+rowH/2+1}" text-anchor="end">${esc(r.label)}</text>${segs}<text class="m" x="${x+5}" y="${y+rowH/2+1}">${tot}</text>`}).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`+lg(series)}
+function vBars(cats,vals,color,{H=150}={}){const W=640,pad=22,max=Math.max(1,...vals),bw=(W-pad*2)/cats.length;
+  const g=vals.map((v,i)=>{const h=v/max*(H-36),x=pad+i*bw;return `<rect x="${(x+bw*.15).toFixed(1)}" y="${(H-18-h).toFixed(1)}" width="${(bw*.7).toFixed(1)}" height="${Math.max(v?2:0,h).toFixed(1)}" rx="3" fill="${color}"><title>${esc(cats[i])}: ${v}</title></rect>${v?`<text x="${(x+bw/2).toFixed(1)}" y="${(H-22-h).toFixed(1)}" text-anchor="middle">${v}</text>`:''}<text class="m" x="${(x+bw/2).toFixed(1)}" y="${H-4}" text-anchor="middle">${esc(cats[i])}</text>`}).join('');
+  return `<svg viewBox="0 0 ${W} ${H}" role="img"><line x1="${pad}" x2="${W-pad}" y1="${H-18}" y2="${H-18}" stroke="var(--line)"/>${g}</svg>`}
+const shortName=n=>n.split(' ').slice(-2).join(' ');
+function dCharts(P,T,A){const ok=DONEINFO.st==='ok';
+  // 1) theo Zone
+  const zs=['Zone 1','Zone 2','Zone 3'].map(z=>{const ids=ROSTER.filter(r=>r.zone===z&&P[r.id]).map(r=>r.id);if(!ids.length)return null;const Z=dSum(P,ids);return {label:z,vals:[Z.doneA.length,Z.a.length,Z.late.length]}}).filter(Boolean);
+  $('c1n').textContent=ok?`${T.doneA.length} xong · ${T.a.length} còn treo hạn ${fmtD(A)} · ${T.late.length} quá hạn từ trước`:'Đang tải số đã xong…';
+  $('c1').innerHTML=hStack(zs,[[C_OK,`Hạn ${fmtD(A)} đã xong`],[C_HANG,`Hạn ${fmtD(A)} còn treo`],[C_LATE,'Quá hạn còn treo']],{labelW:70,rowH:30});
+  // 2) theo nhân viên
+  const pr=ROSTER.filter(r=>P[r.id]).map(r=>({label:shortName(r.name),vals:[P[r.id].doneA.length,P[r.id].a.length,P[r.id].late.length]})).filter(r=>r.vals.some(v=>v)).sort((a,b)=>(b.vals[1]+b.vals[2])-(a.vals[1]+a.vals[2])||b.vals[0]-a.vals[0]);
+  $('c2').innerHTML=hStack(pr,[[C_OK,'Hạn hôm nay đã xong'],[C_HANG,'Hạn hôm nay còn treo'],[C_LATE,'Quá hạn còn treo']],{labelW:120});
+  // 3) hoàn thành theo giờ
+  const hrs=Array.from({length:18},(_,i)=>i+6),cnt=hrs.map(h=>T.done.filter(d=>+d.fin.slice(11,13)===h||(h===6&&+d.fin.slice(11,13)<6)||(h===23&&+d.fin.slice(11,13)>23)).length);
+  $('c3n').textContent=ok?`${T.done.length} task hoàn thành ngày ${fmtD(A)}, theo giờ bấm hoàn thành trên Work`:'Đang tải…';
+  $('c3').innerHTML=ok?vBars(hrs.map(h=>h+'h'),cnt,C_OK):'';
+  // 4) tuổi task còn treo
+  const B4=[['Hôm nay',0,0],['1 ngày',1,1],['2–3',2,3],['4–7',4,7],['8–14',8,14],['15–30',15,30],['> 30',31,1e9]];
+  const hang=T.hang;const v4=B4.map(([,a,b])=>hang.filter(t=>Math.max(0,t.od)>=a&&Math.max(0,t.od)<=b).length);
+  $('c4n').textContent=`${hang.length} task còn treo (hạn đến ${fmtD(A)}), nhóm theo số ngày đã trễ`;
+  $('c4').innerHTML=vBars(B4.map(x=>x[0]),v4,C_LATE)}
 $('dCopy').onclick=async()=>{const P=dBuckets(),A=$('dA').value,B=$('dB').value,T=dSum(P,Object.keys(P));
-  let x=`BÁO CÁO B2 BẢO TRÌ – ${DOW(A)} ${fmtD(A)}\n- Đã làm: ${T.done.length} task\n- Còn treo: ${T.hang.length} task (quá hạn ${T.late.length} · hạn hôm nay ${T.a.length})\n- Ngày mai ${fmtD(B)}: ${T.tom.length} task\n`;
+  let x=`BÁO CÁO B2 BẢO TRÌ – ${DOW(A)} ${fmtD(A)}\n- Task hạn hôm nay: xong ${T.doneA.length} · còn treo ${T.a.length}\n- Đã làm (mọi hạn): ${T.done.length} task\n- Còn treo: ${T.hang.length} task (quá hạn ${T.late.length} · hạn hôm nay ${T.a.length})\n- Ngày mai ${fmtD(B)}: ${T.tom.length} task\n`;
   ['Zone 1','Zone 2','Zone 3'].forEach(z=>{const ppl=ROSTER.filter(r=>r.zone===z&&P[r.id]);if(!ppl.length)return;const Z=dSum(P,ppl.map(r=>r.id));if(!KS.some(k=>Z[k].length))return;
     x+=`\n${z.toUpperCase()}: làm ${Z.done.length} · treo ${Z.hang.length} · mai ${Z.tom.length}\n`+ppl.filter(r=>KS.some(k=>P[r.id][k].length)).map(r=>{const o=P[r.id];const sa=shiftOf(r.id,A),sb=shiftOf(r.id,B);return `- ${r.name}${sa?` [${shiftLabel(sa)}]`:''}: làm ${o.done.length} · treo ${o.hang.length}${o.late.length?` (quá hạn ${o.late.length})`:''} · mai ${o.tom.length}${sb?` [mai: ${shiftLabel(sb)}]`:''}`}).join('\n')+'\n'});
   try{await navigator.clipboard.writeText(x);toast('Đã sao chép báo cáo')}catch(_){const ta=document.createElement('textarea');ta.value=x;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('Đã sao chép báo cáo')}};
