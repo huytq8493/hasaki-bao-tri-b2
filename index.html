@@ -109,13 +109,13 @@ input[type=date]{background:var(--panel);border:1px solid var(--line);border-rad
   </div>
 
   <section class="panel">
-    <div class="row">
+    <div class="row" hidden>
       <input type="password" id="tok" placeholder="Đang dùng token dùng chung (dán token riêng vào đây nếu muốn)" autocomplete="off" aria-label="Token">
       <label class="chk"><input type="checkbox" id="rem"> Ghi nhớ trên máy này</label>
       <button class="btn" id="load">Tải dữ liệu mới nhất</button>
     </div>
     <div class="prog" id="prog" hidden><i></i></div>
-    <div class="sub" id="status">Chưa tải. Bấm "Tải dữ liệu mới nhất" (khoảng 30–60 giây).</div>
+    <div class="row" style="justify-content:space-between"><div class="sub" id="status" style="margin:0">Đang tải dữ liệu từ Work (khoảng 30–60 giây)…</div><button class="btn sec" id="reload" style="padding:5px 12px;font-size:13px">Làm mới dữ liệu</button></div>
   </section>
 
   <div id="main" hidden style="display:grid;gap:16px">
@@ -225,7 +225,8 @@ function shiftLabel(sf){if(!sf)return '';if(sf.off)return sf.code==='W'?'Nghỉ 
 function shiftPill(sf){if(!sf)return '<span class="pill p-rm">chưa có lịch</span>';return `<span class="pill ${sf.code==='T'?'p-it':sf.off||sf.leave?'p-late':'p-kt'}">${esc(shiftLabel(sf))}</span>`}
 const unavailable=sf=>!!sf&&(sf.off||sf.leave);
 function toast(t){const e=$('toast');e.textContent=t;e.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>e.hidden=true,2400)}
-try{const t=localStorage.getItem('b2tok');if(t){$('tok').value=t;$('rem').checked=true}}catch(e){}
+try{localStorage.removeItem('b2tok')}catch(e){}
+$('reload').onclick=()=>$('load').click();
 // BẢN NỘI BỘ: có sẵn token dùng chung. KHÔNG đưa file này lên GitHub / web công khai.
 const DEFAULT_TOKEN='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjQxMDI0MTk1OTksImlzcyI6Imh0dHA6Ly93c2hyLmhhc2FraS52bi9hcGkvYXV0aC9sb2dpbiIsImF1ZCI6IndzaHItcHJvZHVjdGlvbiIsImFwcCI6Im9kcyIsInN1YiI6MCwiaWF0IjoxNzc4NTY4NzU1LCJuYmYiOjE3Nzg1Njg3NTUsImp0aSI6InA3bERYNkpJY0pJb1BQeVIifQ.dE1kJ4t7pg04m_C42DZtUK8JroGE5rk4-f6U83Kh1hI';
 const tok=()=>($('tok').value.trim()||DEFAULT_TOKEN).replace(/^Bearer\s+/i,'');
@@ -241,7 +242,7 @@ function setProg(id,p){const e=$(id);e.hidden=false;e.firstElementChild.style.wi
 $('load').onclick=async()=>{
   if(!tok()){toast('Dán token trước');$('tok').focus();return}
   try{if($('rem').checked)localStorage.setItem('b2tok',tok());else localStorage.removeItem('b2tok')}catch(e){}
-  $('load').disabled=true;$('status').textContent='Đang tải danh mục chi nhánh…';setProg('prog',0.02);
+  $('load').disabled=$('reload').disabled=true;$('status').textContent='Đang tải danh mục chi nhánh…';setProg('prog',0.02);
   try{
     const bd=await api('/staff/base-data');LOCS={};(bd.data?.locations||[]).forEach(l=>LOCS[l.id]=l);
     const today=new Date(),to=new Date(today.getTime()+864e5).toISOString().slice(0,10);
@@ -249,10 +250,10 @@ $('load').onclick=async()=>{
     const rows=await pageAll(q,(n,pg)=>{$('status').textContent=`Đang tải… ${n} đơn (${pg} trang)`;setProg('prog',Math.min(.95,.05+pg/45))});
     const uniq=new Map();rows.forEach(r=>uniq.set(r.id,r));
     build([...uniq.values()]);
-    setProg('prog',1);$('status').textContent=`Đã tải lúc ${new Date().toLocaleTimeString('vi-VN')} · ${uniq.size} đơn đang mở trong WF398 · ${TASKS.length+Object.values(OUTS).reduce((a,b)=>a+b.n,0)} task đang ở B2`;
+    setProg('prog',1);setTimeout(()=>{$('prog').hidden=true},600);$('status').textContent=`Đã tải lúc ${new Date().toLocaleTimeString('vi-VN')} · ${uniq.size} đơn đang mở trong WF398 · ${TASKS.length+Object.values(OUTS).reduce((a,b)=>a+b.n,0)} task đang ở B2`;
     OPENROWS=[...uniq.values()];rebalance();planRestore();$('main').hidden=false;render();loadSched();loadDone();
   }catch(e){$('status').innerHTML=`<span class="er">Không tải được: ${esc(e.message)}</span>. Kiểm tra token (token đăng nhập Work thường hết hạn sau ~48 giờ).`}
-  finally{$('load').disabled=false}
+  finally{$('load').disabled=$('reload').disabled=false}
 };
 
 /* ---------- dựng task ---------- */
