@@ -1,0 +1,528 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Cân task B2 Bảo trì</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: thanh tải dữ liệu realtime → tổng quan → tải theo người (trước/sau) → bảng task có chọn người → popup cập nhật vào Work */
+:root{
+  --bg:#f3f5f3;--panel:#ffffff;--ink:#18211d;--muted:#5b6862;--line:#dde2de;--head:#eef2ef;
+  --accent:#0f6b5c;--accent-ink:#ffffff;--accent-soft:#dbefe9;--urg:#b42318;--urg-soft:#fbe3e0;--late:#9a4d06;--late-soft:#fdeed6;--it:#3b5bb5;--it-soft:#e3e9f9;--bar-old:#c9d0cc;--cap:#b42318;
+  --f:"Be Vietnam Pro",system-ui,-apple-system,"Segoe UI",sans-serif;--mono:"JetBrains Mono",ui-monospace,Consolas,monospace;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#101413;--panel:#18201d;--ink:#e7ece9;--muted:#9aa7a1;--line:#2b3531;--head:#1f2925;--accent:#4fc3aa;--accent-ink:#101413;--accent-soft:#16332e;
+  --urg:#f47a6e;--urg-soft:#3e1b18;--late:#f2a64d;--late-soft:#3b2a13;--it:#93b0f5;--it-soft:#1b2745;--bar-old:#3a4440;--cap:#f47a6e;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#101413;--panel:#18201d;--ink:#e7ece9;--muted:#9aa7a1;--line:#2b3531;--head:#1f2925;--accent:#4fc3aa;--accent-ink:#101413;--accent-soft:#16332e;
+  --urg:#f47a6e;--urg-soft:#3e1b18;--late:#f2a64d;--late-soft:#3b2a13;--it:#93b0f5;--it-soft:#1b2745;--bar-old:#3a4440;--cap:#f47a6e;color-scheme:dark}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f);font-size:14px;line-height:1.45}
+.wrap{max-width:1400px;margin:0 auto;padding-block:18px 60px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:16px}
+h1{font-size:22px;margin:0}h2{font-size:15px;margin:0}
+.sub{color:var(--muted);margin:2px 0 0}.num{font-variant-numeric:tabular-nums}.mono{font-family:var(--mono);font-size:12px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:14px;min-width:0;display:grid;gap:10px}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+input,select,button{font:inherit;color:inherit}
+input[type=password],input[type=search],select{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:7px 10px;min-width:0;color:var(--ink)}
+input[type=password]{flex:1 1 320px}input[type=search]{flex:1 1 220px}
+.btn{background:var(--accent);color:var(--accent-ink);border:0;border-radius:8px;padding:8px 14px;cursor:pointer;font-weight:600}
+.btn.sec{background:var(--panel);color:var(--ink);border:1px solid var(--line)}
+.btn:disabled{opacity:.5;cursor:not-allowed}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+label.chk{display:inline-flex;gap:6px;align-items:center;color:var(--muted)}
+.prog{height:8px;background:var(--head);border-radius:99px;overflow:hidden}.prog i{display:block;height:100%;width:0;background:var(--accent);transition:width .2s}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:10px 14px}.kpi b{display:block;font-size:22px;font-variant-numeric:tabular-nums}.kpi span{color:var(--muted);font-size:12px}
+.note{background:var(--late-soft);border-left:3px solid var(--late);padding:8px 12px;border-radius:6px;font-size:13px}
+.bad{background:var(--urg-soft);border-left:3px solid var(--urg);padding:8px 12px;border-radius:6px;font-size:13px}
+.loads{display:grid;grid-template-columns:repeat(auto-fit,minmax(360px,1fr));gap:12px}
+.zc{border:1px solid var(--line);border-radius:8px;overflow:hidden}
+.zc h3{margin:0;padding:8px 12px;background:var(--head);font-size:13px;display:flex;justify-content:space-between;gap:8px}
+.lr{display:grid;grid-template-columns:150px 1fr 120px;gap:8px;align-items:center;padding:4px 12px;border-top:1px solid var(--line);cursor:pointer}
+.lr:hover,.lr.sel{background:var(--accent-soft)}
+.lr .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lr small{color:var(--muted)}
+.track{position:relative;height:16px}.track .o,.track .n{position:absolute;left:0;border-radius:3px}.track .o{top:0;height:16px;background:var(--bar-old)}.track .n{top:4px;height:8px;background:var(--accent)}
+.lr .v{text-align:right;font-variant-numeric:tabular-nums;font-size:12.5px}
+.legend{display:flex;gap:14px;color:var(--muted);font-size:12px;flex-wrap:wrap}.legend i{display:inline-block;width:12px;height:10px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.tbl{overflow:auto;max-height:70vh;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{position:sticky;top:0;background:var(--head);text-align:left;font-weight:600;padding:8px;border-bottom:1px solid var(--line);white-space:nowrap;z-index:1}
+td{padding:6px 8px;border-bottom:1px solid var(--line);vertical-align:top}
+tr.chg td{background:color-mix(in srgb,var(--accent-soft) 60%,transparent)}
+td.cn small,td.what small{display:block;color:var(--muted);font-size:12px}
+td a{color:var(--accent);text-decoration:none}
+.pill{display:inline-block;border-radius:99px;padding:0 8px;font-size:11.5px;font-weight:600;white-space:nowrap}
+.p-urg{background:var(--urg-soft);color:var(--urg)}.p-late{background:var(--late-soft);color:var(--late)}.p-it{background:var(--it-soft);color:var(--it)}.p-kt{background:var(--accent-soft);color:var(--accent)}.p-rm{background:var(--head);color:var(--muted)}
+td select{max-width:220px;font-size:12.5px;padding:4px 6px}
+.modal{position:fixed;inset:0;z-index:20;background:rgba(10,14,12,.55);display:grid;place-items:center;padding:16px}
+.dlg{background:var(--panel);border:2px solid var(--accent);border-radius:12px;padding:16px;display:grid;gap:10px;width:min(1100px,100%);max-height:calc(100vh - 32px);overflow:auto}
+.dlg .x{margin-left:auto;background:none;border:0;font-size:22px;cursor:pointer;color:var(--muted)}
+.ok{color:var(--accent);font-weight:600}.btn.sm{padding:5px 10px;font-size:12.5px;min-height:0}.btn.warn{background:var(--urg-soft);color:var(--urg);border:1px solid var(--urg)}div.sm{font-size:12px;font-weight:500;margin-bottom:4px;max-width:220px}td.act{white-space:nowrap}.er{color:var(--urg);font-weight:600}.wt{color:var(--muted)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:18px;background:var(--ink);color:var(--bg);padding:8px 14px;border-radius:10px;z-index:30}
+.empty{padding:24px;text-align:center;color:var(--muted)}
+.dd td.n{text-align:right;font-variant-numeric:tabular-nums;white-space:nowrap}.dd td.n button{background:none;border:0;color:var(--accent);font:inherit;font-weight:600;cursor:pointer;padding:0;text-decoration:underline dotted}.dd td.n.z{color:var(--muted)}
+.dd tr.zh td{background:var(--head);font-weight:600}.dd tr.tot td{font-weight:700;border-top:2px solid var(--line)}.dd small{color:var(--muted)}
+input[type=date]{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px 8px;color:var(--ink)}
+.tabs{display:flex;gap:4px;border-bottom:1px solid var(--line)}
+.tabs button{background:none;border:0;border-bottom:2px solid transparent;padding:8px 14px;cursor:pointer;font-weight:600;color:var(--muted)}
+.tabs button[aria-selected=true]{color:var(--accent);border-bottom-color:var(--accent)}
+.board{display:grid;grid-template-columns:330px 1fr;gap:12px;align-items:start}
+.pool,.col{background:var(--panel);border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;min-height:200px}
+.pool{position:sticky;top:8px;max-height:calc(100vh - 24px)}
+.pool>header,.col>header{padding:10px 12px;border-bottom:1px solid var(--line);display:grid;gap:6px}
+.pool .body,.col .body{padding:8px;display:grid;gap:8px;align-content:start;overflow:auto;flex:1}
+.cols{display:flex;gap:10px;overflow-x:auto;padding-bottom:8px;align-items:stretch}
+.col{flex:0 0 270px;max-height:calc(100vh - 24px)}
+.col header .nm{font-weight:600;display:flex;justify-content:space-between;gap:6px;align-items:center}
+.col header small{color:var(--muted);font-weight:500}
+.cap{height:8px;background:var(--head);border-radius:99px;overflow:hidden}.cap i{display:block;height:100%;background:var(--accent)}.cap.over i{background:var(--urg)}
+.hrs{font-size:12.5px;color:var(--muted);font-variant-numeric:tabular-nums}.hrs.over{color:var(--urg);font-weight:600}
+.grp{border:1px solid var(--line);border-radius:8px;background:var(--bg)}
+.grp>.gh{padding:6px 8px;font-weight:600;font-size:12.5px;cursor:grab;display:flex;justify-content:space-between;gap:6px}
+.grp>.gh small{color:var(--muted);font-weight:500;white-space:nowrap}
+.card{margin:0 6px 6px;padding:6px 8px;border-radius:6px;background:var(--panel);border:1px solid var(--line);cursor:grab;font-size:12.5px;display:grid;gap:2px;position:relative}
+.card .t{padding-right:16px}.card .m{color:var(--muted);font-size:11.5px;display:flex;gap:4px;flex-wrap:wrap;align-items:center}
+.card .rm{position:absolute;right:4px;top:2px;background:none;border:0;color:var(--muted);cursor:pointer;font-size:15px;line-height:1}
+.dragging{opacity:.4}.col.offc{opacity:.6;background:repeating-linear-gradient(135deg,var(--panel) 0 10px,var(--head) 10px 20px)}
+.drop{outline:2px dashed var(--accent);outline-offset:-2px;background:var(--accent-soft)!important}
+.drop.no{outline-color:var(--urg);background:var(--urg-soft)!important}
+.hint{color:var(--muted);font-size:12px;text-align:center;padding:14px 6px;border:1px dashed var(--line);border-radius:8px}
+.icon{white-space:nowrap;flex:none;background:none;border:1px solid var(--line);border-radius:6px;padding:2px 7px;cursor:pointer;font-size:12px;color:var(--muted)}
+@media (max-width:760px){.board{grid-template-columns:1fr}.pool{position:static;max-height:50vh}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div>
+    <h1>Cân task B2 Bảo trì · dữ liệu trực tiếp từ Work</h1>
+    <p class="sub">Workflow 398 · đơn đang ở bước <b>B2. Tiếp nhận và xử lý yêu cầu</b> (current_step_id = 4416) · chỉ cân các task đang giao cho đội bảo trì 26 người · người Zone nào làm task Zone đó</p>
+  </div>
+
+  <section class="panel">
+    <div class="row">
+      <input type="password" id="tok" placeholder="Dán token Bearer của Work (wshr)" autocomplete="off" aria-label="Token">
+      <label class="chk"><input type="checkbox" id="rem"> Ghi nhớ trên máy này</label>
+      <button class="btn" id="load">Tải dữ liệu mới nhất</button>
+    </div>
+    <div class="prog" id="prog" hidden><i></i></div>
+    <div class="sub" id="status">Chưa tải. Bấm "Tải dữ liệu mới nhất" (khoảng 30–60 giây).</div>
+  </section>
+
+  <div id="main" hidden style="display:grid;gap:16px">
+    <div class="kpis" id="kpis"></div>
+    <div class="note" id="note"></div>
+    <section class="panel">
+      <div class="row" style="justify-content:space-between">
+        <h2>Tải theo người (giờ ước tính, gồm 30 phút di chuyển mỗi chi nhánh)</h2>
+        <div class="legend"><span><i style="background:var(--bar-old)"></i>Hiện tại</span><span><i style="background:var(--accent)"></i>Sau khi cân</span></div>
+      </div>
+      <div class="row"><button class="btn sec" id="rebal">Cân tải lại</button><button class="btn sec" id="reset">Bỏ đề xuất (giữ người hiện tại)</button><span class="sub" id="balInfo"></span></div>
+      <div class="loads" id="loads"></div>
+    </section>
+    <div class="tabs" role="tablist"><button role="tab" id="tabT" aria-selected="true">Bảng task</button><button role="tab" id="tabB" aria-selected="false">Điều phối ngày mai (kéo thả)</button><button role="tab" id="tabD" aria-selected="false">Báo cáo ngày</button></div>
+    <section id="viewDue" hidden style="display:grid;gap:10px">
+      <div class="row">
+        <label class="chk">Ngày báo cáo <input type="date" id="dA"></label>
+        <label class="chk">Ngày mai <input type="date" id="dB"></label>
+        <select id="dWho" aria-label="Tính theo"><option value="cur">Theo người đang giao trên Work</option><option value="new">Theo người sau khi cân / điều phối</option></select>
+        <select id="dTr" aria-label="Nghiệp vụ"><option value="">Tất cả nghiệp vụ</option><option value="KT">Điện / Điện Lạnh</option><option value="IT">IT Helpdesk</option></select>
+        <span style="margin-left:auto" class="row"><button class="btn" id="dCopy">Sao chép báo cáo (Zalo)</button><button class="btn sec" id="dCsv">Tải CSV</button></span>
+      </div>
+      <div class="sub" id="dLoad" style="margin:0"></div>
+      <div class="kpis" id="dK"></div>
+      <div class="tbl dd" style="max-height:none"><table><thead><tr><th>Nhân viên</th><th id="hSA">Ca hôm nay</th><th id="hSB">Ca ngày mai</th><th style="text-align:right" id="hDone">Đã làm hôm nay</th><th style="text-align:right">Còn treo · quá hạn</th><th style="text-align:right" id="hA">Còn treo · hạn hôm nay</th><th style="text-align:right">Tổng còn treo</th><th style="text-align:right" id="hB">Ngày mai làm*</th></tr></thead><tbody id="dBody"></tbody></table></div>
+      <div class="sub" style="margin:0"><b>Đã làm</b> = task con ở bước B2 chuyển sang hoàn thành (finished_at) trong ngày báo cáo, tính cho mọi người được giao. <b>Còn treo</b> = task B2 chưa xong có hạn (date_end) trước hoặc đúng ngày báo cáo. *<b>Ngày mai làm</b> = task hạn ngày mai + task đã xếp ở tab Điều phối (không đếm trùng). Số ô: task · chi nhánh · giờ ước tính (gồm 30′ di chuyển mỗi chi nhánh). Bấm vào số để xem chi tiết.</div>
+      <section class="panel" id="dDet" hidden></section>
+    </section>
+    <section id="viewBoard" hidden style="display:grid;gap:10px">
+      <div class="row">
+        <select id="bZone" aria-label="Zone"><option>Zone 1</option><option>Zone 2</option><option>Zone 3</option></select>
+        <select id="bTr" aria-label="Nghiệp vụ"><option value="KT">Điện / Điện Lạnh</option><option value="IT">IT Helpdesk</option></select>
+        <label class="chk" title="Giờ tối đa mỗi người; nếu có lịch ca thì lấy theo giờ ca (trừ 1h nghỉ trưa)">Giờ làm tối đa <input type="number" id="bCap" value="8" min="1" max="14" step="0.5" style="width:64px;background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:6px"></label>
+        <button class="btn sec" id="bAuto">Gợi ý tự động</button>
+        <button class="btn sec" id="bClear">Xoá kế hoạch Zone này</button>
+        <span class="sub" id="bInfo"></span>
+        <button class="btn" id="bUpd" style="margin-left:auto">Cập nhật người thực hiện (task đã xếp)</button>
+      </div>
+      <div class="sub" style="margin:0">Kéo <b>task</b> hoặc kéo <b>tên chi nhánh</b> (cả cụm) từ cột "Chưa xếp" sang cột nhân viên. Kéo giữa 2 nhân viên để đổi người; kéo ngược về "Chưa xếp" hoặc bấm × để bỏ. Kế hoạch tự lưu trên máy này.</div>
+      <div class="board">
+        <aside class="pool" id="pool"><header><b id="poolT">Chưa xếp</b><input type="search" id="bQ" placeholder="Tìm chi nhánh, mã, hạng mục…" aria-label="Tìm trong chưa xếp"><select id="bSort" aria-label="Sắp xếp"><option value="late">Ưu tiên trễ hạn / gấp</option><option value="nv">Theo người đang được giao</option><option value="st">Theo tên chi nhánh</option></select></header><div class="body" id="poolB" data-drop=""></div></aside>
+        <div class="cols" id="cols"></div>
+      </div>
+    </section>
+    <div id="viewTbl" style="display:grid;gap:16px">
+    <div class="row">
+      <select id="fZone" aria-label="Zone"><option value="">Tất cả Zone</option><option>Zone 1</option><option>Zone 2</option><option>Zone 3</option></select>
+      <select id="fNv" aria-label="Người làm"><option value="">Tất cả người làm</option></select>
+      <select id="fTr" aria-label="Nghiệp vụ"><option value="">Tất cả nghiệp vụ</option><option value="KT">Điện / Điện Lạnh</option><option value="IT">IT Helpdesk</option></select>
+      <select id="fChg" aria-label="Thay đổi"><option value="">Tất cả task</option><option value="1">Chỉ task đổi người</option><option value="out">Task ngoài đội bảo trì</option></select>
+      <input type="search" id="fQ" placeholder="Tìm mã, chi nhánh, hạng mục…" aria-label="Tìm">
+      <span class="sub" id="cnt"></span>
+      <button class="btn" id="openUpd">Cập nhật người thực hiện vào Work</button>
+    </div>
+    <div class="tbl" id="tbl"></div>
+    </div>
+  </div>
+</div>
+
+<div class="modal" id="modal" hidden role="dialog" aria-modal="true" aria-labelledby="mT">
+  <div class="dlg">
+    <div class="row"><h2 id="mT">Cập nhật người thực hiện vào Work</h2><span class="pill p-kt" id="mCnt"></span><button class="x" id="mX" aria-label="Đóng">×</button></div>
+    <p class="sub" style="margin:0">Mỗi task được ghi <b>toàn bộ</b> danh sách người thực hiện bên dưới (API <span class="mono">mass-update-field-task-input</span>, field <span class="mono">assign_staff</span>). Người hiện tại không có trong danh sách mới sẽ bị gỡ khỏi task.</p>
+    <div class="row"><select id="mScope" aria-label="Phạm vi"><option value="">Tất cả task đổi người</option><option value="plan">Chỉ task đã xếp ngày mai</option></select><select id="mZone"><option value="">Tất cả Zone</option><option>Zone 1</option><option>Zone 2</option><option>Zone 3</option></select>
+      <input type="password" id="tok2" placeholder="Token để ghi (để trống = dùng token ở trên)" autocomplete="off" aria-label="Token ghi"></div>
+    <div class="row"><button class="btn sec" id="mTest">Chạy thử 1 task</button><button class="btn" id="mGo">Cập nhật vào Work</button><span class="sub" id="mMsg"></span></div>
+    <div class="note" id="mConf" hidden></div>
+    <div class="prog" id="mProg" hidden><i></i></div>
+    <div class="tbl" style="max-height:50vh"><table><thead><tr><th>Mã task</th><th>Chi nhánh</th><th>Người hiện tại</th><th>Người mới</th><th>staff_id gửi</th><th>Kết quả</th></tr></thead><tbody id="mBody"></tbody></table></div>
+  </div>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+const STATIC={"roster":[{"id":15936,"name":"Trần Quốc Tỉnh","zone":"Zone 1","skill":"Điện"},{"id":3414,"name":"Trần Văn Luân","zone":"Zone 1","skill":"Điện Lạnh"},{"id":9104,"name":"Nguyễn Quốc Thanh Tòng","zone":"Zone 1","skill":"Điện Lạnh"},{"id":35884,"name":"Huỳnh Lê Tiềm","zone":"Zone 1","skill":"Điện Lạnh"},{"id":36778,"name":"Trần văn Anh Vũ","zone":"Zone 1","skill":"Điện Lạnh"},{"id":6411,"name":"Phạm Hải Đăng","zone":"Zone 1","skill":"Điện Lạnh"},{"id":18282,"name":"Nguyễn Đức Trần Minh Khải","zone":"Zone 1","skill":"IT Helpdesk"},{"id":13976,"name":"Nguyễn Minh Tâm","zone":"Zone 1","skill":"IT Helpdesk"},{"id":41554,"name":"Trần Hoài Bão","zone":"Zone 1","skill":"IT Helpdesk"},{"id":2414,"name":"Nguyễn Bá Trung","zone":"Zone 2","skill":"Điện"},{"id":40892,"name":"Cao Văn Hoàng","zone":"Zone 2","skill":"Điện"},{"id":18579,"name":"Nguyễn Trung Kiên","zone":"Zone 2","skill":"Điện Lạnh"},{"id":5088,"name":"Nguyễn Hoàng Minh","zone":"Zone 2","skill":"Điện Lạnh"},{"id":8428,"name":"Nguyễn Văn Đoàn","zone":"Zone 2","skill":"Điện Lạnh"},{"id":35387,"name":"Trần Văn Nhanh","zone":"Zone 2","skill":"Điện Lạnh"},{"id":37147,"name":"Thạch Tô Là","zone":"Zone 2","skill":"Điện Lạnh"},{"id":36779,"name":"Nguyễn Văn Thành","zone":"Zone 2","skill":"Điện Lạnh"},{"id":21135,"name":"Tô Lê Trung Hiếu","zone":"Zone 2","skill":"IT Helpdesk"},{"id":22476,"name":"Nguyễn Trung Hiếu","zone":"Zone 2","skill":"IT Helpdesk"},{"id":41304,"name":"Trần Bỉnh Tùng","zone":"Zone 2","skill":"IT Helpdesk"},{"id":2666,"name":"Kim Thành Vinh","zone":"Zone 3","skill":"Điện"},{"id":5060,"name":"Huỳnh Văn Mến","zone":"Zone 3","skill":"Điện Lạnh"},{"id":25905,"name":"Tô Việt Cát Duy","zone":"Zone 3","skill":"Điện Lạnh"},{"id":9426,"name":"Đặng Xuân Khánh","zone":"Zone 3","skill":"Điện Lạnh"},{"id":387,"name":"Võ Thành Phi","zone":"Zone 3","skill":"IT Helpdesk"},{"id":24102,"name":"Nguyễn Minh Hảo","zone":"Zone 3","skill":"IT Helpdesk"}],"zones":{"22 tân thới nhất 13b - hồ chí minh":"Zone 2","43 tân hải - hồ chí minh":"Zone 2","130 ấp chánh - tỉnh long an":"Zone 2","170 quốc lộ 1a - hồ chí minh":"Zone 2","71 hoàng hoa thám - hồ chí minh":"Zone 2","555 3 tháng 2 - hồ chí minh":"Zone 1","176 phan đăng lưu - hồ chí minh":"Zone 1","94 lê văn việt - hồ chí minh":"Zone 3","119 nguyễn gia trí - hồ chí minh":"Zone 3","657 quang trung - hồ chí minh":"Zone 2","468 nguyễn thị thập - hồ chí minh":"Zone 1","447 phan văn trị - hồ chí minh":"Zone 2","6 nguyễn ảnh thủ - hồ chí minh":"Zone 2","304 lê văn quới - hồ chí minh":"Zone 2","104 lê trọng tấn - hồ chí minh":"Zone 2","141 nguyễn trãi - hồ chí minh":"Zone 1","81 hồ tùng mậu - hồ chí minh":"Zone 1","48 lê văn sỹ - hồ chí minh":"Zone 1","15 võ văn ngân - hồ chí minh":"Zone 3","182 cầu giấy - thành phố hà nội":"Zone 1","94 hậu giang - hồ chí minh":"Zone 1","223 khánh hội - hồ chí minh":"Zone 1","169 thái hà - thành phố hà nội":"Zone 1","50 phạm văn chiêu - hồ chí minh":"Zone 2","220 tân hương - hồ chí minh":"Zone 2","109 nguyễn duy trinh - hồ chí minh":"Zone 3","28 phan huy ích - hồ chí minh":"Zone 2","a30 quốc lộ 50 - hồ chí minh":"Zone 2","56 nguyễn thị tú - hồ chí minh":"Zone 2","631 tỉnh lộ 10 - hồ chí minh":"Zone 2","36 nguyễn ảnh thủ - hồ chí minh":"Zone 2","256 đỗ xuân hợp - hồ chí minh":"Zone 3","420 huỳnh tấn phát - hồ chí minh":"Zone 1","1261 phạm hùng - hồ chí minh":"Zone 2","36 phan văn hớn - hồ chí minh":"Zone 2","133 hiệp bình - hồ chí minh":"Zone 3","694 âu cơ - hồ chí minh":"Zone 2","1519 phạm văn thuận - đồng nai":"Zone 3","202 nguyễn an ninh - bình dương":"Zone 3","402 lê đức thọ - hồ chí minh":"Zone 2","177 ba cu - tỉnh bà rịa-vũng tàu":"Zone 1","189 30 tháng 4 - thành phố cần thơ":"Zone 3","219 yersin - bình dương":"Zone 3","695 phạm văn thuận - đồng nai":"Zone 3","311 tây thạnh - hồ chí minh":"Zone 2","11 cách mạng tháng tám - bình dương":"Zone 3","59 quang trung - hồ chí minh":"Zone 2","136 phan trung - đồng nai":"Zone 3","582 nguyễn ái quốc - đồng nai":"Zone 3","28 lê trọng tấn - bình dương":"Zone 3","407 nguyễn trung trực - kiên giang":"Zone 3","167 nguyễn xí - hồ chí minh":"Zone 1","194 ấp bắc - tỉnh tiền giang":"Zone 3","296 lãnh binh thăng - hồ chí minh":"Zone 1","393 lê duẩn - đà nẵng":"Zone 2","276 xô viết nghệ tĩnh - hồ chí minh":"Zone 1","96 yjut - đắk lắk":"Zone 2","75 đồng khởi - bến tre":"Zone 3","76 bà triệu - tỉnh thừa thiên huế":"Zone 2","38 phạm thái bường - trà vinh":"Zone 3","58 lý thánh tôn - khánh hòa":"Zone 2","96 nguyễn huệ - đồng tháp":"Zone 3","238 trần phú - bạc liêu":"Zone 3","1395 trần hưng đạo - an giang":"Zone 3","1 hai bà trưng - lâm đồng":"Zone 2","401 trần hưng đạo - bình thuận":"Zone 2","168 trưng nữ vương - vĩnh long":"Zone 3","12 nguyễn đình chiểu - long an":"Zone 2","499 cách mạng tháng tám - tỉnh tây ninh":"Zone 2","240 tỉnh lộ 825 - tỉnh long an":"Zone 2","261 lê quang định - hồ chí minh":"Zone 1","197 trần hưng đạo - tỉnh cà mau":"Zone 3","7 tỉnh lộ 43 - bình dương":"Zone 3","224 lê văn việt - hồ chí minh":"Zone 3","30 phan đình phùng - tỉnh gia lai":"Zone 2","31 phổ quang - hồ chí minh":"Zone 2","113 lương khánh thiện - tp. hải phòng":"Zone 1","39 trần phú - tỉnh hà tĩnh":"Zone 2","723 cách mạng tháng 8 - tp.hồ chí minh":"Zone 2","513 phú riềng đỏ - bình phước":"Zone 2","217 nguyễn văn cừ - nghệ an":"Zone 2","39 nguyễn văn tăng - hồ chí minh":"Zone 3","232 phan bội châu - bình định":"Zone 2","137 nguyễn trãi - thanh hóa":"Zone 2","112 trần não - hồ chí minh":"Zone 3","25 nguyễn trãi - thành phố cần thơ":"Zone 3","1134 kha vạn cân - hồ chí minh":"Zone 3","219 nguyễn thị thập - hồ chí minh":"Zone 1","594 nguyễn văn cừ - hà nội":"Zone 1","40 bạch mai - hà nội":"Zone 1","1207 nguyễn duy trinh - hồ chí minh":"Zone 3","4 đường 30 tháng 4 - bình dương":"Zone 3","517 phú lợi - bình dương":"Zone 3","246 dương bá trạc - hồ chí minh":"Zone 1","588 luỹ bán bích - hồ chí minh":"Zone 2","182 thạch lam - hồ chí minh":"Zone 2","182 trần hưng đạo - thành phố cần thơ":"Zone 3","58 hùng vương - thành phố cần thơ":"Zone 3","392 nguyễn văn quá - hồ chí minh":"Zone 2","68 bùi văn hòa - đồng nai":"Zone 3","63 lê hồng phong - lâm đồng":"Zone 2","953 hà huy giáp - hồ chí minh":"Zone 2","304 thống nhất - hồ chí minh":"Zone 2","146 hùng vương - tỉnh thừa thiên huế":"Zone 2","726 huỳnh tấn phát - hồ chí minh":"Zone 1","363 tô ngọc vân - hồ chí minh":"Zone 3","562 thống nhất - ninh thuận":"Zone 2","34 dt 746 - bình dương":"Zone 3","361 hồ thị hương - đồng nai":"Zone 3","136a phan đình phùng - tỉnh quảng ngãi":"Zone 2","132 nguyễn hữu thọ - tỉnh bà rịa - vũng tàu":"Zone 1","127 nguyễn trãi - bình dương":"Zone 3","329 hoàng diệu - đà nẵng":"Zone 2","122 trần hưng đạo - tỉnh bắc ninh":"Zone 1","200a cách mạng tháng tám":"Zone 3","277 trần hưng đạo - tỉnh phú yên":"Zone 2","194 lương ngọc quyến - tỉnh thái nguyên":"Zone 1","49 phú lợi - tỉnh sóc trăng":"Zone 3","212 lê lợi - an giang":"Zone 3","61 nguyễn an ninh - bình dương":"Zone 3","1/709 đường 22 tháng 12 - bình dương":"Zone 3","160 đường 30 tháng 4 - kiên giang":"Zone 3","422 lê duẫn - đồng nai":"Zone 3","350 tân sơn nhì - hồ chí minh":"Zone 2","389 hùng vương - đồng nai":"Zone 3","104 phan chu trinh - tỉnh quảng nam":"Zone 2","521 nguyễn tri phương - bình dương":"Zone 3","225 đường 30 tháng 4 - đồng nai":"Zone 3","447 kha vạn cân - hồ chí minh":"Zone 3","166 hùng vương - bình dương":"Zone 3","95 cách mạng tháng 8 - bình dương":"Zone 3","89 đường 3/2 - thành phố cần thơ":"Zone 3","49 mậu thân - thành phố cần thơ":"Zone 3","68 tỉnh lộ 8 - tp. hồ chí minh":"Zone 2","105 bà hom - hồ chí minh":"Zone 1","1030 lê văn lương - tp.hcm":"Zone 1","346 trần hưng đạo - tỉnh kon tum":"Zone 2","18 âu cơ - đà nẵng":"Zone 2","105 phạm ngọc thạch - hà nội":"Zone 1","477 lê văn thọ - hồ chí minh":"Zone 2","608 nguyễn duy trinh - hồ chí minh":"Zone 3","75 ba tháng hai - đồng nai":"Zone 3","57 trần phú - kiên giang":"Zone 3","284 bùi thị xuân - lâm đồng":"Zone 2","141 cách mạng tháng 8 - cần thơ":"Zone 3","60-62 nguyễn công trứ - hậu giang":"Zone 3","1838 huỳnh tấn phát - hồ chí minh":"Zone 1","895 trần hưng đạo - an giang":"Zone 3","124 đường 30 tháng 4 - tỉnh tiền giang":"Zone 3","650 nguyễn ảnh thủ - hồ chí minh":"Zone 2","78 lê lợi - đồng tháp":"Zone 3","230 âu cơ - hồ chí minh":"Zone 2","130 ngô quyền - vĩnh long":"Zone 3","542 quốc lộ 20 - lâm đồng":"Zone 2","67 đặng thúc vịnh - hồ chí minh":"Zone 2","366 lê duẩn - đắk lắk":"Zone 2","479 đường 30 tháng 4 - tỉnh bà rịa - vũng tàu":"Zone 1","206 nguyễn tất thành - đắk lắk":"Zone 2","362 đồng khởi - đồng nai":"Zone 3","225 đình phong phú - hồ chí minh":"Zone 3","127 đặng văn bi - hồ chí minh":"Zone 3","c9 võ văn vân - hồ chí minh":"Zone 2","24 nguyễn văn thoại - đà nẵng":"Zone 2","348 nguyễn chí công - tiền giang":"Zone 3","66 trương định - tiền giang":"Zone 3","224 hùng vương - đồng tháp":"Zone 3","432 cách mạng tháng 8 - hồ chí minh":"Zone 1","398 đường 2 tháng 4 - khánh hòa":"Zone 2","54 phạm hữu lầu - hồ chí minh":"Zone 1","36 lê văn chí - hồ chí minh":"Zone 3","57 quang trung - hồ chí minh":"Zone 2","7 quốc lộ 50 - tỉnh long an":"Zone 2","199 hùng vương - tỉnh gia lai":"Zone 2","129 mai thị hồng hạnh - kiên giang":"Zone 3","151 quốc lộ 9 - quảng trị":"Zone 2","369 nguyễn văn tăng - hồ chí minh":"Zone 3","274 gò xoài - hồ chí minh":"Zone 2","70 lê văn khương - hồ chí minh":"Zone 2","2203 hùng vương - khánh hòa":"Zone 2","214 quốc lộ 62 - tỉnh long an":"Zone 2","179 phan chu trinh - lâm đồng":"Zone 2","quốc lộ 51 - bà rịa vũng tàu":"Zone 1","2857 lương định của - bình dương":"Zone 3","10 hùng vương - lâm đồng":"Zone 2","113 lê lợi - bình thuận":"Zone 2","18 võ thị sáu - đồng nai":"Zone 3","126 tỉnh lộ 8 - hồ chí minh":"Zone 2","20 nguyễn hữu thọ - tỉnh long an":"Zone 2","70 trần hưng đạo - bình phước":"Zone 2","65 dương thị mười - hồ chí minh":"Zone 2","21 quốc lộ 20 - đồng nai":"Zone 3","919 hậu giang - hồ chí minh":"Zone 1","c6 lý thái tổ - đồng nai":"Zone 3","39 quốc lộ 13 - bình phước":"Zone 2","29 hoàng việt - hồ chí minh":"Zone 2","302 nguyễn trãi - hà nội":"Zone 1","90 nguyễn huệ - vĩnh long":"Zone 3","83 mạc thiên tích":"Zone 3","457 nguyễn văn tạo - hồ chí minh":"Zone 1","191 đỗ tường phong - tỉnh long an":"Zone 2","106 nguyễn tất thành - đắk nông":"Zone 2","404 hồ học lãm - hồ chí minh":"Zone 2","531 đỗ xuân hợp - hồ chí minh":"Zone 3","125 nguyễn văn cừ nối dài - cần thơ":"Zone 3","109 hùng vương - đồng tháp":"Zone 3","268 nguyễn hoàng - hà nội":"Zone 1","62 võ thị sáu - bà rịa vũng tàu":"Zone 1","18 man thiện - hồ chí minh":"Zone 3","219 khâm thiên - hà nội":"Zone 1","1099 hùng vương - hậu giang":"Zone 3","2 quốc lộ 22b - tỉnh tây ninh":"Zone 2","182 phan đăng lưu - đà nẵng":"Zone 2","193 núi thành - đà nẵng":"Zone 2","49 ngô mây - bình định":"Zone 2","1018 quốc lộ 91 - cần thơ":"Zone 3","59 mai thúc loan - tỉnh thừa thiên huế":"Zone 2","334 đinh bộ lĩnh - tiền giang":"Zone 3","78 - 78a đt 835 - long an":"Zone 2","31 đinh đức thiện - hồ chí minh":"Zone 2","118 ông ích đường - đà nẵng":"Zone 2","a26 nguyễn du - tỉnh tây ninh":"Zone 2","158 trần hưng đạo - quảng bình":"Zone 2","98 đt 747a - hồ chí minh":"Zone 3","1488 quốc lộ 30 - đồng tháp":"Zone 3","443 điện biên phủ - đà nẵng":"Zone 2","4 tây nam - đồng nai":"Zone 3","11 quang trung - nghệ an":"Zone 2","179 trần văn xã - đồng nai":"Zone 3","442 phạm hùng - cần thơ":"Zone 3","300 lý thường kiệt - tỉnh quảng nam":"Zone 2","50 tây lân - hồ chí minh":"Zone 2","384 nguyễn tất thành - tỉnh bình phước":"Zone 2","329 tôn đức thắng - tỉnh đắk nông":"Zone 2","133 biên hòa - hà nam":"Zone 2","1 nguyễn văn linh - cần thơ":"Zone 3","136 trung hòa - hà nội":"Zone 1","254 võ thị sáu - bà rịa vũng tàu":"Zone 1","1222 tỉnh lộ 10 - hồ chí minh":"Zone 2","71 trần hưng đạo - tỉnh bình thuận":"Zone 2","140 lê lợi - bắc giang":"Zone 1","26 bùi văn hòa - đồng nai":"Zone 3","553 đường tỉnh 767 - đồng nai":"Zone 3","108 phùng hưng - đồng nai":"Zone 3","137 điện biên - hưng yên":"Zone 1","459 nguyễn đáng - trà vinh":"Zone 3","29 quốc hương - hồ chí minh":"Zone 3","276 quang trung - hà nội":"Zone 1","461 trương định - hà nội":"Zone 1","49 độc lập - bình dương":"Zone 3","241 nguyễn tất thành - cà mau":"Zone 3","67 thú y - hà nội":"Zone 1","1967 đường tỉnh 768 - đồng nai":"Zone 3","5 trần hưng đạo - quảng ninh":"Zone 1","303 hùng vương - bà rịa vũng tàu":"Zone 1","25 nguyễn văn tiên - đồng nai":"Zone 3","22 huỳnh minh thạnh - bà rịa vũng tàu":"Zone 1","251 thới hòa - hồ chí minh":"Zone 2","142 hai bà trưng - thái bình":"Zone 1","e4 đường n9 - bình dương":"Zone 3","104 quang trung - tuyên quang":"Zone 1","88 trần phú - bắc ninh":"Zone 1","79 xuân la - hà nội":"Zone 1","121 bà triệu - thừa thiên huế":"Zone 2","189 hai bà trưng - hồ chí minh":"Zone 1","33 lê xoay - vĩnh phúc":"Zone 2","2184 quốc lộ 20":"Zone 3","129 phạm ngũ lão - hải dương":"Zone 1","321 cầu giấy - hà nội":"Zone 1","1009 trần hưng đạo - ninh bình":"Zone 2","76a phan văn hớn - hồ chí minh":"Zone 2","475 quốc lộ 91 - cần thơ":"Zone 3","635 quoc lo 14 - bình phước":"Zone 2","349 lê lợi - an giang":"Zone 3","244 đống đa - đà nẵng":"Zone 2","32 đường d6 - 5a - bình dương":"Zone 3","44 nguyễn huy tưởng - đà nẵng":"Zone 2","22 cao sơn pháo - quảng nam":"Zone 2","545 trần nhân tông - đà nẵng":"Zone 2","568 lũy bán bích - hcm":"Zone 2","269 phạm văn đồng - tây ninh":"Zone 2","2705 quang trung - bình định":"Zone 2","174 phan đình phùng - lâm đồng":"Zone 2","125 trần phú - bình định":"Zone 2","205 quốc lộ 50 - long an":"Zone 2","183 trần quý cáp - khánh hòa":"Zone 2","191 phạm văn đồng - quảng ngãi":"Zone 2","185 nguyễn trãi - hcm":"Zone 1","554 lê hồng phong - bình dương":"Zone 3","98 trần đăng ninh - lạng sơn":"Zone 3","274a âu cơ - hcm":"Zone 2","188 hùng vương - đồng nai":"Zone 3","1 quốc lộ 53 - vĩnh long":"Zone 3","432 quốc lộ 91 - an giang":"Zone 3","14 nguyễn du - bình dương":"Zone 3","248 đồng khởi - bến tre":"Zone 3","344 võ văn ngân - hcm":"Zone 3","305 nguyễn nghiêm - quảng ngãi":"Zone 2","649 30 tháng 4 - tây ninh":"Zone 2","274 âu cơ - hcm":"Zone 2","582 hùng vương - đồng nai":"Zone 3","180 tôn đức thắng - binh thuận":"Zone 2","34 phan văn hớn - hcm":"Zone 2","đường đt 824":"Zone 2","114 ngô gia tự - ninh thuận":"Zone 2","đường n5 - d9":"Zone 3","181 khánh hội - hcm":"Zone 1","342 lê văn sỹ - hcm":"Zone 2","50 đội cấn - hà nội":"Zone 1","17 vân đồn - nha trang":"Zone 2","15 hùng vương - sóc trăng":"Zone 3","447 quang trung - quảng ngãi":"Zone 2","76 phan văn hớn - hồ chí minh":"Zone 2","933 trần hưng đạo - ninh bình":"Zone 2","295 giải phóng - đắk lắk":"Zone 2","182 thủ khoa huân - an giang":"Zone 3","đường db4 - bình dương":"Zone 3","2b bình chiểu - hồ chí minh":"Zone 3","78 hai bà trưng - tỉnh gia lai":"Zone 2","2a dt 743b - bình dương":"Zone 3","57 thong nhat - bình dương":"Zone 3","16 hùng vương - tỉnh quảng nam":"Zone 2","320 tạo lục 5 - bình dương":"Zone 3","d6 nguyễn thị tú - hồ chí minh":"Zone 2","384 phan boi chau - đắk lắk":"Zone 2","12 nguyễn hữu cảnh - an giang":"Zone 3","815 hà hoàng hổ - an giang":"Zone 3","168 ấp chánh - long an":"Zone 2","461 nguyễn bình - hồ chí minh":"Zone 1","676 điện biên - yên bái":"Zone 3","62 nguyễn tất thành - đắk nông":"Zone 2","88 trần đăng ninh - lạng sơn":"Zone 3","45 nguyễn tất thành - đồng tháp":"Zone 3","174 nguyễn du - nghiệ an":"Zone 2","125 nguyễn trung trực - kiên giang":"Zone 3","231 trần nguyên hãn - hải phòng":"Zone 1","103 bờ bao tân thắng - hồ chí minh":"Zone 2","61 an mỹ - bình dương":"Zone 3","116 quốc lộ 14 - đồng nai":"Zone 3","1912 quốc lộ 51- đồng nai":"Zone 3","211 nguyễn ảnh thủ - hồ chí minh":"Zone 2","14 liêu bình hương - hồ chí minh":"Zone 2","342 phạm văn thuận - đồng nai":"Zone 3","355 lê hoàn - thanh hóa":"Zone 2","833 hà huy giáp - hồ chí minh":"Zone 2","149 nguyễn duy trinh - hồ chí minh":"Zone 3","1297 đại lộ hùng vương - phú thọ":"Zone 2","402 nguyễn thị thập - đồng tháp":"Zone 3"}};
+const API='https://wshr.hasaki.vn/api/hr';
+const B2=4416,WF=398,TRAVEL=30;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const nm=s=>String(s||'').normalize('NFC').toLowerCase().replace(/\s+/g,' ').trim();
+const ROSTER=STATIC.roster.map(r=>({...r,tr:/^IT/.test(r.skill)?'IT':'KT'}));
+const BYID=Object.fromEntries(ROSTER.map(r=>[r.id,r]));
+const ZONEOF=STATIC.zones;
+const REG=['hồ chí minh','tp.hcm','tp. hồ chí minh','bình dương','đồng nai','long an','tỉnh long an'];
+let TASKS=[],LOCS={},OUTS={},OPENROWS=[],DONE=[],DONEINFO={st:'',days:0},SCHED={},SCHEDINFO={st:''};
+/* ---------- lịch làm việc (ca) ---------- */
+// API staff-schedule: phòng 135, nghiệp vụ 6 + 68. Mã ca: HC/PM = ca làm (giờ vào–ra), W = nghỉ tuần, T = đi thi công (không nhận task B2), leave_id > 0 = có đơn nghỉ phép
+const SCHED_Q=(y,m)=>{const fr=Math.floor(new Date(y,m-1,1)/1000),to=Math.floor(new Date(y,m,1)/1000)-1;return `/staff-schedule?year=${y}&month=${m}&department_id=135&major_id%5B%5D=6&major_id%5B%5D=68&is_manager=true&from_date=${fr}&to_date=${to}`};
+async function loadSched(){SCHEDINFO={st:'run'};
+  try{const ms=new Set([0,1].map(k=>{const d=new Date(Date.now()+k*864e5);return d.getFullYear()+'-'+(d.getMonth()+1)}));SCHED={};
+    for(const ym of ms){const [y,m]=ym.split('-').map(Number);const j=await apiRetry(SCHED_Q(y,m));
+      (j.data?.rows||[]).forEach(r=>{const id=+r.staffsche_staff_id;if(!BYID[id])return;const i=String(r.staffsche_time_in_str||''),o=String(r.staffsche_time_out_str||''),day=i.slice(0,10);if(!day)return;
+        const code=String(r.staffsche_shift||'').trim(),hi=i.slice(11,16),ho=o.slice(11,16);const span=(Date.parse(o.replace(' ','T'))-Date.parse(i.replace(' ','T')))/36e5||0;
+        const off=/^(W|T)$/i.test(code)||span<=0;const leave=+r.staffsche_leave_id>0;
+        (SCHED[id]??={})[day]={code,hi,ho,off,leave,hours:off?0:Math.max(0,span-(span>=8?1:0))}})}
+    SCHEDINFO={st:'ok',at:new Date()}}catch(e){SCHEDINFO={st:'er',msg:e.message}}
+  render()}
+function shiftOf(id,day){return SCHED[id]?.[day]||null}
+function shiftLabel(sf){if(!sf)return '';if(sf.off)return sf.code==='W'?'Nghỉ tuần (W)':sf.code==='T'?'Đi thi công (T)':'Nghỉ ('+sf.code+')';return `${sf.code} ${sf.hi}–${sf.ho}${sf.leave?' · có đơn nghỉ':''}`}
+function shiftPill(sf){if(!sf)return '<span class="pill p-rm">chưa có lịch</span>';return `<span class="pill ${sf.code==='T'?'p-it':sf.off||sf.leave?'p-late':'p-kt'}">${esc(shiftLabel(sf))}</span>`}
+const unavailable=sf=>!!sf&&(sf.off||sf.leave);
+function toast(t){const e=$('toast');e.textContent=t;e.hidden=false;clearTimeout(toast.h);toast.h=setTimeout(()=>e.hidden=true,2400)}
+try{const t=localStorage.getItem('b2tok');if(t){$('tok').value=t;$('rem').checked=true}}catch(e){}
+const tok=()=>$('tok').value.trim().replace(/^Bearer\s+/i,'');
+async function api(path){const r=await fetch(API+path,{headers:{Authorization:'Bearer '+tok(),'x-locale':'vi'}});if(r.status===401||r.status===403)throw new Error('Token sai hoặc hết hạn ('+r.status+')');const j=await r.json();if(j&&j.error&&!j.data)throw new Error(j.message||'Lỗi API');return j}
+async function apiRetry(path,n=3){let e;for(let i=0;i<n;i++){try{return await api(path)}catch(x){e=x;if(/Token/.test(x.message))throw x;await new Promise(r=>setTimeout(r,800*(i+1)))}}throw e}
+// tải tất cả trang (6 luồng), thử lại trang lỗi, chỉ dừng khi gặp trang thật sự ít hơn 100 dòng
+async function pageAll(q,onProg){const rows=[];let off=0,end=Infinity,pg=0;
+  const w=async()=>{while(true){const o=off;if(o>=end)return;off+=100;const j=await apiRetry(q(o));const rr=j.data?.rows||[];rows.push(...rr);pg++;onProg&&onProg(rows.length,pg);if(rr.length<100)end=Math.min(end,o+100)}};
+  await Promise.all([w(),w(),w(),w(),w(),w()]);return rows}
+function setProg(id,p){const e=$(id);e.hidden=false;e.firstElementChild.style.width=Math.round(p*100)+'%'}
+
+/* ---------- tải dữ liệu ---------- */
+$('load').onclick=async()=>{
+  if(!tok()){toast('Dán token trước');$('tok').focus();return}
+  try{if($('rem').checked)localStorage.setItem('b2tok',tok());else localStorage.removeItem('b2tok')}catch(e){}
+  $('load').disabled=true;$('status').textContent='Đang tải danh mục chi nhánh…';setProg('prog',0.02);
+  try{
+    const bd=await api('/staff/base-data');LOCS={};(bd.data?.locations||[]).forEach(l=>LOCS[l.id]=l);
+    const today=new Date(),to=new Date(today.getTime()+864e5).toISOString().slice(0,10);
+    const q=o=>`/workflows/detail-workflow-task/${WF}?from_date=2025-01-01&to_date=${to}&search_type=board&wfid=${WF}&workflow_step_id=${B2}&status[]=0&limit=100&offset=${o}`;
+    const rows=await pageAll(q,(n,pg)=>{$('status').textContent=`Đang tải… ${n} đơn (${pg} trang)`;setProg('prog',Math.min(.95,.05+pg/45))});
+    const uniq=new Map();rows.forEach(r=>uniq.set(r.id,r));
+    build([...uniq.values()]);
+    setProg('prog',1);$('status').textContent=`Đã tải lúc ${new Date().toLocaleTimeString('vi-VN')} · ${uniq.size} đơn đang mở trong WF398 · ${TASKS.length+Object.values(OUTS).reduce((a,b)=>a+b.n,0)} task đang ở B2`;
+    OPENROWS=[...uniq.values()];rebalance();planRestore();$('main').hidden=false;render();loadSched();loadDone();
+  }catch(e){$('status').innerHTML=`<span class="er">Không tải được: ${esc(e.message)}</span>. Kiểm tra token (token đăng nhập Work thường hết hạn sau ~48 giờ).`}
+  finally{$('load').disabled=false}
+};
+
+/* ---------- dựng task ---------- */
+function est(name){const n=nm(name);if(n.includes('vệ sinh dàn'))return 30;if(n.includes('bảo trì định kỳ'))return 60;if(n.includes('thi công'))return n.includes('khảo sát')?60:240;return 45}
+function needLanh(name,hm){const n=nm(name);if(n.includes('vệ sinh dàn')||n.includes('lõi lọc'))return false;return /lạnh|dàn nóng|lọc nước|máy giặt|thổi lạnh|quạt/.test(n)||/điều hòa/.test(nm(hm))}
+function build(parents){
+  TASKS=[];OUTS={};const now=Date.now();
+  parents.filter(p=>p.current_step_id==B2).forEach(p=>{
+    const cfg=(p.data&&!Array.isArray(p.data)&&p.data.configs)||{};const loc=LOCS[cfg.chinhanh00]||null;
+    (p.subtasks||[]).filter(s=>s.workflow_step_id==B2&&[0,1,5,6].includes(s.status)).forEach(s=>{
+      const ids=[...new Set((s.staff_ids||[]).map(Number))];
+      const names=Object.fromEntries((s.staff||[]).map(x=>[x.staff_id,x.info?.staff_name||('#'+x.staff_id)]));
+      const store=loc?loc.name:(p.name.split('_')[0]||'');
+      const city=loc?nm(loc.city_name):'';
+      const de=Date.parse((s.date_end||p.date_end||'').replace(' ','T'));
+      const t={tid:s.id,pid:p.id,code:p.code,name:p.name.replace(store,'').replace(/^_?\d{13,19}_/,'').replace(/^_/,''),full:p.name,store,addr:loc?.address||'',ll:loc?.coordinates?`${loc.coordinates.latitude},${loc.coordinates.longitude}`:'',
+        hm:(cfg.hangmuc00||'').split('-')[1]||'',pri:p.piority,od:isNaN(de)?0:Math.round((new Date(new Date().toDateString())-new Date(new Date(de).toDateString()))/864e5),dl:(s.date_end||'').slice(0,10),cur:ids,curNames:ids.map(i=>BYID[i]?.name||names[i]||('#'+i))};
+      if(!ids.length||!ids.every(i=>BYID[i])){ids.forEach(i=>{if(!BYID[i]){const k=names[i]||('#'+i);(OUTS[k]??={n:0}).n++}});if(!ids.length)(OUTS['(chưa giao ai)']??={n:0}).n++;return}
+      t.tr=ids.some(i=>BYID[i].tr==='IT')?'IT':'KT';
+      t.zone=ZONEOF[nm(store)]||BYID[ids[0]].zone;
+      t.remote=t.tr==='IT'&&city&&!REG.some(r=>city.includes(r));
+      t.lanh=needLanh(p.name,t.hm);t.est=t.remote?20:est(p.name);t.new=ids.slice();
+      TASKS.push(t)});
+  });
+}
+
+/* ---------- cân tải ---------- */
+function loadOf(get){const L={};ROSTER.forEach(r=>L[r.id]={m:0,st:new Set(),n:0});TASKS.forEach(t=>get(t).forEach(i=>{if(!L[i])return;L[i].m+=t.est;L[i].n++;if(!t.remote)L[i].st.add(t.store)}));Object.values(L).forEach(o=>o.h=(o.m+TRAVEL*o.st.size)/60);return L}
+function eligible(t,exclude=[]){return ROSTER.filter(r=>r.zone===t.zone&&r.tr===t.tr&&(!t.lanh||r.skill!=='Điện')&&!exclude.includes(r.id)).map(r=>r.id)}
+function rebalance(){
+  const load={};ROSTER.forEach(r=>load[r.id]=0);
+  const add=(id,m)=>{load[id]=(load[id]||0)+m};
+  // 1) task làm cặp + task từ xa: giữ người nếu đúng Zone/nghiệp vụ, sai thì thay người cùng Zone
+  const units={},REP={};
+  // xếp để các task cùng chi nhánh đi liền nhau
+  TASKS.slice().sort((a,b)=>a.store.localeCompare(b.store)).forEach(t=>{t.new=t.cur.slice();
+    if(t.cur.length>1||t.remote){
+      const got=[];t.new=t.cur.map(i=>{const r=BYID[i];if(r.zone===t.zone&&r.tr===t.tr)return i;
+        // cùng chi nhánh + cùng người sai Zone → luôn thay bằng CÙNG 1 người (không mỗi task một người)
+        const mk=t.store+'|'+t.tr+'|'+i;if(REP[mk]&&!t.cur.includes(REP[mk])&&!got.includes(REP[mk])){got.push(REP[mk]);return REP[mk]}
+        const el=eligible(t,[...t.cur,...got]);if(!el.length)return i;const pick=el.sort((a,b)=>load[a]-load[b])[0];REP[mk]=pick;got.push(pick);return pick});
+      t.new=[...new Set(t.new)];t.new.forEach(i=>add(i,t.est/ t.new.length*t.new.length));
+    }else{const k=t.zone+'|'+t.tr+'|'+t.store;(units[k]??=[]).push(t)}});
+  // 2) gom theo chi nhánh, chia đều trong Zone + nghiệp vụ
+  const groups={};Object.values(units).forEach(u=>{const k=u[0].zone+'|'+u[0].tr;(groups[k]??=[]).push(u)});
+  Object.entries(groups).forEach(([k,us])=>{
+    const [z,tr]=k.split('|');const ppl=ROSTER.filter(r=>r.zone===z&&r.tr===tr).map(r=>r.id);if(!ppl.length)return;
+    const tot=ppl.reduce((a,i)=>a+load[i],0)+us.reduce((a,u)=>a+u.reduce((b,t)=>b+t.est,0)+TRAVEL,0);const target=tot/ppl.length;
+    us.sort((a,b)=>b.reduce((x,t)=>x+t.est,0)-a.reduce((x,t)=>x+t.est,0));
+    us.forEach(u=>{const m=u.reduce((a,t)=>a+t.est,0)+TRAVEL;const lanh=u.some(t=>t.lanh);
+      const el=ppl.filter(i=>!lanh||BYID[i].skill!=='Điện');const pool=el.length?el:ppl;
+      const cnt={};u.forEach(t=>cnt[t.cur[0]]=(cnt[t.cur[0]]||0)+1);const own=+Object.entries(cnt).sort((a,b)=>b[1]-a[1])[0][0];
+      const best=pool.slice().sort((a,b)=>load[a]-load[b])[0];
+      const pick=(pool.includes(own)&&load[own]+m<=target*1.1)?own:best;
+      load[pick]+=m;u.forEach(t=>t.new=[pick])})});
+  $('balInfo').textContent=`Đã cân lại lúc ${new Date().toLocaleTimeString('vi-VN')}`;
+}
+
+/* ---------- hiển thị ---------- */
+const S={zone:'',nv:'',tr:'',chg:'',q:''};
+const changed=t=>[...t.cur].sort().join()!==[...t.new].sort().join();
+function render(){renderMain();if(!$('viewBoard').hidden)bRender();if(!$('viewDue').hidden)dRender()}
+function renderMain(){
+  const L0=loadOf(t=>t.cur),L1=loadOf(t=>t.new);
+  const ch=TASKS.filter(changed).length,outN=Object.values(OUTS).reduce((a,b)=>a+b.n,0);
+  const zAvg=(z,tr)=>{const p=ROSTER.filter(r=>r.zone===z&&r.tr===tr);return (p.reduce((a,r)=>a+L1[r.id].h,0)/p.length).toFixed(1)};
+  $('kpis').innerHTML=[[TASKS.length,'task B2 của đội bảo trì'],[ch,'task đề xuất đổi người'],[outN,'task B2 giao người ngoài đội (không đụng tới)'],[TASKS.filter(t=>t.od>0).length,'task đã trễ hạn'],
+    [`${zAvg('Zone 1','KT')} · ${zAvg('Zone 2','KT')} · ${zAvg('Zone 3','KT')}`,'giờ TB/người Điện–Lạnh Z1 · Z2 · Z3']].map(([b,s])=>`<div class="kpi"><b>${b}</b><span>${s}</span></div>`).join('');
+  const top=Object.entries(OUTS).sort((a,b)=>b[1].n-a[1].n).slice(0,6).map(([k,v])=>`${esc(k)} (${v.n})`).join(', ');
+  $('note').innerHTML=`Chỉ cân các task mà <b>mọi người đang được giao đều thuộc đội bảo trì</b>. ${outN} task còn lại giữ nguyên${top?' ('+top+')':''}. Thời gian là ước tính: vệ sinh 30′, bảo trì định kỳ 60′, khảo sát/sửa chữa 45′, thi công 240′ (khảo sát thi công 60′), +30′ mỗi chi nhánh.`;
+  const mx=Math.max(1,...Object.values(L0).map(o=>o.h),...Object.values(L1).map(o=>o.h));
+  $('loads').innerHTML=['Zone 1','Zone 2','Zone 3'].map(z=>{const p=ROSTER.filter(r=>r.zone===z).sort((a,b)=>a.tr.localeCompare(b.tr)||L1[b.id].h-L1[a.id].h);
+    return `<div class="zc"><h3><span>${z}</span><span class="num">${TASKS.filter(t=>t.zone===z).length} task</span></h3>${p.map(r=>{const a=L0[r.id],b=L1[r.id];
+      return `<div class="lr${S.nv==r.id?' sel':''}" data-id="${r.id}"><div class="nm">${esc(r.name)} <small>${r.tr==='IT'?'IT':r.skill==='Điện'?'Điện':'Đ.Lạnh'}</small></div><div class="track"><div class="o" style="width:${a.h/mx*100}%"></div><div class="n" style="width:${b.h/mx*100}%"></div></div><div class="v">${a.n}→<b>${b.n}</b> task · ${b.h.toFixed(1)}h · ${b.st.size} CN</div></div>`}).join('')}</div>`}).join('');
+  document.querySelectorAll('.lr').forEach(e=>e.onclick=()=>{S.nv=S.nv==e.dataset.id?'':e.dataset.id;$('fNv').value=S.nv;render()});
+  if($('fNv').options.length<2)$('fNv').insertAdjacentHTML('beforeend',ROSTER.map(r=>`<option value="${r.id}">${esc(r.name)}</option>`).join(''));
+  // bảng
+  if(S.chg==='out'){$('cnt').textContent='';$('tbl').innerHTML=`<table><thead><tr><th>Người được giao (ngoài đội bảo trì)</th><th>Số task B2</th></tr></thead><tbody>${Object.entries(OUTS).sort((a,b)=>b[1].n-a[1].n).map(([k,v])=>`<tr><td>${esc(k)}</td><td class="num">${v.n}</td></tr>`).join('')}</tbody></table>`;return}
+  const q=nm(S.q);
+  const L=TASKS.filter(t=>(!S.zone||t.zone===S.zone)&&(!S.tr||t.tr===S.tr)&&(!S.nv||t.new.includes(+S.nv)||t.cur.includes(+S.nv))&&(!S.chg||changed(t))&&(!q||nm(t.code+' '+t.store+' '+t.full+' '+t.hm).includes(q)))
+    .sort((a,b)=>a.zone.localeCompare(b.zone)||(BYID[a.new[0]]?.name||'').localeCompare(BYID[b.new[0]]?.name||'')||a.store.localeCompare(b.store));
+  $('cnt').textContent=`${L.length} task`;
+  const opt=(t,sel)=>ROSTER.filter(r=>r.tr===t.tr).sort((a,b)=>(a.zone!==t.zone)-(b.zone!==t.zone)||a.name.localeCompare(b.name)).map(r=>`<option value="${r.id}"${r.id===sel?' selected':''}>${esc(r.name)}${r.zone!==t.zone?' ('+r.zone+')':''}</option>`).join('');
+  $('tbl').innerHTML=L.length?`<table><thead><tr><th>Zone</th><th>Mã task</th><th>Chi nhánh</th><th>Hạng mục</th><th>Trễ</th><th>Người hiện tại</th><th>Người thực hiện mới</th><th>Cập nhật</th></tr></thead><tbody>${L.map(t=>`<tr class="${changed(t)?'chg':''}">
+    <td>${t.zone}</td><td><a class="mono" href="https://work.hasaki.vn/tasks?task_id=${t.tid}" target="_blank" rel="noopener">${esc(t.code)}</a></td>
+    <td class="cn">${esc(t.store)}${t.remote?'<small>Hỗ trợ từ xa</small>':''}</td>
+    <td class="what">${esc(t.name)}<small>${esc(t.hm)} · <span class="pill ${t.tr==='IT'?'p-it':'p-kt'}">${t.tr==='IT'?'IT':'Điện/Lạnh'}</span></small></td>
+    <td>${t.pri==3?'<span class="pill p-urg">Gấp</span> ':''}${t.od>0?`<span class="pill p-late">${t.od}n</span>`:'<span class="sub">còn hạn</span>'}</td>
+    <td>${esc(t.curNames.join(', '))}</td>
+    <td>${t.new.map((id,k)=>`<select data-t="${t.tid}" data-k="${k}" aria-label="Người mới">${opt(t,id)}</select>`).join('<br>')}</td><td class="act">${rowBtn(t)}</td></tr>`).join('')}</tbody></table>`:'<div class="empty">Không có task nào khớp bộ lọc.</div>';
+  document.querySelectorAll('td select').forEach(sl=>sl.addEventListener('change',()=>{delete RR[sl.dataset.t]}));
+  document.querySelectorAll('td select').forEach(sl=>sl.onchange=()=>{const t=TASKS.find(x=>x.tid==sl.dataset.t);t.new[+sl.dataset.k]=+sl.value;t.new=[...new Set(t.new)];if(PLAN[t.tid])planSave();render()});
+}
+[['fZone','zone'],['fNv','nv'],['fTr','tr'],['fChg','chg']].forEach(([id,k])=>$(id).onchange=e=>{S[k]=e.target.value;render()});
+$('fQ').oninput=e=>{S.q=e.target.value;render()};
+$('rebal').onclick=()=>{rebalance();planRestore();render();toast('Đã cân tải lại')};
+$('reset').onclick=()=>{TASKS.forEach(t=>t.new=t.cur.slice());planSave();$('balInfo').textContent='Đang giữ nguyên người hiện tại';render()};
+
+/* ---------- điều phối ngày mai (kéo thả) ---------- */
+let PLAN={};
+const TMR=(()=>{const d=new Date(Date.now()+864e5);return d})();
+const TMRK='b2plan-'+TMR.toISOString().slice(0,10);
+const TMRL=['Chủ nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'][TMR.getDay()]+', '+TMR.toLocaleDateString('vi-VN');
+function planSave(){try{const o={};Object.keys(PLAN).forEach(k=>{const t=TASKS.find(x=>x.tid==k);if(t)o[k]=t.new});localStorage.setItem(TMRK,JSON.stringify(o))}catch(e){}}
+function planRestore(){PLAN={};try{const o=JSON.parse(localStorage.getItem(TMRK)||'{}');Object.entries(o).forEach(([k,ids])=>{const t=TASKS.find(x=>x.tid==k);if(!t)return;const v=(ids||[]).map(Number).filter(i=>BYID[i]);if(v.length)t.new=[...new Set(v)];PLAN[k]=1})}catch(e){}}
+const bTasks=()=>TASKS.filter(t=>t.zone===$('bZone').value&&t.tr===$('bTr').value);
+const pScore=t=>(t.pri==3?1000:0)+Math.max(0,t.od);
+const isLanhBlock=(t,id)=>t.lanh&&BYID[id]?.skill==='Điện';
+function grpStores(L){const g={};L.forEach(t=>(g[t.store]??=[]).push(t));return Object.entries(g)}
+function chip(t,from){const who=from?t.new.filter(i=>i!=from).map(i=>BYID[i]?.name.split(' ').pop()):t.new.map(i=>BYID[i]?.name.split(' ').pop());
+  return `<div class="card" draggable="true" data-tid="${t.tid}" data-from="${from||''}">${from?`<button class="rm" data-unplan="${t.tid}" aria-label="Bỏ khỏi kế hoạch" title="Bỏ khỏi kế hoạch">×</button>`:''}
+  <div class="t">${esc(t.name)}</div><div class="m"><span class="mono">${esc(t.code)}</span>${t.pri==3?'<span class="pill p-urg">Gấp</span>':''}${t.od>0?`<span class="pill p-late">trễ ${t.od}n</span>`:''}${t.lanh?'<span class="pill p-it">Lạnh</span>':''}${t.remote?'<span class="pill p-rm">Từ xa</span>':''}<span>${t.est}′</span>${who.length?`<span>· ${from?'cùng ':''}${esc(who.join(', '))}</span>`:''}</div></div>`}
+function grpHtml(store,L,from){const m=L.reduce((a,t)=>a+t.est,0);
+  return `<div class="grp"><div class="gh" draggable="true" data-store="${esc(store)}" data-from="${from||''}" title="Kéo cả cụm chi nhánh"><span>${esc(store)}</span><small>${L.length} task · ${(m/60).toFixed(1)}h</small></div>${L.map(t=>chip(t,from)).join('')}</div>`}
+function pLoad(id,L){const mine=L.filter(t=>PLAN[t.tid]&&t.new.includes(id));const st=new Set(mine.filter(t=>!t.remote).map(t=>t.store));return {mine,h:(mine.reduce((a,t)=>a+t.est,0)+TRAVEL*st.size)/60,st:st.size}}
+const TMRD=()=>ymd(TMR);
+function capOf(id){const sf=shiftOf(id,TMRD()),c=+$('bCap').value||8;return sf?(sf.off?0:Math.min(c,sf.hours||c)):c}
+function bRender(){
+  const L=bTasks(),q=nm($('bQ').value);
+  const pool=L.filter(t=>!PLAN[t.tid]&&(!q||nm(t.code+' '+t.store+' '+t.full+' '+t.hm).includes(q)));
+  let gs=grpStores(pool);const so=$('bSort').value;
+  if(so==='late')gs.sort((a,b)=>Math.max(...b[1].map(pScore))-Math.max(...a[1].map(pScore))||b[1].length-a[1].length);
+  else if(so==='nv')gs.sort((a,b)=>(BYID[a[1][0].new[0]]?.name||'').localeCompare(BYID[b[1][0].new[0]]?.name||'')||a[0].localeCompare(b[0]));
+  else gs.sort((a,b)=>a[0].localeCompare(b[0]));
+  gs.forEach(g=>g[1].sort((a,b)=>pScore(b)-pScore(a)));
+  $('poolT').textContent=`Chưa xếp · ${pool.length} task · ${gs.length} chi nhánh`;
+  $('poolB').innerHTML=gs.length?gs.map(([s,l])=>grpHtml(s,l,'')).join(''):'<div class="hint">Đã xếp hết task của Zone này.</div>';
+  const ppl=ROSTER.filter(r=>r.zone===$('bZone').value&&r.tr===$('bTr').value);
+  const planned=L.filter(t=>PLAN[t.tid]).length;
+  $('bInfo').textContent=`${TMRL} · đã xếp ${planned}/${L.length} task`;
+  $('cols').innerHTML=ppl.map(r=>{const o=pLoad(r.id,L),sf=shiftOf(r.id,TMRD()),un=unavailable(sf),cap=capOf(r.id),over=o.h>cap+1e-9;
+    return `<section class="col${un?' offc':''}" data-drop="${r.id}"><header><div class="nm"><span>${esc(r.name)} <small>${r.tr==='IT'?'IT':r.skill==='Điện'?'Điện':'Đ.Lạnh'}</small></span><button class="icon" data-copy="${r.id}" title="Sao chép danh sách việc để gửi Zalo">Sao chép</button></div>
+      <div>Ca ngày mai: ${shiftPill(sf)}</div>
+      <div class="cap${over?' over':''}"><i style="width:${cap?Math.min(100,o.h/cap*100):(o.h?100:0)}%"></i></div><div class="hrs${over?' over':''}">${o.h.toFixed(1)}h / ${cap}h · ${o.mine.length} task · ${o.st} chi nhánh${over?(un?(sf.code==='T'?' · đi thi công':' · đang nghỉ'):' · quá giờ'):''}</div></header>
+      <div class="body">${o.mine.length?grpStores(o.mine).map(([s,l])=>grpHtml(s,l,r.id)).join(''):'<div class="hint">Kéo task vào đây</div>'}</div></section>`}).join('')||'<div class="empty">Zone này không có người cho nghiệp vụ đã chọn.</div>';
+}
+let DRAG=null;
+function dragTids(el){if(el.dataset.tid)return [el.dataset.tid];const g=el.closest('.grp');return [...g.querySelectorAll('.card')].map(c=>c.dataset.tid)}
+$('viewBoard').addEventListener('dragstart',e=>{const el=e.target.closest('[draggable=true]');if(!el)return;DRAG={tids:dragTids(el),from:el.dataset.from?+el.dataset.from:0};
+  e.dataTransfer.effectAllowed='move';try{e.dataTransfer.setData('text/plain',DRAG.tids.join(','))}catch(_){}(el.classList.contains('gh')?el.parentElement:el).classList.add('dragging')});
+$('viewBoard').addEventListener('dragend',()=>{DRAG=null;document.querySelectorAll('.dragging,.drop').forEach(x=>x.classList.remove('dragging','drop','no'))});
+$('viewBoard').addEventListener('dragover',e=>{const z=e.target.closest('[data-drop]');if(!z||!DRAG)return;e.preventDefault();
+  document.querySelectorAll('.drop').forEach(x=>{if(x!==z)x.classList.remove('drop','no')});z.classList.add('drop');
+  const id=+z.dataset.drop;z.classList.toggle('no',!!id&&DRAG.tids.every(k=>isLanhBlock(TASKS.find(t=>t.tid==k),id)))});
+$('viewBoard').addEventListener('dragleave',e=>{const z=e.target.closest('[data-drop]');if(z&&!z.contains(e.relatedTarget))z.classList.remove('drop','no')});
+$('viewBoard').addEventListener('drop',e=>{const z=e.target.closest('[data-drop]');if(!z||!DRAG)return;e.preventDefault();doDrop(DRAG,+z.dataset.drop||0);DRAG=null});
+function doDrop(d,to){let n=0,blk=0;
+  d.tids.forEach(k=>{const t=TASKS.find(x=>x.tid==k);if(!t)return;
+    if(!to){delete PLAN[k];n++;return}
+    if(isLanhBlock(t,to)){blk++;return}
+    if(d.from&&d.from!==to){const i=t.new.indexOf(d.from);if(i>=0)t.new[i]=to;else t.new[0]=to}
+    else if(!t.new.includes(to)){if(t.new.length>1)t.new[0]=to;else t.new=[to]}
+    t.new=[...new Set(t.new)];PLAN[k]=1;delete RR[k];n++});
+  planSave();render();
+  const sfT=to?shiftOf(to,TMRD()):null;
+  if(blk)toast(`${blk} task cần thợ Điện Lạnh nên không giao cho ${BYID[to].name}`);
+  else if(n&&unavailable(sfT))toast(`Lưu ý: ${BYID[to].name} ngày mai ${shiftLabel(sfT)}`);
+  else if(n)toast(to?`Đã xếp ${n} task cho ${BYID[to].name}`:`Đã bỏ ${n} task khỏi kế hoạch`)}
+$('viewBoard').addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.unplan){delete PLAN[b.dataset.unplan];planSave();render();return}
+  if(b.dataset.copy){const id=+b.dataset.copy,o=pLoad(id,bTasks());if(!o.mine.length){toast('Chưa có việc để sao chép');return}
+    const txt=`Việc ngày mai ${TMRL} – ${BYID[id].name} (${o.mine.length} task, ~${o.h.toFixed(1)}h)\n`+grpStores(o.mine).map(([s,l],i)=>{const a=l[0].addr?` – ${l[0].addr}`:'';
+      return `${i+1}. ${s}${a}\n`+l.map(t=>`   • ${t.code} ${t.name}${t.new.length>1?' (cùng '+t.new.filter(x=>x!=id).map(x=>BYID[x].name).join(', ')+')':''}`).join('\n')}).join('\n');
+    try{await navigator.clipboard.writeText(txt);toast('Đã sao chép, dán vào Zalo để gửi')}catch(_){const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('Đã sao chép')}}});
+$('bAuto').onclick=()=>{const L=bTasks();let n=0,skip=[];
+  ROSTER.filter(r=>r.zone===$('bZone').value&&r.tr===$('bTr').value).forEach(r=>{if(unavailable(shiftOf(r.id,TMRD()))){skip.push(r.name.split(' ').pop());return}
+    const cand=grpStores(L.filter(t=>!PLAN[t.tid]&&t.new.includes(r.id))).sort((a,b)=>Math.max(...b[1].map(pScore))-Math.max(...a[1].map(pScore)));
+    cand.forEach(([s,l])=>{l.sort((a,b)=>pScore(b)-pScore(a)).forEach(t=>{const fits=t.new.every(id=>{const h=pLoad(id,L).h,here=L.some(x=>PLAN[x.tid]&&x.new.includes(id)&&x.store===t.store);const cap=capOf(id);if(!cap)return false;return h===0||h+(t.est+(t.remote||here?0:TRAVEL))/60<=cap+1e-9});if(fits){PLAN[t.tid]=1;n++}})})});
+  planSave();render();toast((n?`Đã gợi ý ${n} task (theo giờ ca ngày mai, ưu tiên trễ hạn/gấp)`:'Không còn task phù hợp để gợi ý')+(skip.length?` · bỏ qua người nghỉ / đi thi công: ${skip.join(', ')}`:''))};
+$('bClear').onclick=()=>{bTasks().forEach(t=>delete PLAN[t.tid]);planSave();render();toast('Đã xoá kế hoạch của Zone này')};
+['bZone','bTr','bCap','bSort'].forEach(i=>$(i).onchange=bRender);$('bQ').oninput=bRender;
+$('bUpd').onclick=()=>{$('mScope').value='plan';$('mZone').value=$('bZone').value;openModal()};
+function tab(v){[['tabT','viewTbl','t'],['tabB','viewBoard','b'],['tabD','viewDue','d']].forEach(([a,b,k])=>{$(a).setAttribute('aria-selected',v===k);$(b).hidden=v!==k});render()}
+$('tabT').onclick=()=>tab('t');$('tabB').onclick=()=>tab('b');$('tabD').onclick=()=>tab('d');
+
+/* ---------- báo cáo ngày: đã làm / còn treo / ngày mai ---------- */
+const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+$('dA').value=ymd(new Date());$('dB').value=ymd(new Date(Date.now()+864e5));
+const fmtD=v=>{const [y,m,d]=v.split('-');return `${d}/${m}`};
+const DOW=v=>['Chủ nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'][new Date(v+'T00:00').getDay()];
+const DONE_DAYS=60;
+// task đã xong: quét các đơn tạo trong 60 ngày gần nhất (mọi trạng thái) + các đơn đang mở (mọi tuổi)
+async function loadDone(){DONEINFO={st:'run'};if(!$('viewDue').hidden)dRender();
+  try{const to=ymd(new Date(Date.now()+864e5)),fr=ymd(new Date(Date.now()-DONE_DAYS*864e5));
+    const q=o=>`/workflows/detail-workflow-task/${WF}?from_date=${fr}&to_date=${to}&search_type=board&wfid=${WF}&workflow_step_id=${B2}&limit=100&offset=${o}`;
+    const rows=await pageAll(q,(n,pg)=>{DONEINFO.msg=`Đang tải task đã hoàn thành… ${n} đơn (${pg} trang)`;const e=$('dLoad');if(e&&!$('viewDue').hidden)e.textContent=DONEINFO.msg});
+    const u=new Map();OPENROWS.forEach(r=>u.set(r.id,r));rows.forEach(r=>u.set(r.id,r));
+    DONE=[];u.forEach(p=>{const cfg=(p.data&&!Array.isArray(p.data)&&p.data.configs)||{};const loc=LOCS[cfg.chinhanh00];
+      (p.subtasks||[]).forEach(s=>{if(s.workflow_step_id!=B2||s.status!=2||!s.finished_at)return;const ids=[...new Set((s.staff_ids||[]).map(Number))].filter(i=>BYID[i]);if(!ids.length)return;
+        const store=loc?loc.name:(p.name.split('_')[0]||'');const tr=ids.some(i=>BYID[i].tr==='IT')?'IT':'KT';
+        DONE.push({tid:s.id,code:p.code,store,addr:loc?.address||'',name:p.name.replace(store,'').replace(/^_?\d{13,19}_/,'').replace(/^_/,''),hm:(cfg.hangmuc00||'').split('-')[1]||'',
+          fin:s.finished_at,day:s.finished_at.slice(0,10),dl:(s.date_end||'').slice(0,10),ids,tr,zone:ZONEOF[nm(store)]||BYID[ids[0]].zone,est:est(p.name),remote:false,pri:p.piority,od:0,lanh:false,done:true})})});
+    DONEINFO={st:'ok',n:u.size,at:new Date()}}catch(e){DONEINFO={st:'er',msg:e.message}}
+  if(!$('viewDue').hidden)dRender()}
+let DSEL=null;
+function dBuckets(){const A=$('dA').value,B=$('dB').value,who=$('dWho').value,tr=$('dTr').value;const P={};
+  ROSTER.filter(r=>!tr||r.tr===tr).forEach(r=>P[r.id]={done:[],late:[],a:[],hang:[],b:[],plan:[],tom:[]});
+  TASKS.filter(t=>!tr||t.tr===tr).forEach(t=>{(who==='cur'?t.cur:t.new).forEach(i=>{const o=P[i];if(!o)return;
+    if(t.dl&&t.dl<A)o.late.push(t);if(t.dl===A)o.a.push(t);if(t.dl===B)o.b.push(t)});
+    t.new.forEach(i=>{if(P[i]&&PLAN[t.tid])P[i].plan.push(t)})});
+  DONE.filter(d=>d.day===A&&(!tr||d.tr===tr)).forEach(d=>d.ids.forEach(i=>P[i]&&P[i].done.push(d)));
+  Object.values(P).forEach(o=>{o.hang=[...o.late,...o.a];o.tom=[...new Set([...o.b,...o.plan])]});return P}
+const dH=l=>{const st=new Set(l.filter(t=>!t.remote).map(t=>t.store));return {n:l.length,st:st.size,h:(l.reduce((a,t)=>a+t.est,0)+TRAVEL*st.size)/60}};
+function dCell(l,id,k){if(!l.length)return '<td class="n z">–</td>';const o=dH(l);return `<td class="n"><button data-d="${id}|${k}">${o.n}</button> <small>· ${o.st} CN${k==='done'?'':' · '+o.h.toFixed(1)+'h'}</small></td>`}
+const KS=['done','late','a','hang','tom'];
+const uniqT=l=>[...new Map(l.map(t=>[t.tid,t])).values()];
+function dSum(P,ids){const o={};KS.forEach(k=>o[k]=uniqT(ids.flatMap(i=>P[i][k])));return o}
+function dRender(){const P=dBuckets(),A=$('dA').value,B=$('dB').value;
+  $('hDone').textContent=`Đã làm ${fmtD(A)}`;$('hSA').textContent=`Ca ${fmtD(A)}`;$('hSB').textContent=`Ca ${fmtD(B)}`;$('hA').textContent=`Còn treo · hạn ${fmtD(A)}`;$('hB').textContent=`Ngày mai ${fmtD(B)} làm*`;
+  $('dLoad').innerHTML=DONEINFO.st==='run'?esc(DONEINFO.msg||'Đang tải task đã hoàn thành…'):DONEINFO.st==='er'?`<span class="er">Không tải được task đã hoàn thành: ${esc(DONEINFO.msg)}</span> <button class="icon" id="dRetry">Thử lại</button>`:DONEINFO.st==='ok'?`Số "đã làm" lấy từ ${DONEINFO.n} đơn (đang mở + tạo trong ${DONE_DAYS} ngày gần nhất), cập nhật lúc ${DONEINFO.at.toLocaleTimeString('vi-VN')}. <button class="icon" id="dRetry">Tải lại số đã làm</button>`:'';
+  $('dLoad').innerHTML+=SCHEDINFO.st==='er'?` · <span class="er">Không tải được lịch ca: ${esc(SCHEDINFO.msg)}</span> <button class="icon" id="sRetry">Thử lại</button>`:SCHEDINFO.st==='run'?' · Đang tải lịch ca…':'';
+  if($('dRetry'))$('dRetry').onclick=loadDone;if($('sRetry'))$('sRetry').onclick=loadSched;
+  const T=dSum(P,Object.keys(P));const dueA=T.done.filter(d=>d.dl===A).length,rate=dueA+T.a.length?Math.round(dueA/(dueA+T.a.length)*100):null;
+  const ontime=T.done.filter(d=>!d.dl||d.day<=d.dl).length;
+  $('dK').innerHTML=[[DONEINFO.st==='ok'?T.done.length:'…',`task đã làm ${fmtD(A)}${DONEINFO.st==='ok'&&T.done.length?` · ${ontime} đúng hạn, ${T.done.length-ontime} trễ`:''}`],[T.hang.length,`task còn treo (${T.late.length} quá hạn · ${T.a.length} hạn ${fmtD(A)})`],
+    [T.tom.length,`task ngày mai ${fmtD(B)} (${uniqT(Object.values(P).flatMap(o=>o.b)).length} theo hạn · ${uniqT(Object.values(P).flatMap(o=>o.plan)).length} đã xếp)`],[rate==null?'–':rate+'%',`hoàn thành task hạn ${fmtD(A)} (${dueA}/${dueA+T.a.length})`]]
+    .map(([b,x])=>`<div class="kpi"><b>${b}</b><span>${x}</span></div>`).join('');
+  let h='';['Zone 1','Zone 2','Zone 3'].forEach(z=>{const ppl=ROSTER.filter(r=>r.zone===z&&P[r.id]);if(!ppl.length)return;const Z=dSum(P,ppl.map(r=>r.id));
+    h+=`<tr class="zh"><td>${z} · ${ppl.length} người</td><td colspan="2" class="sub">${ppl.filter(r=>{const x=shiftOf(r.id,A);return x&&!unavailable(x)}).length} người làm hôm nay · ${ppl.filter(r=>{const x=shiftOf(r.id,B);return x&&!unavailable(x)}).length} người làm ngày mai</td>${KS.map(k=>`<td class="n">${Z[k].length||'–'}</td>`).join('')}</tr>`;
+    ppl.sort((a,b)=>a.tr.localeCompare(b.tr)||P[b.id].done.length-P[a.id].done.length||P[b.id].hang.length-P[a.id].hang.length).forEach(r=>{const o=P[r.id];
+      h+=`<tr><td>${esc(r.name)} <small>${r.tr==='IT'?'IT':r.skill==='Điện'?'Điện':'Đ.Lạnh'}</small></td><td>${shiftPill(shiftOf(r.id,A))}</td><td>${shiftPill(shiftOf(r.id,B))}</td>${KS.map(k=>dCell(o[k],r.id,k)).join('')}</tr>`})});
+  h+=`<tr class="tot"><td>Toàn đội</td><td></td><td></td>${KS.map(k=>`<td class="n">${T[k].length}</td>`).join('')}</tr>`;
+  $('dBody').innerHTML=h;if(DSEL)dDetail(...DSEL,P)}
+const DLAB={done:'đã làm',late:'còn treo · quá hạn',a:'còn treo · hạn hôm nay',hang:'tổng còn treo',tom:'ngày mai làm',b:'hạn ngày mai',plan:'đã xếp ngày mai'};
+function dDetail(id,k,P){P=P||dBuckets();const l=(P[id]||{})[k]||[];DSEL=[id,k];const d=$('dDet');d.hidden=false;const isD=k==='done';
+  d.innerHTML=`<div class="row" style="justify-content:space-between"><h2>${esc(BYID[id].name)} · ${l.length} task ${DLAB[k]}</h2><button class="icon" id="dX">Đóng</button></div>`+
+  (l.length?`<div class="tbl" style="max-height:none"><table><thead><tr><th>Chi nhánh</th><th>Mã task</th><th>Hạng mục</th><th>Hạn</th>${isD?'<th>Hoàn thành lúc</th>':''}<th>Cùng làm</th><th>Ước tính</th></tr></thead><tbody>${grpStores(l).map(([st,ts])=>ts.map((t,i)=>`<tr>${i?'':`<td rowspan="${ts.length}" class="cn">${esc(st)}<small>${esc(t.addr)}</small></td>`}<td><a class="mono" href="https://work.hasaki.vn/tasks?task_id=${t.tid}" target="_blank" rel="noopener">${esc(t.code)}</a></td><td class="what">${esc(t.name)}<small>${esc(t.hm)}${t.pri==3?' · <span class="pill p-urg">Gấp</span>':''}${t.lanh?' · <span class="pill p-it">Lạnh</span>':''}</small></td><td class="mono">${t.dl?fmtD(t.dl):'–'}${!isD&&t.od>0?` <span class="pill p-late">trễ ${t.od}n</span>`:''}</td>${isD?`<td class="mono">${esc(t.fin.slice(11,16))}${t.dl&&t.day>t.dl?' <span class="pill p-late">trễ hạn</span>':''}</td>`:''}<td>${esc((isD?t.ids:($('dWho').value==='cur'?t.cur:t.new)).filter(x=>x!=id).map(x=>BYID[x]?.name||x).join(', ')||'–')}</td><td class="num">${t.est}′</td></tr>`).join('')).join('')}</tbody></table></div>`:'<div class="empty">Không có task.</div>');
+  $('dX').onclick=()=>{DSEL=null;d.hidden=true};d.scrollIntoView({behavior:'smooth',block:'nearest'})}
+$('dBody').addEventListener('click',e=>{const b=e.target.closest('button[data-d]');if(!b)return;const [id,k]=b.dataset.d.split('|');dDetail(+id,k)});
+['dA','dB','dWho','dTr'].forEach(i=>$(i).onchange=dRender);
+$('dCopy').onclick=async()=>{const P=dBuckets(),A=$('dA').value,B=$('dB').value,T=dSum(P,Object.keys(P));
+  let x=`BÁO CÁO B2 BẢO TRÌ – ${DOW(A)} ${fmtD(A)}\n- Đã làm: ${T.done.length} task\n- Còn treo: ${T.hang.length} task (quá hạn ${T.late.length} · hạn hôm nay ${T.a.length})\n- Ngày mai ${fmtD(B)}: ${T.tom.length} task\n`;
+  ['Zone 1','Zone 2','Zone 3'].forEach(z=>{const ppl=ROSTER.filter(r=>r.zone===z&&P[r.id]);if(!ppl.length)return;const Z=dSum(P,ppl.map(r=>r.id));if(!KS.some(k=>Z[k].length))return;
+    x+=`\n${z.toUpperCase()}: làm ${Z.done.length} · treo ${Z.hang.length} · mai ${Z.tom.length}\n`+ppl.filter(r=>KS.some(k=>P[r.id][k].length)).map(r=>{const o=P[r.id];const sa=shiftOf(r.id,A),sb=shiftOf(r.id,B);return `- ${r.name}${sa?` [${shiftLabel(sa)}]`:''}: làm ${o.done.length} · treo ${o.hang.length}${o.late.length?` (quá hạn ${o.late.length})`:''} · mai ${o.tom.length}${sb?` [mai: ${shiftLabel(sb)}]`:''}`}).join('\n')+'\n'});
+  try{await navigator.clipboard.writeText(x);toast('Đã sao chép báo cáo')}catch(_){const ta=document.createElement('textarea');ta.value=x;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('Đã sao chép báo cáo')}};
+$('dCsv').onclick=()=>{const P=dBuckets(),who=$('dWho').value,rows=[['Zone','Nhân viên','Nghiệp vụ','Ca hôm nay','Ca ngày mai','Nhóm','Chi nhánh','Mã task','Hạng mục','Hạn','Hoàn thành lúc','Cùng làm','Ước tính (phút)','Link']];
+  ROSTER.filter(r=>P[r.id]).forEach(r=>['done','late','a','b','plan'].forEach(k=>P[r.id][k].forEach(t=>rows.push([r.zone,r.name,r.tr==='IT'?'IT':r.skill,shiftLabel(shiftOf(r.id,$('dA').value)),shiftLabel(shiftOf(r.id,$('dB').value)),DLAB[k],t.store,t.code,t.name,t.dl,t.fin||'',(t.done?t.ids:(who==='cur'?t.cur:t.new)).filter(x=>x!=r.id).map(x=>BYID[x]?.name||x).join(', '),t.est,'https://work.hasaki.vn/tasks?task_id='+t.tid]))));
+  const csv='﻿'+rows.map(r=>r.map(v=>`"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=`Bao_cao_B2_${$('dA').value}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)};
+
+/* ---------- cập nhật từng task ---------- */
+const RR={};// tid -> {st:'arm'|'run'|'ok'|'er', msg}
+function rowBtn(t){const r=RR[t.tid];
+  if(r?.st==='run')return '<button class="btn sm" disabled>Đang gửi…</button>';
+  if(r?.st==='ok'&&!changed(t))return '<span class="ok">✓ Đã cập nhật</span>';
+  const err=r?.st==='er'?`<div class="er sm">${esc(r.msg)}</div>`:'';
+  if(!changed(t))return err||'<span class="sub">Không đổi</span>';
+  if(r?.st==='arm')return `<button class="btn sm warn" data-up="${t.tid}">Xác nhận ghi?</button> <button class="btn sec sm" data-no="${t.tid}">Huỷ</button>`;
+  return `${err}<button class="btn sm" data-up="${t.tid}">${r?.st==='er'?'Thử lại':'Cập nhật'}</button>`}
+$('tbl').addEventListener('click',async e=>{const b=e.target.closest('button');if(!b)return;
+  if(b.dataset.no){delete RR[b.dataset.no];render();return}
+  const id=b.dataset.up;if(!id)return;const t=TASKS.find(x=>x.tid==id);if(!t)return;
+  const tk=($('tok2').value.trim()||tok()).replace(/^Bearer\s+/i,'');if(!tk){toast('Chưa có token');return}
+  if(RR[id]?.st!=='arm'){RR[id]={st:'arm'};render();setTimeout(()=>{if(RR[id]?.st==='arm'){delete RR[id];render()}},6000);return}
+  RR[id]={st:'run'};render();await mOne(t,tk);const r=M.res[t.tid];RR[id]={st:r.ok?'ok':'er',msg:r.msg};render();
+  toast(r.ok?`Đã cập nhật ${t.code}: ${t.curNames.join(', ')}`:`${t.code}: ${r.msg}`)});
+
+/* ---------- popup cập nhật ---------- */
+const M={res:{},running:false};
+const mList=()=>TASKS.filter(t=>changed(t)&&(!$('mZone').value||t.zone===$('mZone').value)&&($('mScope').value!=='plan'||PLAN[t.tid]));
+function mRender(){const L=mList();$('mCnt').textContent=`${L.length} task`;
+  $('mBody').innerHTML=L.map(t=>{const r=M.res[t.tid];return `<tr><td><a class="mono" href="https://work.hasaki.vn/tasks?task_id=${t.tid}" target="_blank" rel="noopener">${esc(t.code)}</a></td><td>${esc(t.store)}</td><td>${esc(t.curNames.join(', '))}</td><td><b>${esc(t.new.map(i=>BYID[i].name).join(', '))}</b></td><td class="mono">${t.new.join(',')}</td><td class="${r?(r.ok?'ok':'er'):'wt'}">${r?esc(r.msg):'chưa gửi'}</td></tr>`}).join('')||'<tr><td colspan="6" class="empty">Không có task nào cần đổi người.</td></tr>'}
+$('openUpd').onclick=()=>{$('mScope').value='';openModal()};
+function openModal(){M.res={};$('mConf').hidden=true;$('mProg').hidden=true;$('modal').hidden=false;mRender()}
+const mHide=()=>{if(M.running){toast('Đang cập nhật, chờ xong rồi đóng');return}$('modal').hidden=true};
+$('mX').onclick=mHide;$('modal').addEventListener('click',e=>{if(e.target.id==='modal')mHide()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('modal').hidden)mHide()});
+$('mZone').onchange=mRender;$('mScope').onchange=mRender;
+async function mOne(t,tk){try{const r=await fetch(API+'/projects/mass-update-field-task-input',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+tk},body:JSON.stringify({field:'assign_staff',value:t.new.join(','),id:String(t.tid)})});
+  const tx=await r.text();let j=null;try{j=JSON.parse(tx)}catch(e){}const ok=r.ok&&!(j&&(j.error||j.status===false||j.success===false));
+  M.res[t.tid]={ok,msg:ok?'Đã cập nhật':('Lỗi '+r.status+': '+String(j&&(j.message||j.msg)||tx).slice(0,120))};
+  if(ok){t.cur=t.new.slice();t.curNames=t.cur.map(i=>BYID[i].name)}}catch(e){M.res[t.tid]={ok:false,msg:'Không gọi được API ('+e.message+')'}}}
+async function mRun(L){const tk=($('tok2').value.trim()||tok()).replace(/^Bearer\s+/i,'');if(!tk){toast('Chưa có token');return}
+  M.running=true;$('mGo').disabled=$('mTest').disabled=true;let d=0;const q=L.slice();
+  const w=async()=>{while(q.length){const t=q.shift();await mOne(t,tk);d++;setProg('mProg',d/L.length);if(d%5===0)mRender()}};await Promise.all([w(),w(),w()]);
+  M.running=false;$('mGo').disabled=$('mTest').disabled=false;
+  const ok=L.filter(t=>M.res[t.tid]?.ok).length,bad=L.length-ok;
+  // các task đã cập nhật xong sẽ không còn "đổi người" → giữ lại kết quả trong bảng bằng danh sách L
+  $('mBody').innerHTML=L.map(t=>{const r=M.res[t.tid];return `<tr><td><a class="mono" href="https://work.hasaki.vn/tasks?task_id=${t.tid}" target="_blank" rel="noopener">${esc(t.code)}</a></td><td>${esc(t.store)}</td><td>${esc(t.curNames.join(', '))}</td><td><b>${esc(t.new.map(i=>BYID[i].name).join(', '))}</b></td><td class="mono">${t.new.join(',')}</td><td class="${r?(r.ok?'ok':'er'):'wt'}">${r?esc(r.msg):'chưa gửi'}</td></tr>`}).join('');
+  $('mConf').hidden=false;$('mConf').className=bad?'bad':'note';$('mConf').innerHTML=bad?`Xong: ${ok} task thành công, <b>${bad} task lỗi</b>. Bấm "Cập nhật vào Work" lần nữa để gửi lại các task lỗi.`:`Xong: đã cập nhật ${ok} task. Bấm "Tải dữ liệu mới nhất" để kiểm tra lại trên Work.`;
+  render()}
+$('mTest').onclick=()=>{const t=mList()[0];if(t)mRun([t])};
+$('mGo').onclick=()=>{if(M.running)return;const L=mList();if(!L.length){toast('Không còn task nào cần cập nhật');return}
+  const b=$('mConf');b.hidden=false;b.className='note';b.innerHTML=`Sẽ ghi người thực hiện cho <b>${L.length} task</b> trên Work. <button class="btn" id="mYes" style="margin-left:6px">Xác nhận cập nhật ${L.length} task</button> <button class="btn sec" id="mNo">Huỷ</button>`;
+  $('mYes').onclick=()=>{b.textContent='Đang cập nhật…';mRun(L)};$('mNo').onclick=()=>b.hidden=true};
+</script>
+</body>
+</html>
