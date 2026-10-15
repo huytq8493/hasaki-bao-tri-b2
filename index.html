@@ -88,9 +88,13 @@ details.fbox .filters{padding:0 14px 12px}
 .note{background:var(--late-soft);border-left:3px solid var(--late);padding:10px 12px;border-radius:var(--r-sm);font-size:13px}
 .bad{background:var(--urg-soft);border-left:3px solid var(--urg);padding:10px 12px;border-radius:var(--r-sm);font-size:13px}
 .charts{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,440px),1fr));gap:12px}
-.chart{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:grid;gap:6px;min-width:0;box-shadow:var(--shadow)}
+.chart{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px;display:grid;gap:6px;align-content:start;min-width:0;box-shadow:var(--shadow)}
 .chart .sub{font-size:12px}
 .chart svg{display:block;width:100%;height:auto;overflow:visible}.chart svg text{fill:var(--ink);font-size:12px;font-family:var(--f)}.chart svg .m{fill:var(--muted)}
+.chart .tg{cursor:pointer}.chart .tg.on rect:not(.hit){filter:brightness(1.12)}.chart .tg.on .hit{fill:var(--head)}
+.tip{position:fixed;z-index:50;pointer-events:none;background:var(--panel);border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 28px rgba(0,0,0,.18);padding:8px 10px;font-size:12.5px;min-width:180px;max-width:280px}
+.tip .tt{font-weight:600;margin-bottom:4px}.tip .tr{display:flex;align-items:center;gap:8px;padding:1px 0}.tip .tr i{width:10px;height:10px;border-radius:3px;flex:none}.tip .tr span{flex:1;color:var(--muted)}.tip .tr b{font-variant-numeric:tabular-nums}
+.tip .tot{border-top:1px solid var(--line);margin-top:4px;padding-top:4px}.tip .tot span{color:var(--ink);font-weight:600}
 .lg{display:flex;gap:12px;flex-wrap:wrap;font-size:12px;color:var(--muted)}.lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:4px;vertical-align:-1px}
 
 /* ---------- bảng ---------- */
@@ -677,12 +681,24 @@ const lg=items=>`<div class="lg">${items.map(([c,t])=>`<span><i style="backgroun
 function hStack(rows,series,{labelW=150,rowH=24,W=640}={}){if(!rows.length)return '<p class="sub">Không có dữ liệu.</p>';
   const max=Math.max(1,...rows.map(r=>r.vals.reduce((a,b)=>a+b,0))),pw=W-labelW-44,H=rows.length*rowH+4;
   const g=rows.map((r,i)=>{let x=labelW;const y=i*rowH+3,tot=r.vals.reduce((a,b)=>a+b,0);
-    const segs=r.vals.map((v,k)=>{if(!v)return '';const w=v/max*pw,el=`<rect x="${x.toFixed(1)}" y="${y}" width="${Math.max(1,w).toFixed(1)}" height="${rowH-7}" rx="3" fill="${series[k][0]}"><title>${esc(r.label)} · ${esc(series[k][1])}: ${v}</title></rect>`;x+=w;return el}).join('');
-    return `<text x="${labelW-6}" y="${y+rowH/2+1}" text-anchor="end">${esc(r.label)}</text>${segs}<text class="m" x="${x+5}" y="${y+rowH/2+1}">${tot}</text>`}).join('');
+    const tip=esc(JSON.stringify({t:r.full||r.label,l:series.map((s,k)=>[s[0],s[1],r.vals[k]]),tot}));
+    const segs=r.vals.map((v,k)=>{if(!v)return '';const w=v/max*pw,el=`<rect x="${x.toFixed(1)}" y="${y}" width="${Math.max(1,w).toFixed(1)}" height="${rowH-7}" rx="3" fill="${series[k][0]}"/>`;x+=w;return el}).join('');
+    return `<g class="tg" data-tip="${tip}"><rect class="hit" x="0" y="${y-3}" width="${W}" height="${rowH}" fill="transparent"/><text x="${labelW-6}" y="${y+rowH/2+1}" text-anchor="end">${esc(r.label)}</text>${segs}<text class="m" x="${x+5}" y="${y+rowH/2+1}">${tot}</text></g>`}).join('');
   return `<svg viewBox="0 0 ${W} ${H}" role="img">${g}</svg>`+lg(series)}
-function vBars(cats,vals,color,{H=170,W=640}={}){const pad=14,max=Math.max(1,...vals),bw=(W-pad*2)/cats.length;
-  const g=vals.map((v,i)=>{const h=v/max*(H-36),x=pad+i*bw;return `<rect x="${(x+bw*.15).toFixed(1)}" y="${(H-18-h).toFixed(1)}" width="${(bw*.7).toFixed(1)}" height="${Math.max(v?2:0,h).toFixed(1)}" rx="3" fill="${color}"><title>${esc(cats[i])}: ${v}</title></rect>${v?`<text x="${(x+bw/2).toFixed(1)}" y="${(H-22-h).toFixed(1)}" text-anchor="middle">${v}</text>`:''}<text class="m" x="${(x+bw/2).toFixed(1)}" y="${H-4}" text-anchor="middle">${esc(cats[i])}</text>`}).join('');
+function vBars(cats,vals,color,{H=170,W=640,tips=null,name='Số task'}={}){const pad=14,max=Math.max(1,...vals),bw=(W-pad*2)/cats.length;
+  const g=vals.map((v,i)=>{const h=v/max*(H-36),x=pad+i*bw,tip=esc(JSON.stringify({t:(tips&&tips[i])||cats[i],l:[[color,name,v]]}));
+    return `<g class="tg" data-tip="${tip}"><rect class="hit" x="${x.toFixed(1)}" y="0" width="${bw.toFixed(1)}" height="${H}" fill="transparent"/><rect x="${(x+bw*.15).toFixed(1)}" y="${(H-18-h).toFixed(1)}" width="${(bw*.7).toFixed(1)}" height="${Math.max(v?2:0,h).toFixed(1)}" rx="3" fill="${color}"/>${v?`<text x="${(x+bw/2).toFixed(1)}" y="${(H-22-h).toFixed(1)}" text-anchor="middle">${v}</text>`:''}<text class="m" x="${(x+bw/2).toFixed(1)}" y="${H-4}" text-anchor="middle">${esc(cats[i])}</text></g>`}).join('');
   return `<svg viewBox="0 0 ${W} ${H}" role="img"><line x1="${pad}" x2="${W-pad}" y1="${H-18}" y2="${H-18}" stroke="var(--line)"/>${g}</svg>`}
+// tooltip cho biểu đồ (rê chuột trên máy tính, chạm trên điện thoại)
+const TIP=document.createElement('div');TIP.className='tip';TIP.hidden=true;document.body.appendChild(TIP);
+function showTip(g,cx,cy){let d;try{d=JSON.parse(g.dataset.tip)}catch(e){return}
+  TIP.innerHTML=`<div class="tt">${esc(d.t)}</div>`+d.l.map(([c,n,v])=>`<div class="tr"><i style="background:${c}"></i><span>${esc(n)}</span><b>${v}</b></div>`).join('')+(d.l.length>1?`<div class="tr tot"><span>Tổng</span><b>${d.tot}</b></div>`:'');
+  TIP.hidden=false;const r=TIP.getBoundingClientRect();let x=cx+14,y=cy+14;if(x+r.width>innerWidth-8)x=cx-r.width-14;if(x<8)x=8;if(y+r.height>innerHeight-8)y=cy-r.height-14;TIP.style.left=x+'px';TIP.style.top=y+'px';
+  document.querySelectorAll('.tg.on').forEach(e=>e.classList.remove('on'));g.classList.add('on')}
+function hideTip(){TIP.hidden=true;document.querySelectorAll('.tg.on').forEach(e=>e.classList.remove('on'))}
+document.addEventListener('mousemove',e=>{const g=e.target.closest&&e.target.closest('.chart .tg');if(g)showTip(g,e.clientX,e.clientY);else if(!TIP.hidden)hideTip()});
+document.addEventListener('click',e=>{const g=e.target.closest&&e.target.closest('.chart .tg');if(g&&matchMedia('(hover:none)').matches){showTip(g,e.clientX,e.clientY);e.stopPropagation()}else if(!g)hideTip()},true);
+window.addEventListener('scroll',hideTip,{passive:true});
 const shortName=n=>n.split(' ').slice(-2).join(' ');
 const cw=id=>Math.max(300,Math.round($(id).clientWidth||600));
 let _rz;window.addEventListener('resize',()=>{clearTimeout(_rz);_rz=setTimeout(()=>{if(!$('viewDue').hidden&&!$('main').hidden)dRender()},200)});
@@ -692,17 +708,17 @@ function dCharts(P,T,A){const ok=DONEINFO.st==='ok';
   $('c1n').textContent=ok?`${T.doneA.length} xong · ${T.a.length} còn treo hạn ${fmtD(A)} · ${T.late.length} quá hạn từ trước`:'Đang tải số đã xong…';
   $('c1').innerHTML=hStack(zs,[[C_OK,`Hạn ${fmtD(A)} đã xong`],[C_HANG,`Hạn ${fmtD(A)} còn treo`],[C_LATE,'Quá hạn còn treo']],{labelW:62,rowH:32,W:cw('c1')});
   // 2) theo nhân viên
-  const pr=ROSTER.filter(r=>P[r.id]).map(r=>({label:shortName(r.name),vals:[P[r.id].doneA.length,P[r.id].a.length,P[r.id].late.length]})).filter(r=>r.vals.some(v=>v)).sort((a,b)=>(b.vals[1]+b.vals[2])-(a.vals[1]+a.vals[2])||b.vals[0]-a.vals[0]);
+  const pr=ROSTER.filter(r=>P[r.id]).map(r=>({label:shortName(r.name),full:`${r.name} · ${r.zone}`,vals:[P[r.id].doneA.length,P[r.id].a.length,P[r.id].late.length]})).filter(r=>r.vals.some(v=>v)).sort((a,b)=>(b.vals[1]+b.vals[2])-(a.vals[1]+a.vals[2])||b.vals[0]-a.vals[0]);
   $('c2').innerHTML=hStack(pr,[[C_OK,'Hạn hôm nay đã xong'],[C_HANG,'Hạn hôm nay còn treo'],[C_LATE,'Quá hạn còn treo']],{labelW:cw('c2')<480?96:120,W:cw('c2')});
   // 3) hoàn thành theo giờ
   const hrs=Array.from({length:18},(_,i)=>i+6),cnt=hrs.map(h=>T.done.filter(d=>+d.fin.slice(11,13)===h||(h===6&&+d.fin.slice(11,13)<6)||(h===23&&+d.fin.slice(11,13)>23)).length);
   $('c3n').textContent=ok?`${T.done.length} task hoàn thành ngày ${fmtD(A)}, theo giờ bấm hoàn thành trên Work`:'Đang tải…';
-  $('c3').innerHTML=ok?vBars(hrs.map(h=>cw('c3')<480&&h%2?'':h+'h'),cnt,C_OK,{W:cw('c3')}):'';
+  $('c3').innerHTML=ok?vBars(hrs.map(h=>cw('c3')<480&&h%2?'':h+'h'),cnt,C_OK,{W:cw('c3'),tips:hrs.map(h=>`Từ ${h}h đến ${h+1}h${h===6?' (gồm trước 6h)':''}`),name:'Task hoàn thành'}):'';
   // 4) tuổi task còn treo
   const B4=[['Hôm nay',0,0],['1 ngày',1,1],['2–3',2,3],['4–7',4,7],['8–14',8,14],['15–30',15,30],['> 30',31,1e9]];
   const hang=T.hang;const v4=B4.map(([,a,b])=>hang.filter(t=>Math.max(0,t.od)>=a&&Math.max(0,t.od)<=b).length);
   $('c4n').textContent=`${hang.length} task còn treo (hạn đến ${fmtD(A)}), nhóm theo số ngày đã trễ`;
-  $('c4').innerHTML=vBars(B4.map(x=>x[0]),v4,C_LATE,{W:cw('c4')})}
+  $('c4').innerHTML=vBars(B4.map(x=>x[0]),v4,C_LATE,{W:cw('c4'),tips:B4.map(x=>x[0]==='Hôm nay'?'Hạn hôm nay':`Trễ ${x[0]} ngày`.replace('ngày ngày','ngày')),name:'Task còn treo'})}
 $('dCopy').onclick=async()=>{const P=dBuckets(),A=$('dA').value,B=$('dB').value,T=dSum(P,Object.keys(P));
   let x=`BÁO CÁO B2 BẢO TRÌ – ${DOW(A)} ${fmtD(A)}\n- Task hạn hôm nay: xong ${T.doneA.length} · còn treo ${T.a.length}\n- Đã làm (mọi hạn): ${T.done.length} task\n- Còn treo: ${T.hang.length} task (quá hạn ${T.late.length} · hạn hôm nay ${T.a.length})\n- Ngày mai ${fmtD(B)}: ${T.tom.length} task\n`;
   ['Zone 1','Zone 2','Zone 3'].forEach(z=>{const ppl=ROSTER.filter(r=>r.zone===z&&P[r.id]);if(!ppl.length)return;const Z=dSum(P,ppl.map(r=>r.id));if(!KS.some(k=>Z[k].length))return;
