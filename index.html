@@ -214,6 +214,10 @@ td select{max-width:230px;font-size:12.5px;padding:5px 8px;min-height:32px}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--c-done:#4cc47a;--c-wait:#f0a43a;--c-late:#f05a4f}}
 :root[data-theme="dark"]{--c-done:#4cc47a;--c-wait:#f0a43a;--c-late:#f05a4f}
 .pc{font-weight:600}.pc.g{color:var(--c-done)}.pc.w{color:var(--c-wait)}.pc.r{color:var(--c-late)}
+.seg{display:flex;gap:0;margin:4px 0 10px;border:1px solid var(--line);border-radius:10px;overflow:hidden}.seg button{flex:1;padding:8px 10px;border:0;background:transparent;color:inherit;font:inherit;font-size:13.5px;font-weight:600;cursor:pointer}.seg button.on{background:var(--accent);color:var(--accent-ink,#fff)}
+.mv button.inp{opacity:.55;pointer-events:none}
+.pairdlg{width:min(520px,100%)}.pairdlg h4{margin:6px 0 6px;font-size:14px}.pairdlg .opt{display:flex;flex-wrap:wrap;gap:6px}.pairdlg .opt label{display:flex;align-items:center;gap:6px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;cursor:pointer;font-size:14px}.pairdlg .opt label:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.pairdlg .rp{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center;margin:4px 0}.pairdlg select{height:38px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:inherit;font:inherit;padding:0 8px}.pairdlg .res{font-size:13.5px;padding:8px 10px;border-radius:10px;background:var(--panel2)}
 </style>
 </head>
 <body>
@@ -255,7 +259,7 @@ td select{max-width:230px;font-size:12.5px;padding:5px 8px;min-height:32px}
     <!-- ===== TỔNG QUAN ===== -->
     <section id="viewDue" class="view">
       <div class="vhead"><div><h2 id="dTitle">Tổng quan hôm nay</h2><p class="sub" id="dLoad"></p>
-        <div class="dayp" role="group" aria-label="Ngày báo cáo"><button class="btn sec sm" data-od="-1">Hôm qua</button><button class="btn sec sm" data-od="0">Hôm nay</button><input type="date" id="dPick" aria-label="Chọn ngày báo cáo"></div></div>
+        <div class="dayp" role="group" aria-label="Ngày báo cáo"><button class="btn sec sm" data-od="-1">Hôm qua</button><button class="btn sec sm" data-od="0">Hôm nay</button><button class="btn sec sm" data-od="1">Ngày mai</button><input type="date" id="dPick" aria-label="Chọn ngày báo cáo"></div></div>
         <div class="row"><button class="btn" id="dCopy">Sao chép báo cáo</button><button class="btn sec" id="dCsv">Tải CSV</button></div></div>
       <details class="fbox"><summary>Bộ lọc</summary><div class="filters">
         <input type="hidden" id="dA"><input type="hidden" id="dB">
@@ -290,7 +294,7 @@ td select{max-width:230px;font-size:12.5px;padding:5px 8px;min-height:32px}
         <label class="chk" title="Bật: kéo thả là ghi ngay người làm + hạn = ngày điều phối lên Work. Tắt: chỉ lưu trên máy, bấm Ghi ngay để ghi."><input type="checkbox" id="bAutoW" checked> Tự ghi lên Work khi kéo thả</label>
       </div></details>
       <div class="pend" id="bPend" hidden><span id="bPendT"></span><button class="btn sm" id="bPendGo">Ghi ngay</button></div>
-      <p class="sub" style="font-size:12.5px">Kéo thả task (hoặc tên chi nhánh để chuyển cả cụm) sang cột nhân viên. Trên điện thoại: <b>chạm vào task</b> để chọn người. Khi xếp, task được ghi lên Work: <b>người thực hiện</b> và <b>hạn = ngày điều phối 23:59</b>. Bỏ khỏi kế hoạch thì trả lại hạn cũ.</p>
+      <p class="sub" style="font-size:12.5px">Kéo thả task (hoặc tên chi nhánh để chuyển cả cụm) sang cột nhân viên. Task cần <b>2 người</b>: giữ <b>Ctrl</b> khi thả để <b>thêm người cùng làm</b> (hoặc chạm vào task → "+ Thêm người cùng làm"); bấm × trên thẻ ở cột một người để bỏ riêng người đó. Trên điện thoại: <b>chạm vào task</b> để chọn người. Khi xếp, task được ghi lên Work: <b>người thực hiện</b> và <b>hạn = ngày điều phối 23:59</b>. Bỏ khỏi kế hoạch thì trả lại hạn cũ.</p>
       <div class="board">
         <aside class="pool" id="pool"><header><b id="poolT">Chưa xếp</b><input type="search" id="bQ" placeholder="Tìm chi nhánh, mã, hạng mục…" aria-label="Tìm trong chưa xếp"><select id="bSort" aria-label="Sắp xếp"><option value="late">Ưu tiên trễ hạn / gấp</option><option value="nv">Theo người đang được giao</option><option value="st">Theo tên chi nhánh</option></select></header><div class="body" id="poolB" data-drop=""></div></aside>
         <div class="cols" id="cols"></div>
@@ -339,10 +343,19 @@ td select{max-width:230px;font-size:12.5px;padding:5px 8px;min-height:32px}
     <div class="tbl" style="max-height:50vh"><table><thead><tr><th>Mã task</th><th>Chi nhánh</th><th>Người hiện tại</th><th>Người mới</th><th>staff_id</th><th>Kết quả</th></tr></thead><tbody id="mBody"></tbody></table></div>
   </div>
 </div>
+<div class="modal" id="pair" hidden role="dialog" aria-modal="true" aria-labelledby="prT">
+  <div class="dlg sheet pairdlg">
+    <div class="row"><h2 id="prT">Task đang có 2 người làm</h2><button class="x" id="prX" aria-label="Đóng">×</button></div>
+    <p class="sub" id="prSub"></p>
+    <div id="prBody"></div>
+    <div class="row" style="justify-content:flex-end;gap:8px"><button class="btn sec" id="prCancel">Huỷ</button><button class="btn" id="prOk">Xác nhận</button></div>
+  </div>
+</div>
 <div class="modal" id="sheet" hidden role="dialog" aria-modal="true" aria-labelledby="shT">
   <div class="dlg sheet">
     <div class="row"><h2 id="shT">Chuyển task</h2><button class="x" id="shX" aria-label="Đóng">×</button></div>
     <p class="sub" id="shSub"></p>
+    <div class="seg" id="shMode" role="group" aria-label="Kiểu xếp"><button data-m="move" class="on">Giao cho</button><button data-m="add">+ Thêm người cùng làm</button></div>
     <div class="mv" id="shList"></div>
   </div>
 </div>
@@ -545,7 +558,7 @@ const pScore=t=>(t.pri==3?1000:0)+Math.max(0,t.od);
 const isLanhBlock=(t,id)=>t.lanh&&BYID[id]?.skill==='Điện';
 function grpStores(L){const g={};L.forEach(t=>(g[t.store]??=[]).push(t));return Object.entries(g)}
 function chip(t,from){const who=from?t.new.filter(i=>i!=from).map(i=>BYID[i]?.name.split(' ').pop()):t.new.map(i=>BYID[i]?.name.split(' ').pop());
-  return `<div class="card" draggable="true" data-tid="${t.tid}" data-from="${from||''}">${from?`<button class="rm" data-unplan="${t.tid}" aria-label="Bỏ khỏi kế hoạch" title="Bỏ khỏi kế hoạch">×</button>`:''}
+  return `<div class="card" draggable="true" data-tid="${t.tid}" data-from="${from||''}">${from?`<button class="rm" data-unplan="${t.tid}" data-rmfrom="${from}" aria-label="${t.new.length>1?'Bỏ người này khỏi task':'Bỏ khỏi kế hoạch'}" title="${t.new.length>1?'Bỏ '+esc(BYID[from]?.name||'')+' khỏi task (giữ người còn lại)':'Bỏ khỏi kế hoạch'}">×</button>`:''}
   <div class="t">${esc(t.name)}</div><div class="m"><a class="mono tlink" draggable="false" href="https://work.hasaki.vn/tasks?task_id=${t.tid}" target="_blank" rel="noopener" title="Mở task trên Work">${esc(t.code)}</a>${t.pri==3?'<span class="pill p-urg">Gấp</span>':''}${t.od>0?`<span class="pill p-late">trễ ${t.od}n</span>`:''}${t.lanh?'<span class="pill p-it">Lạnh</span>':''}${t.remote?'<span class="pill p-rm">Từ xa</span>':''}${from?(WS[t.tid]==='run'?'<span class="pill p-rm">đang ghi…</span>':WS[t.tid]==='er'?`<span class="pill p-urg" title="${esc(WS[t.tid+'m']||'')}">lỗi ghi</span>`:pending(t)?'<span class="pill p-late">chưa ghi</span>':'<span class="pill p-kt">✓ đã ghi</span>'):''}<span>${t.est}′</span>${from?(who.length?`<span>· cùng ${esc(who.join(', '))}</span>`:''):poolWho(t)}</div></div>`}
 function grpHtml(store,L,from){const m=L.reduce((a,t)=>a+t.est,0);
   return `<div class="grp"><div class="gh" draggable="true" data-store="${esc(store)}" data-from="${from||''}" title="Kéo cả cụm chi nhánh"><span>${esc(store)}</span><small>${L.length} task · ${(m/60).toFixed(1)}h</small></div>${L.map(t=>chip(t,from)).join('')}</div>`}
@@ -581,34 +594,39 @@ $('viewBoard').addEventListener('dragover',e=>{const z=e.target.closest('[data-d
   document.querySelectorAll('.drop').forEach(x=>{if(x!==z)x.classList.remove('drop','no')});z.classList.add('drop');
   const id=+z.dataset.drop;z.classList.toggle('no',!!id&&DRAG.tids.every(k=>isLanhBlock(TASKS.find(t=>t.tid==k),id)))});
 $('viewBoard').addEventListener('dragleave',e=>{const z=e.target.closest('[data-drop]');if(z&&!z.contains(e.relatedTarget))z.classList.remove('drop','no')});
-$('viewBoard').addEventListener('drop',e=>{const z=e.target.closest('[data-drop]');if(!z||!DRAG)return;e.preventDefault();doDrop(DRAG,+z.dataset.drop||0);DRAG=null});
-function doDrop(d,to){if(staleGuard())return;let n=0,blk=0;const aff=[];
+$('viewBoard').addEventListener('drop',e=>{const z=e.target.closest('[data-drop]');if(!z||!DRAG)return;e.preventDefault();doDrop(DRAG,+z.dataset.drop||0,(e.ctrlKey||e.metaKey||e.altKey)&&+z.dataset.drop?'add':'move');DRAG=null});
+function doDrop(d,to,mode){if(staleGuard())return;
+  if(to&&mode!=='add'&&!d._ids&&d.tids.length===1){const t0=TASKS.find(x=>x.tid==d.tids[0]);if(t0){const base=PLAN[t0.tid]?t0.new:t0.cur;if(base.length>=2&&!base.includes(to)&&!isLanhBlock(t0,to)){openPair(d,to,t0,base);return}}}let n=0,blk=0;const aff=[];
   d.tids.forEach(k=>{const t=TASKS.find(x=>x.tid==k);if(!t)return;
     if(!to){delete PLAN[k];n++;if(ORIG[k])aff.push(t);return}
     if(isLanhBlock(t,to)){blk++;return}
-    if(d.from&&d.from!==to){const i=t.new.indexOf(d.from);if(i>=0)t.new[i]=to;else t.new[0]=to}
+    if(d._ids){t.new=d._ids.slice()}
+    else if(mode==='add'){const base=PLAN[k]?t.new:t.cur;if(PLAN[k]&&base.includes(to))return;t.new=[...new Set([...base,to])]}
+    else if(!d.from&&!t.new.includes(to)){t.new=[to]}
+    else if(d.from&&d.from!==to){const i=t.new.indexOf(d.from);if(i>=0)t.new[i]=to;else t.new[0]=to}
     else if(!t.new.includes(to)){if(t.new.length>1)t.new[0]=to;else t.new=[to]}
     t.new=[...new Set(t.new)];PLAN[k]=1;delete RR[k];n++;aff.push(t)});
   planSave();render();
-  if(autoW()&&aff.length){if(to)writePlanned(aff,`${BYID[to].name.split(' ').slice(-2).join(' ')}`);else{toast(`Đang trả hạn cũ cho ${aff.length} task…`);syncMany(aff,'unplan').then(r=>toast(r.bad?`${r.bad} task lỗi khi trả hạn cũ`:`Đã bỏ ${aff.length} task khỏi kế hoạch và trả hạn cũ trên Work`))}return}
+  if(autoW()&&aff.length){if(to)writePlanned(aff,`${mode==='add'?'Thêm ':''}${BYID[to].name.split(' ').slice(-2).join(' ')}${mode==='add'?' cùng làm':''}`);else{toast(`Đang trả hạn cũ cho ${aff.length} task…`);syncMany(aff,'unplan').then(r=>toast(r.bad?`${r.bad} task lỗi khi trả hạn cũ`:`Đã bỏ ${aff.length} task khỏi kế hoạch và trả hạn cũ trên Work`))}return}
   const sfT=to?shiftOf(to,TMRD()):null;
   if(blk)toast(`${blk} task cần thợ Điện Lạnh nên không giao cho ${BYID[to].name}`);
   else if(n&&unavailable(sfT))toast(`Lưu ý: ${BYID[to].name} ngày mai ${shiftLabel(sfT)}`);
-  else if(n)toast(to?`Đã xếp ${n} task cho ${BYID[to].name}`:`Đã bỏ ${n} task khỏi kế hoạch`)}
+  else if(n)toast(to?(mode==='add'?`Đã thêm ${BYID[to].name} cùng làm ${n} task`:`Đã xếp ${n} task cho ${BYID[to].name}`):`Đã bỏ ${n} task khỏi kế hoạch`)}
 function openMove(el){const d={tids:dragTids(el),from:el.dataset.from?+el.dataset.from:0};const ts=d.tids.map(k=>TASKS.find(t=>t.tid==k)).filter(Boolean);if(!ts.length)return;
   const L=bTasks();const WL=t=>`<a class="tlink mono" href="https://work.hasaki.vn/tasks?task_id=${t.tid}" target="_blank" rel="noopener" title="Mở task trên Work">${esc(t.code)} ↗</a>`;$('shT').innerHTML=ts.length>1?`Chuyển ${ts.length} task · ${esc(ts[0].store)}<div class="tlinks">${ts.map(WL).join('')}</div>`:`${WL(ts[0])} · ${esc(ts[0].name)}`;
-  $('shSub').textContent=ts.length>1?`Chọn người làm cả cụm chi nhánh này ${DLBL()}`:`${ts[0].store}${d.from?' · đang xếp cho '+BYID[d.from].name:''}`;
+  $('shSub').textContent=ts.length>1?`Chọn người làm cả cụm chi nhánh này ${DLBL()}`:`${ts[0].store} · ${PLAN[ts[0].tid]?'đang xếp':'đang giữ'}: ${(PLAN[ts[0].tid]?ts[0].new:ts[0].cur).map(i=>BYID[i]?.name||('#'+i)).join(', ')||'chưa có người'}`;
+  let SHM='move';const setM=m=>{SHM=m;$('shMode').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x.dataset.m===m));$('shList').querySelectorAll('button[data-to]').forEach(x=>{const id=+x.dataset.to;x.classList.toggle('inp',m==='add'&&(!id||ts.every(t=>(PLAN[t.tid]?t.new:t.cur).includes(id)&&PLAN[t.tid])))})};$('shMode').onclick=e=>{const x=e.target.closest('button[data-m]');if(x)setM(x.dataset.m)};
   const ppl=ROSTER.filter(r=>zOK(r.zone)&&r.tr===$('bTr').value).sort((a,b)=>(a.zone!==ts[0].zone)-(b.zone!==ts[0].zone));
   $('shList').innerHTML=ppl.map(r=>{const o=pLoad(r.id,L),sf=shiftOf(r.id,TMRD()),un=unavailable(sf),blk=ts.every(t=>isLanhBlock(t,r.id));
     return `<button data-to="${r.id}" class="${r.id===d.from?'cur':''}${un||blk?' off':''}"><span><b>${esc(r.name)}</b>${$('bZone').value?'':` <small>· ${esc(r.zone)}</small>`}<br><small>${esc(sf?shiftLabel(sf):'chưa có lịch')}${blk?' · không làm việc lạnh':''}</small></span><small>${o.h.toFixed(1)}h / ${capOf(r.id)}h</small></button>`}).join('')
     +(d.from||ts.some(t=>PLAN[t.tid])?'<button data-to="0"><span><b>Bỏ khỏi kế hoạch</b><br><small>Trả về "Chưa xếp"</small></span></button>':'');
-  $('shList').onclick=e=>{const b=e.target.closest('button[data-to]');if(!b)return;$('sheet').hidden=true;doDrop(d,+b.dataset.to)};
-  $('sheet').hidden=false}
+  $('shList').onclick=e=>{const b=e.target.closest('button[data-to]');if(!b)return;$('sheet').hidden=true;doDrop(d,+b.dataset.to,+b.dataset.to?SHM:'move')};
+  setM('move');$('sheet').hidden=false}
 $('shX').onclick=()=>$('sheet').hidden=true;$('sheet').addEventListener('click',e=>{if(e.target.id==='sheet')$('sheet').hidden=true});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('sheet').hidden=true});
 $('viewBoard').addEventListener('click',async e=>{if(e.target.closest('a'))return;const cd=e.target.closest('.card,.gh');if(cd&&!e.target.closest('button')){openMove(cd);return}
   const b=e.target.closest('button');if(!b)return;
-  if(b.dataset.unplan){doDrop({tids:[b.dataset.unplan],from:0},0);return}
+  if(b.dataset.unplan){const t=TASKS.find(x=>x.tid==b.dataset.unplan),fr=+b.dataset.rmfrom;if(t&&fr&&t.new.length>1){if(staleGuard())return;t.new=t.new.filter(i=>i!==fr);planSave();render();if(autoW())writePlanned([t],`Bỏ ${BYID[fr].name.split(' ').slice(-2).join(' ')}`);else toast(`Đã bỏ ${BYID[fr].name} khỏi task, còn ${t.new.map(i=>BYID[i]?.name.split(' ').pop()).join(', ')}`);return}doDrop({tids:[b.dataset.unplan],from:0},0);return}
   if(b.dataset.copy){const id=+b.dataset.copy,o=pLoad(id,bTasks());if(!o.mine.length){toast('Chưa có việc để sao chép');return}
     const txt=`Việc ${TMRL} – ${BYID[id].name} (${o.mine.length} task, ~${o.h.toFixed(1)}h)\n`+grpStores(o.mine).map(([s,l],i)=>{const a=l[0].addr?` – ${l[0].addr}`:'';
       return `${i+1}. ${s}${a}\n`+l.map(t=>`   • ${t.code} ${t.name}${t.new.length>1?' (cùng '+t.new.filter(x=>x!=id).map(x=>BYID[x].name).join(', ')+')':''}`).join('\n')}).join('\n');
@@ -853,16 +871,33 @@ function c5Render(P,A,ok){const el=$('c5');if(!el)return;if(!ok){$('c5n').textCo
   const busy=rows.some(x=>x.tot)?H.map((h,i)=>[h,rows.reduce((a,x)=>a+x.v[i],0)]).sort((a,b)=>b[1]-a[1])[0]:null;
   $('c5n').textContent=`${rows.length-idle.length-offN}/${rows.length} nhân viên có task hoàn thành ngày ${fmtD(A)}${idle.length?` · ${idle.length} người đi làm nhưng chưa hoàn thành task nào (${idle.map(x=>x.r.name.split(' ').pop()).join(', ')})`:''}${offN?` · ${offN} người nghỉ / đi thi công`:''}${busy?` · cao điểm ${busy[0]}h–${busy[0]+1}h (${busy[1]} task)`:''} · màu càng đậm càng nhiều task · bấm ô để xem danh sách`;
   el.innerHTML=`<svg class="hm" viewBox="0 0 ${W} ${Ht}" role="img" aria-label="Task hoàn thành theo nhân viên và khung giờ">${head}${body}</svg>`}
-function RL(v){const td=ymd(new Date());return v===td?'hôm nay':v===ymd(new Date(Date.now()-864e5))?'hôm qua':'ngày '+fmtD(v)}
-function repUI(){const td=ymd(new Date());$('dPick').max=td;$('dPick').min=ymd(new Date(Date.now()-(DONE_DAYS-1)*864e5));$('dPick').value=$('dA').value;
+function RL(v){const td=ymd(new Date());return v===td?'hôm nay':v===ymd(new Date(Date.now()-864e5))?'hôm qua':v===ymd(new Date(Date.now()+864e5))?'ngày mai':'ngày '+fmtD(v)}
+function repUI(){const td=ymd(new Date());$('dPick').max=ymd(new Date(Date.now()+90*864e5));$('dPick').min=ymd(new Date(Date.now()-(DONE_DAYS-1)*864e5));$('dPick').value=$('dA').value;
   document.querySelectorAll('#viewDue .dayp [data-od]').forEach(b=>b.classList.toggle('on',$('dA').value===ymd(new Date(Date.now()+(+b.dataset.od)*864e5))))}
 function setRep(v){if(staleGuard())return;const td=ymd(new Date()),mn=$('dPick').min||'';if(!v){repUI();return}
-  if(v>td){toast('Chỉ xem được đến hôm nay');v=td}if(mn&&v<mn){toast(`Chỉ xem được ${DONE_DAYS} ngày gần nhất`);v=mn}
+  if($('dPick').max&&v>$('dPick').max){toast('Chỉ xem trước được 90 ngày');v=$('dPick').max}if(mn&&v<mn){toast(`Chỉ xem được ${DONE_DAYS} ngày gần nhất`);v=mn}
   $('dA').value=v;$('dB').value=ymd(new Date(new Date(v+'T12:00:00').getTime()+864e5));DSEL=null;$('dDet').hidden=true;
   const need=[v,$('dB').value].some(x=>{const d=new Date(x+'T12:00:00');return !SCHEDM.has(d.getFullYear()+'-'+(d.getMonth()+1))});
   if(need&&TASKS.length)loadSched();else dRender()}
 $('dPick').onchange=e=>setRep(e.target.value);
 document.querySelectorAll('#viewDue .dayp [data-od]').forEach(b=>b.onclick=()=>setRep(ymd(new Date(Date.now()+(+b.dataset.od)*864e5))));
+function openPair(d,to,t,base){const nm=i=>BYID[i]?.name||('#'+i),sh=i=>{const sf=shiftOf(i,TMRD());return unavailable(sf)?` (${shiftLabel(sf)})`:''};
+  $('prT').textContent=`Task đang có ${base.length} người làm`;
+  $('prSub').innerHTML=`<a class="tlink mono" href="https://work.hasaki.vn/tasks?task_id=${t.tid}" target="_blank" rel="noopener">${esc(t.code)} ↗</a> · ${esc(t.name)}<br>Đang ${PLAN[t.tid]?'xếp':'giao'}: <b>${esc(base.map(nm).join(', '))}</b> → giao cho <b>${esc(nm(to))}</b>`;
+  const fixed=d.from&&base.includes(d.from)?d.from:0;
+  const cand=ROSTER.filter(r=>r.tr===t.tr&&r.id!==to&&!base.includes(r.id)&&!isLanhBlock(t,r.id)).sort((a,b)=>(a.zone!==t.zone)-(b.zone!==t.zone)||unavailable(shiftOf(a.id,TMRD()))-unavailable(shiftOf(b.id,TMRD())));
+  const draw=()=>{const rep=fixed||+(document.querySelector('input[name=prRep]:checked')?.value||base[0]);const rest=base.filter(i=>i!==rep);
+    $('prRest').innerHTML=`<h4>Người còn lại</h4>`+rest.map(i=>`<div class="rp"><span>${esc(nm(i))}</span><select data-k="${i}"><option value="keep">Giữ ${esc(nm(i).split(' ').pop())} cùng làm</option><option value="drop">Bỏ – không làm task này</option><optgroup label="Thay bằng người khác">${cand.map(r=>`<option value="${r.id}">${esc(r.name)} · ${esc(r.zone)}${esc(sh(r.id))}</option>`).join('')}</optgroup></select></div>`).join('');
+    $('prRest').querySelectorAll('select').forEach(x=>x.onchange=res);res()};
+  const pick=()=>{const rep=fixed||+(document.querySelector('input[name=prRep]:checked')?.value||base[0]);const out=[to];
+    $('prRest').querySelectorAll('select').forEach(x=>{const v=x.value,k=+x.dataset.k;if(v==='keep')out.push(k);else if(v!=='drop')out.push(+v)});return [...new Set(out)]};
+  const res=()=>{$('prRes').innerHTML=`Sau khi xác nhận: <b>${esc(pick().map(nm).join(' + '))}</b>`};
+  $('prBody').innerHTML=(fixed?`<div class="res">${esc(nm(to))} thay cho <b>${esc(nm(fixed))}</b></div>`:`<h4>${esc(nm(to))} thay cho ai?</h4><div class="opt">${base.map((i,k)=>`<label><input type="radio" name="prRep" value="${i}"${k?'':' checked'}> ${esc(nm(i))}</label>`).join('')}</div>`)+`<div id="prRest"></div><div class="res" id="prRes"></div>`;
+  $('prBody').querySelectorAll('input[name=prRep]').forEach(x=>x.onchange=draw);draw();
+  const close=()=>{$('pair').hidden=true};$('prX').onclick=$('prCancel').onclick=close;$('pair').onclick=e=>{if(e.target.id==='pair')close()};
+  $('prOk').onclick=()=>{const ids=pick();close();doDrop({...d,_ids:ids},to,'move')};
+  $('pair').hidden=false;$('prOk').focus()}
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('pair').hidden)$('pair').hidden=true});
 if(innerWidth<760)document.querySelectorAll('details.fbox').forEach(d=>d.open=false);
 if(tok())setTimeout(()=>$('load').click(),50);else{$('boot').hidden=true;$('auth').hidden=false;setChip('err','Chưa kết nối')}
 </script>
