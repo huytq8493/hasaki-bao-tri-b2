@@ -209,6 +209,11 @@ td select{max-width:230px;font-size:12.5px;padding:5px 8px;min-height:32px}
 .tlink{color:var(--accent);text-decoration:none;border-bottom:1px dashed currentColor;font-weight:600}.tlink:hover{border-bottom-style:solid}#shT .tlink{font-size:.95em}.tlinks{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:6px;font-size:13px;font-weight:500}
 .sug{color:var(--muted);font-style:italic}
 .dayp{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:8px}.dayp .on{background:var(--accent);color:#fff;border-color:var(--accent)}.dayp input[type=date]{height:32px;padding:0 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg2,transparent);color:inherit;font:inherit;font-size:13px;color-scheme:light dark}
+.chart.wide{grid-column:1/-1}.hm text.v{font-size:11px;font-weight:600}.hm text.v.inv{fill:#fff}
+:root{--c-done:#1f9d55;--c-wait:#e8890c;--c-late:#d93025}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--c-done:#4cc47a;--c-wait:#f0a43a;--c-late:#f05a4f}}
+:root[data-theme="dark"]{--c-done:#4cc47a;--c-wait:#f0a43a;--c-late:#f05a4f}
+.pc{font-weight:600}.pc.g{color:var(--c-done)}.pc.w{color:var(--c-wait)}.pc.r{color:var(--c-late)}
 </style>
 </head>
 <body>
@@ -249,26 +254,26 @@ td select{max-width:230px;font-size:12.5px;padding:5px 8px;min-height:32px}
 
     <!-- ===== TỔNG QUAN ===== -->
     <section id="viewDue" class="view">
-      <div class="vhead"><div><h2 id="dTitle">Tổng quan hôm nay</h2><p class="sub" id="dLoad"></p></div>
+      <div class="vhead"><div><h2 id="dTitle">Tổng quan hôm nay</h2><p class="sub" id="dLoad"></p>
+        <div class="dayp" role="group" aria-label="Ngày báo cáo"><button class="btn sec sm" data-od="-1">Hôm qua</button><button class="btn sec sm" data-od="0">Hôm nay</button><input type="date" id="dPick" aria-label="Chọn ngày báo cáo"></div></div>
         <div class="row"><button class="btn" id="dCopy">Sao chép báo cáo</button><button class="btn sec" id="dCsv">Tải CSV</button></div></div>
       <details class="fbox"><summary>Bộ lọc</summary><div class="filters">
-        <label class="chk">Ngày báo cáo <input type="date" id="dA"></label>
-        <label class="chk">Ngày mai <input type="date" id="dB"></label>
+        <input type="hidden" id="dA"><input type="hidden" id="dB">
         <select id="dZ" aria-label="Zone"><option value="">Tất cả Zone</option><option>Zone 1</option><option>Zone 2</option><option>Zone 3</option></select>
         <select id="dTr" aria-label="Nghiệp vụ"><option value="">Tất cả nghiệp vụ</option><option value="KT">Điện / Điện Lạnh</option><option value="IT">IT Helpdesk</option></select>
         <select id="dWho" aria-label="Tính theo"><option value="cur">Theo người đang giao trên Work</option><option value="new">Theo người sau khi cân / điều phối</option></select>
       </div></details>
       <div class="kpis" id="dK"></div>
       <div class="charts">
-        <section class="chart"><h3>Task hạn hôm nay theo Zone</h3><p class="sub" id="c1n"></p><div id="c1"></div></section>
-        <section class="chart"><h3>Hạn hôm nay theo nhân viên</h3><p class="sub">Xong · còn treo hạn hôm nay · quá hạn còn treo</p><div id="c2"></div></section>
+        <section class="chart"><h3 id="c1t">Task hạn hôm nay theo Zone</h3><p class="sub" id="c1n"></p><div id="c1"></div></section>
+        <section class="chart"><h3 id="c2t">Hạn hôm nay theo nhân viên</h3><p class="sub">Đã xong · chờ xử lý · quá hạn chưa xử lý</p><div id="c2"></div></section>
         <section class="chart"><h3>Hoàn thành theo giờ</h3><p class="sub" id="c3n"></p><div id="c3"></div></section>
-        <section class="chart"><h3>Task còn treo theo số ngày trễ</h3><p class="sub" id="c4n"></p><div id="c4"></div></section>
+        <section class="chart wide"><h3>Hoàn thành theo nhân viên & khung giờ</h3><p class="sub" id="c5n"></p><div id="c5"></div></section>
       </div>
       <section class="panel" id="dDet" hidden></section>
       <div class="vhead"><h2>Theo nhân viên</h2><p class="sub">Bấm vào số để xem danh sách task</p></div>
-      <div class="tbl dd cards" style="max-height:none"><table><thead><tr><th>Nhân viên</th><th id="hSA">Ca hôm nay</th><th id="hSB">Ca ngày mai</th><th style="text-align:right" id="hDA">Hạn hôm nay · đã xong</th><th style="text-align:right" id="hA">Hạn hôm nay · còn treo</th><th style="text-align:right" id="hDone">Đã làm hôm nay (mọi hạn)</th><th style="text-align:right">Quá hạn · còn treo</th><th style="text-align:right">Tổng còn treo</th><th style="text-align:right" id="hB">Ngày mai làm*</th></tr></thead><tbody id="dBody"></tbody></table></div>
-      <p class="foot"><b>Đã làm</b> = task con bước B2 hoàn thành trong ngày báo cáo, tính cho mọi người được giao. <b>Còn treo</b> = task B2 chưa xong có hạn trước hoặc đúng ngày báo cáo. *<b>Ngày mai làm</b> = task hạn ngày mai + task đã xếp ở mục Ngày mai. Giờ ước tính gồm 30′ di chuyển mỗi chi nhánh.</p>
+      <div class="tbl dd cards" style="max-height:none"><table><thead><tr><th>Nhân viên</th><th id="hSA">Ca làm việc</th><th style="text-align:right" id="hDA">Đã xong</th><th style="text-align:right" id="hA">Chờ xử lý</th><th style="text-align:right">Quá hạn chưa xử lý</th><th style="text-align:right">Tổng chờ xử lý</th></tr></thead><tbody id="dBody"></tbody></table></div>
+      <p class="foot"><b>Đã xong</b> / <b>Chờ xử lý</b> = số task theo tổng task có hạn trong ngày báo cáo. <b>Quá hạn chưa xử lý</b> = task có hạn trước ngày báo cáo mà chưa xong (tính đến hết ngày báo cáo). <b>Tổng chờ xử lý</b> = chờ xử lý + quá hạn chưa xử lý. Bấm vào số để xem danh sách task.</p>
     </section>
 
     <!-- ===== ĐIỀU PHỐI NGÀY MAI ===== -->
@@ -359,7 +364,7 @@ let TASKS=[],LOCS={},OUTS={},OPENROWS=[],DONE=[],DONEINFO={st:'',days:0},SCHED={
 // API staff-schedule: phòng 135, nghiệp vụ 6 + 68. Mã ca: HC/PM = ca làm (giờ vào–ra), W = nghỉ tuần, T = đi thi công (không nhận task B2), leave_id > 0 = có đơn nghỉ phép
 const SCHED_Q=(y,m)=>{const fr=Math.floor(new Date(y,m-1,1)/1000),to=Math.floor(new Date(y,m,1)/1000)-1;return `/staff-schedule?year=${y}&month=${m}&department_id=135&major_id%5B%5D=6&major_id%5B%5D=68&is_manager=true&from_date=${fr}&to_date=${to}`};
 async function loadSched(){SCHEDINFO={st:'run'};
-  try{const ms=new Set([new Date(),new Date(Date.now()+864e5),TMR].map(d=>d.getFullYear()+'-'+(d.getMonth()+1)));SCHEDM=ms;SCHED={};
+  try{const ms=new Set([new Date(),new Date(Date.now()+864e5),TMR,...[$('dA').value,$('dB').value].filter(Boolean).map(v=>new Date(v+'T12:00:00'))].map(d=>d.getFullYear()+'-'+(d.getMonth()+1)));SCHEDM=ms;SCHED={};
     for(const ym of ms){const [y,m]=ym.split('-').map(Number);const j=await apiRetry(SCHED_Q(y,m));
       (j.data?.rows||[]).forEach(r=>{const id=+r.staffsche_staff_id;if(!BYID[id])return;const i=String(r.staffsche_time_in_str||''),o=String(r.staffsche_time_out_str||''),day=i.slice(0,10);if(!day)return;
         const code=String(r.staffsche_shift||'').trim(),hi=i.slice(11,16),ho=o.slice(11,16);const span=(Date.parse(o.replace(' ','T'))-Date.parse(i.replace(' ','T')))/36e5||0;
@@ -650,15 +655,19 @@ function dBuckets(){const A=$('dA').value,B=$('dB').value,who=$('dWho').value,tr
     if(t.dl&&t.dl<A)o.late.push(t);if(t.dl===A)o.a.push(t);if(t.dl===B)o.b.push(t)});
     t.new.forEach(i=>{if(P[i]&&PLAN[t.tid])P[i].plan.push(t)})});
   DONE.filter(d=>d.day===A&&(!tr||d.tr===tr)).forEach(d=>d.ids.forEach(i=>{if(!P[i])return;P[i].done.push(d);if(d.dl===A)P[i].doneA.push(d)}));
+  if(A<ymd(new Date()))DONE.filter(d=>d.day>A&&d.dl&&d.dl<=A&&(!tr||d.tr===tr)).forEach(d=>d.ids.forEach(i=>{const o=P[i];if(!o)return;const x={...d,od:Math.round((new Date(A+'T00:00')-new Date(d.dl+'T00:00'))/864e5),lateFin:true};(d.dl===A?o.a:o.late).push(x)}));
   Object.values(P).forEach(o=>{o.hang=[...o.late,...o.a];o.tom=[...new Set([...o.b,...o.plan])]});return P}
 const dH=l=>{const st=new Set(l.filter(t=>!t.remote).map(t=>t.store));return {n:l.length,st:st.size,h:(l.reduce((a,t)=>a+t.est,0)+TRAVEL*st.size)/60}};
-const DLH={doneA:'Hạn hôm nay · xong',a:'Hạn hôm nay · còn treo',done:'Đã làm (mọi hạn)',late:'Quá hạn · còn treo',hang:'Tổng còn treo',tom:'Ngày mai làm'};
+let DLH={doneA:'Hạn hôm nay · xong',a:'Hạn hôm nay · còn treo',done:'Đã làm (mọi hạn)',late:'Quá hạn · còn treo',hang:'Tổng còn treo',tom:'Ngày mai làm'};
 function dCell(l,id,k){if(!l.length)return `<td class="n z" data-l="${DLH[k]}">–</td>`;const o=dH(l);return `<td class="n" data-l="${DLH[k]}"><button data-d="${id}|${k}">${o.n}</button> <small>· ${o.st} CN${k==='done'||k==='doneA'?'':' · '+o.h.toFixed(1)+'h'}</small></td>`}
 const KS=['doneA','a','done','late','hang','tom'];
 const uniqT=l=>[...new Map(l.map(t=>[t.tid,t])).values()];
 function dSum(P,ids){const o={};KS.forEach(k=>o[k]=uniqT(ids.flatMap(i=>P[i][k])));return o}
-function dRender(){const P=dBuckets(),A=$('dA').value,B=$('dB').value;
-  $('hDone').textContent=`Đã làm ${fmtD(A)} (mọi hạn)`;$('hDA').textContent=`Hạn ${fmtD(A)} · đã xong`;$('hSA').textContent=`Ca ${fmtD(A)}`;$('hSB').textContent=`Ca ${fmtD(B)}`;$('hA').textContent=`Hạn ${fmtD(A)} · còn treo`;$('hB').textContent=`Ngày mai ${fmtD(B)} làm*`;
+function dRender(){const P=dBuckets(),A=$('dA').value,B=$('dB').value;repUI();
+  DLH={doneA:`Đã xong (hạn ${fmtD(A)})`,a:`Chờ xử lý (hạn ${fmtD(A)})`,done:`Đã làm ${fmtD(A)} (mọi hạn)`,late:'Quá hạn chưa xử lý',hang:'Tổng chờ xử lý',tom:`Làm ${fmtD(B)}`};
+  DLAB={...DLAB,doneA:`đã xong (hạn ${fmtD(A)})`,a:`chờ xử lý (hạn ${fmtD(A)})`,late:'quá hạn chưa xử lý',hang:'tổng chờ xử lý',done:`đã làm ${fmtD(A)} (mọi hạn)`};
+  $('hSA').textContent=`Ca ${fmtD(A)}`;$('hDA').textContent=`Đã xong (hạn ${fmtD(A)})`;$('hA').textContent=`Chờ xử lý (hạn ${fmtD(A)})`;
+  $('c1t').textContent=`Task hạn ${RL(A)} theo Zone`;$('c2t').textContent=`Hạn ${RL(A)} theo nhân viên`;
   $('dLoad').innerHTML=DONEINFO.st==='run'?esc(DONEINFO.msg||'Đang tải task đã hoàn thành…'):DONEINFO.st==='er'?`<span class="er">Không tải được task đã hoàn thành: ${esc(DONEINFO.msg)}</span> <button class="icon" id="dRetry">Thử lại</button>`:DONEINFO.st==='ok'?`Số "đã làm" lấy từ ${DONEINFO.n} đơn (đang mở + tạo trong ${DONE_DAYS} ngày gần nhất), cập nhật lúc ${DONEINFO.at.toLocaleTimeString('vi-VN')}. <button class="icon" id="dRetry">Tải lại số đã làm</button>`:'';
   $('dLoad').innerHTML+=SCHEDINFO.st==='er'?` · <span class="er">Không tải được lịch ca: ${esc(SCHEDINFO.msg)}</span> <button class="icon" id="sRetry">Thử lại</button>`:SCHEDINFO.st==='run'?' · Đang tải lịch ca…':'';
   if($('dRetry'))$('dRetry').onclick=loadDone;if($('sRetry'))$('sRetry').onclick=loadSched;
@@ -666,17 +675,20 @@ function dRender(){const P=dBuckets(),A=$('dA').value,B=$('dB').value;
   const ontime=T.done.filter(d=>!d.dl||d.day<=d.dl).length;
   const ok=DONEINFO.st==='ok',dA=T.doneA.length;
   $('dTitle').textContent=`Tổng quan ${DOW(A)} ${fmtD(A)}`;
-  $('dK').innerHTML=[[ok?dA:'…',`task hạn ${fmtD(A)} đã xong`,'k-ok'],[T.a.length,`task hạn ${fmtD(A)} còn treo`,'k-bad'],[ok&&rate!=null?rate+'%':'–',`hoàn thành task hạn ${fmtD(A)}${ok?` (${dA}/${dA+T.a.length})`:''}`,'k-acc'],
-    [ok?T.done.length:'…',`task đã làm ${fmtD(A)} (mọi hạn)${ok&&T.done.length?` · ${T.done.length-ontime} xong trễ hạn`:''}`,''],[T.late.length,`task quá hạn còn treo`,'k-warn'],
-    [T.tom.length,`task ngày mai ${fmtD(B)} (${uniqT(Object.values(P).flatMap(o=>o.b)).length} theo hạn · ${uniqT(Object.values(P).flatMap(o=>o.plan)).length} đã xếp)`,'k-acc']]
+  $('dK').innerHTML=[[ok?dA:'…',`task hạn ${fmtD(A)} đã xong`,'k-ok'],[T.a.length,`task hạn ${fmtD(A)} chờ xử lý`,'k-bad'],[ok&&rate!=null?rate+'%':'–',`hoàn thành task hạn ${fmtD(A)}${ok?` (${dA}/${dA+T.a.length})`:''}`,'k-acc'],
+    [ok?T.done.length:'…',`task đã làm ${fmtD(A)} (mọi hạn)${ok&&T.done.length?` · ${T.done.length-ontime} xong trễ hạn`:''}`,''],[T.late.length,`task quá hạn chưa xử lý (tính đến hết ${fmtD(A)})`,'k-warn'],
+    [T.tom.length,`task ${B===ymd(new Date(Date.now()+864e5))?'ngày mai ':''}${fmtD(B)} (${uniqT(Object.values(P).flatMap(o=>o.b)).length} theo hạn · ${uniqT(Object.values(P).flatMap(o=>o.plan)).length} đã xếp)`,'k-acc']]
     .map(([b,x,c])=>`<div class="kpi ${c||''}"><b>${b}</b><span>${x}</span></div>`).join('');
+  const TK=['late','hang'];
+  const rat=(x,n,k,id,lab)=>{if(!n)return `<td class="n z" data-l="${lab}">–</td>`;const pc=k==='a'?100-Math.round((n-x)/n*100):Math.round(x/n*100);return `<td class="n" data-l="${lab}"><span>${x&&id?`<button data-d="${id}|${k}">${x}</button>`:`<b>${x}</b>`}<small> / ${n}</small> <small class="pc ${k==='doneA'?(pc>=80?'g':pc>=50?'w':'r'):(pc<=20?'g':pc<=50?'w':'r')}">${pc}%</small></span></td>`};
+  const cols=(o,id,tot)=>{const n=o.doneA.length+o.a.length;return rat(o.doneA.length,n,'doneA',id,`Đã xong (hạn ${fmtD(A)})`)+rat(o.a.length,n,'a',id,`Chờ xử lý (hạn ${fmtD(A)})`)+TK.map(k=>tot?`<td class="n" data-l="${DLH[k]}">${o[k].length||'–'}</td>`:dCell(o[k],id,k)).join('')};
   let h='';['Zone 1','Zone 2','Zone 3'].forEach(z=>{const ppl=ROSTER.filter(r=>r.zone===z&&P[r.id]);if(!ppl.length)return;const Z=dSum(P,ppl.map(r=>r.id));
-    h+=`<tr class="zh"><td class="full">${z} · ${ppl.length} người</td><td colspan="2" class="sub full">${ppl.filter(r=>{const x=shiftOf(r.id,A);return x&&!unavailable(x)}).length} người làm hôm nay · ${ppl.filter(r=>{const x=shiftOf(r.id,B);return x&&!unavailable(x)}).length} người làm ngày mai</td>${KS.map(k=>`<td class="n">${Z[k].length||'–'}</td>`).join('')}</tr>`;
-    ppl.sort((a,b)=>a.tr.localeCompare(b.tr)||P[b.id].done.length-P[a.id].done.length||P[b.id].hang.length-P[a.id].hang.length).forEach(r=>{const o=P[r.id];
-      h+=`<tr><td class="full"><b>${esc(r.name)}</b> <small>${r.tr==='IT'?'IT':r.skill==='Điện'?'Điện':'Đ.Lạnh'}</small></td><td data-l="Ca hôm nay">${shiftPill(shiftOf(r.id,A))}</td><td data-l="Ca ngày mai">${shiftPill(shiftOf(r.id,B))}</td>${KS.map(k=>dCell(o[k],r.id,k)).join('')}</tr>`})});
-  h+=`<tr class="tot"><td class="full">Toàn đội</td><td class="full"></td><td class="full"></td>${KS.map(k=>`<td class="n" data-l="${DLH[k]}">${T[k].length}</td>`).join('')}</tr>`;
+    h+=`<tr class="zh"><td class="full">${z} · ${ppl.length} người</td><td class="sub full">${ppl.filter(r=>{const x=shiftOf(r.id,A);return x&&!unavailable(x)}).length} người làm ${fmtD(A)}</td>${cols(Z,0,1)}</tr>`;
+    ppl.sort((a,b)=>a.tr.localeCompare(b.tr)||P[b.id].hang.length-P[a.id].hang.length||P[b.id].doneA.length-P[a.id].doneA.length).forEach(r=>{const o=P[r.id];
+      h+=`<tr><td class="full"><b>${esc(r.name)}</b> <small>${r.tr==='IT'?'IT':r.skill==='Điện'?'Điện':'Đ.Lạnh'}</small></td><td data-l="Ca ${fmtD(A)}">${shiftPill(shiftOf(r.id,A))}</td>${cols(o,r.id,0)}</tr>`})});
+  h+=`<tr class="tot"><td class="full">Toàn đội</td><td class="full"></td>${cols(T,0,1)}</tr>`;
   $('dBody').innerHTML=h;dCharts(P,T,A);if(DSEL)dDetail(...DSEL,P)}
-const DLAB={doneA:'hạn hôm nay đã xong',done:'đã làm (mọi hạn)',late:'còn treo · quá hạn',a:'còn treo · hạn hôm nay',hang:'tổng còn treo',tom:'ngày mai làm',b:'hạn ngày mai',plan:'đã xếp ngày mai'};
+let DLAB={doneA:'hạn hôm nay đã xong',done:'đã làm (mọi hạn)',late:'còn treo · quá hạn',a:'còn treo · hạn hôm nay',hang:'tổng còn treo',tom:'ngày mai làm',b:'hạn ngày mai',plan:'đã xếp ngày mai'};
 function dDetail(id,k,P){P=P||dBuckets();const l=(P[id]||{})[k]||[];DSEL=[id,k];const d=$('dDet');d.hidden=false;const isD=k==='done'||k==='doneA';
   d.innerHTML=`<div class="row" style="justify-content:space-between"><h2>${esc(BYID[id].name)} · ${l.length} task ${DLAB[k]}</h2><button class="icon" id="dX">Đóng</button></div>`+
   (l.length?`<div class="tbl" style="max-height:none"><table><thead><tr><th>Chi nhánh</th><th>Mã task</th><th>Hạng mục</th><th>Hạn</th>${isD?'<th>Hoàn thành lúc</th>':''}<th>Cùng làm</th><th>Ước tính</th></tr></thead><tbody>${grpStores(l).map(([st,ts])=>ts.map((t,i)=>`<tr>${i?'':`<td rowspan="${ts.length}" class="cn">${esc(st)}<small>${esc(t.addr)}</small></td>`}<td><a class="mono" href="https://work.hasaki.vn/tasks?task_id=${t.tid}" target="_blank" rel="noopener">${esc(t.code)}</a></td><td class="what">${esc(t.name)}<small>${esc(t.hm)}${t.pri==3?' · <span class="pill p-urg">Gấp</span>':''}${t.lanh?' · <span class="pill p-it">Lạnh</span>':''}</small></td><td class="mono">${t.dl?fmtD(t.dl):'–'}${!isD&&t.od>0?` <span class="pill p-late">trễ ${t.od}n</span>`:''}</td>${isD?`<td class="mono">${esc(t.fin.slice(11,16))}${t.dl&&t.day>t.dl?' <span class="pill p-late">trễ hạn</span>':''}</td>`:''}<td>${esc((isD?t.ids:($('dWho').value==='cur'?t.cur:t.new)).filter(x=>x!=id).map(x=>BYID[x]?.name||x).join(', ')||'–')}</td><td class="num">${t.est}′</td></tr>`).join('')).join('')}</tbody></table></div>`:'<div class="empty">Không có task.</div>');
@@ -709,11 +721,13 @@ document.addEventListener('mousemove',e=>{const g=e.target.closest&&e.target.clo
 document.addEventListener('click',e=>{const g=e.target.closest&&e.target.closest('.chart .tg');if(!g)hideTip()},true);
 document.addEventListener('click',e=>{const g=e.target.closest&&e.target.closest('.chart .tg');if(!g)return;hideTip();drill(g,e.target)});
 function drill(g,t){if(!DC)return;const {P,T,A}=DC;const c=g.closest('.chart>div[id]')?.id,key=g.dataset.key,k=t.dataset&&t.dataset.k!=null?+t.dataset.k:null;
-  const KB=['doneA','a','late'],LB={doneA:`Hạn ${fmtD(A)} · đã xong`,a:`Hạn ${fmtD(A)} · còn treo`,late:'Quá hạn · còn treo'};
+  const KB=['doneA','a','late'],LB={doneA:`Đã xong (hạn ${fmtD(A)})`,a:`Chờ xử lý (hạn ${fmtD(A)})`,late:'Quá hạn chưa xử lý'};
   let title='',groups=[];
   if(c==='c1'||c==='c2'){const ids=c==='c1'?ROSTER.filter(r=>r.zone===key&&P[r.id]).map(r=>r.id):[+key];if(!ids.length||(c==='c2'&&!BYID[+key]))return;const S=dSum(P,ids);
     title=c==='c1'?key:BYID[+key].name;groups=(k==null?KB:[KB[k]]).map(x=>[LB[x],S[x],x==='doneA']);if(k!=null)title+=' · '+LB[KB[k]]}
   else if(c==='c3'){const h=6+(+key);const l=T.done.filter(d=>{const hh=+d.fin.slice(11,13);return h===6?hh<=6:h===23?hh>=23:hh===h});title=`Hoàn thành từ ${h}h đến ${h+1}h ngày ${fmtD(A)}`;groups=[['',l,true]]}
+  else if(c==='c5'){const [id,hs]=String(key).split('|').map(Number);if(!BYID[id]||!P[id])return;const all=P[id].done;const l=hs<0?all:all.filter(d=>hBin(d.fin)===hs);if(!l.length)return;
+    title=hs<0?`${BYID[id].name} · hoàn thành ngày ${fmtD(A)}`:`${BYID[id].name} · hoàn thành ${hs}h–${hs+1}h ngày ${fmtD(A)}`;groups=[['',l,true]]}
   else if(c==='c4'){const R4=[[0,0],[1,1],[2,3],[4,7],[8,14],[15,30],[31,1e9]][+key],lab=['hạn đến hôm nay','trễ 1 ngày','trễ 2–3 ngày','trễ 4–7 ngày','trễ 8–14 ngày','trễ 15–30 ngày','trễ trên 30 ngày'][+key];
     const l=T.hang.filter(t=>{const o=Math.max(0,t.od);return o>=R4[0]&&o<=R4[1]});title=`Còn treo · ${lab}`;groups=[['',l,false]]}
   else return;
@@ -730,22 +744,23 @@ let DC=null;
 function dCharts(P,T,A){const ok=DONEINFO.st==='ok';DC={P,T,A};
   // 1) theo Zone
   const zs=['Zone 1','Zone 2','Zone 3'].map(z=>{const ids=ROSTER.filter(r=>r.zone===z&&P[r.id]).map(r=>r.id);if(!ids.length)return null;const Z=dSum(P,ids);return {label:z,key:z,vals:[Z.doneA.length,Z.a.length,Z.late.length]}}).filter(Boolean);
-  $('c1n').textContent=ok?`${T.doneA.length} xong · ${T.a.length} còn treo hạn ${fmtD(A)} · ${T.late.length} quá hạn từ trước`:'Đang tải số đã xong…';
-  $('c1').innerHTML=hStack(zs,[[C_OK,`Hạn ${fmtD(A)} đã xong`],[C_HANG,`Hạn ${fmtD(A)} còn treo`],[C_LATE,'Quá hạn còn treo']],{labelW:62,rowH:32,W:cw('c1')});
+  $('c1n').textContent=ok?`${T.doneA.length} đã xong · ${T.a.length} chờ xử lý (hạn ${fmtD(A)}) · ${T.late.length} quá hạn chưa xử lý`:'Đang tải số đã xong…';
+  $('c1').innerHTML=hStack(zs,[['var(--c-done)','Đã xong'],['var(--c-wait)','Chờ xử lý'],['var(--c-late)','Quá hạn chưa xử lý']],{labelW:62,rowH:32,W:cw('c1')});
   // 2) theo nhân viên
   const pr=ROSTER.filter(r=>P[r.id]).map(r=>({label:shortName(r.name),key:r.id,full:`${r.name} · ${r.zone}`,vals:[P[r.id].doneA.length,P[r.id].a.length,P[r.id].late.length]})).filter(r=>r.vals.some(v=>v)).sort((a,b)=>(b.vals[1]+b.vals[2])-(a.vals[1]+a.vals[2])||b.vals[0]-a.vals[0]);
-  $('c2').innerHTML=hStack(pr,[[C_OK,'Hạn hôm nay đã xong'],[C_HANG,'Hạn hôm nay còn treo'],[C_LATE,'Quá hạn còn treo']],{labelW:cw('c2')<480?96:120,W:cw('c2')});
+  $('c2').innerHTML=hStack(pr,[['var(--c-done)','Đã xong'],['var(--c-wait)','Chờ xử lý'],['var(--c-late)','Quá hạn chưa xử lý']],{labelW:cw('c2')<480?96:120,W:cw('c2')});
   // 3) hoàn thành theo giờ
   const hrs=Array.from({length:18},(_,i)=>i+6),cnt=hrs.map(h=>T.done.filter(d=>+d.fin.slice(11,13)===h||(h===6&&+d.fin.slice(11,13)<6)||(h===23&&+d.fin.slice(11,13)>23)).length);
   $('c3n').textContent=ok?`${T.done.length} task hoàn thành ngày ${fmtD(A)}, theo giờ bấm hoàn thành trên Work`:'Đang tải…';
   $('c3').innerHTML=ok?vBars(hrs.map(h=>cw('c3')<480&&h%2?'':h+'h'),cnt,C_OK,{W:cw('c3'),tips:hrs.map(h=>`Từ ${h}h đến ${h+1}h${h===6?' (gồm trước 6h)':''}`),name:'Task hoàn thành'}):'';
+  c5Render(P,A,ok);
   // 4) tuổi task còn treo
   const B4=[['Hôm nay',0,0],['1 ngày',1,1],['2–3',2,3],['4–7',4,7],['8–14',8,14],['15–30',15,30],['> 30',31,1e9]];
   const hang=T.hang;const v4=B4.map(([,a,b])=>hang.filter(t=>Math.max(0,t.od)>=a&&Math.max(0,t.od)<=b).length);
-  $('c4n').textContent=`${hang.length} task còn treo (hạn đến ${fmtD(A)}), nhóm theo số ngày đã trễ`;
-  $('c4').innerHTML=vBars(B4.map(x=>x[0]),v4,C_LATE,{W:cw('c4'),tips:B4.map(x=>x[0]==='Hôm nay'?'Hạn hôm nay':`Trễ ${x[0]} ngày`.replace('ngày ngày','ngày')),name:'Task còn treo'})}
+  if($('c4')){$('c4n').textContent=`${hang.length} task còn treo (hạn đến ${fmtD(A)}), nhóm theo số ngày đã trễ`;
+  $('c4').innerHTML=vBars(B4.map(x=>x[0]),v4,C_LATE,{W:cw('c4'),tips:B4.map(x=>x[0]==='Hôm nay'?'Hạn hôm nay':`Trễ ${x[0]} ngày`.replace('ngày ngày','ngày')),name:'Task còn treo'})}}
 $('dCopy').onclick=async()=>{const P=dBuckets(),A=$('dA').value,B=$('dB').value,T=dSum(P,Object.keys(P));
-  let x=`BÁO CÁO B2 BẢO TRÌ – ${DOW(A)} ${fmtD(A)}\n- Task hạn hôm nay: xong ${T.doneA.length} · còn treo ${T.a.length}\n- Đã làm (mọi hạn): ${T.done.length} task\n- Còn treo: ${T.hang.length} task (quá hạn ${T.late.length} · hạn hôm nay ${T.a.length})\n- Ngày mai ${fmtD(B)}: ${T.tom.length} task\n`;
+  let x=`BÁO CÁO B2 BẢO TRÌ – ${DOW(A)} ${fmtD(A)}\n- Task hạn ${fmtD(A)}: đã xong ${T.doneA.length} · chờ xử lý ${T.a.length}\n- Đã làm (mọi hạn): ${T.done.length} task\n- Còn treo: ${T.hang.length} task (quá hạn ${T.late.length} · hạn hôm nay ${T.a.length})\n- Ngày mai ${fmtD(B)}: ${T.tom.length} task\n`;
   ['Zone 1','Zone 2','Zone 3'].forEach(z=>{const ppl=ROSTER.filter(r=>r.zone===z&&P[r.id]);if(!ppl.length)return;const Z=dSum(P,ppl.map(r=>r.id));if(!KS.some(k=>Z[k].length))return;
     x+=`\n${z.toUpperCase()}: làm ${Z.done.length} · treo ${Z.hang.length} · mai ${Z.tom.length}\n`+ppl.filter(r=>KS.some(k=>P[r.id][k].length)).map(r=>{const o=P[r.id];const sa=shiftOf(r.id,A),sb=shiftOf(r.id,B);return `- ${r.name}${sa?` [${shiftLabel(sa)}]`:''}: làm ${o.done.length} · treo ${o.hang.length}${o.late.length?` (quá hạn ${o.late.length})`:''} · mai ${o.tom.length}${sb?` [mai: ${shiftLabel(sb)}]`:''}`}).join('\n')+'\n'});
   try{await navigator.clipboard.writeText(x);toast('Đã sao chép báo cáo')}catch(_){const ta=document.createElement('textarea');ta.value=x;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('Đã sao chép báo cáo')}};
@@ -820,6 +835,34 @@ function setDay(v){if(staleGuard())return;const td=ymd(new Date());if(!v||v<td){
 $('bDay').onchange=e=>setDay(e.target.value);
 document.querySelectorAll('.dayp [data-dd]').forEach(b=>b.onclick=()=>setDay(ymd(new Date(Date.now()+(+b.dataset.dd)*864e5))));
 dayUI();
+function hBin(fin){const h=+String(fin).slice(11,13);return h<6?6:h>23?23:h}
+function c5Render(P,A,ok){const el=$('c5');if(!el)return;if(!ok){$('c5n').textContent='Đang tải…';el.innerHTML='';return}
+  const H=Array.from({length:18},(_,i)=>i+6);
+  const rows=ROSTER.filter(r=>P[r.id]).map(r=>{const v=H.map(h=>P[r.id].done.filter(d=>hBin(d.fin)===h).length),sf=shiftOf(r.id,A);return {r,v,tot:P[r.id].done.length,sf,off:unavailable(sf)}}).sort((a,b)=>b.tot-a.tot||a.off-b.off||a.r.zone.localeCompare(b.r.zone));
+  const idle=rows.filter(x=>!x.tot&&!x.off),offN=rows.filter(x=>!x.tot&&x.off).length;
+  if(!rows.length){$('c5n').textContent=`Không có nhân viên theo bộ lọc`;el.innerHTML='<p class="sub">Không có dữ liệu.</p>';return}
+  const W=cw('c5'),narrow=W<560,lw=narrow?96:210,tw=34,cwid=(W-lw-tw)/H.length,rh=narrow?24:26,top=18,Ht=top+rows.length*rh+4;
+  const mx=Math.max(1,...rows.flatMap(x=>x.v));const used=H.map((h,i)=>rows.some(x=>x.v[i]));
+  const head=H.map((h,i)=>(narrow&&i%2)?'':`<text class="m" x="${(lw+i*cwid+cwid/2).toFixed(1)}" y="12" text-anchor="middle">${h}h</text>`).join('')+`<text class="m" x="${W-tw/2}" y="12" text-anchor="middle">Tổng</text>`;
+  const body=rows.map((x,ri)=>{const y=top+ri*rh,nm=narrow?x.r.name.split(' ').pop():shortName(x.r.name);
+    const cells=x.v.map((v,i)=>{const xx=lw+i*cwid,op=v?0.18+0.82*v/mx:0,tip=esc(JSON.stringify({t:`${x.r.name} · ${H[i]}h–${H[i]+1}h${i===0?' (gồm trước 6h)':''}`,l:[[C_OK,'Task hoàn thành',v]]}));
+      return `<g class="tg" data-tip="${tip}" data-key="${x.r.id}|${H[i]}"><rect x="${(xx+1).toFixed(1)}" y="${y+1}" width="${Math.max(1,cwid-2).toFixed(1)}" height="${rh-3}" rx="3" fill="${v?C_OK:'var(--line)'}" fill-opacity="${v?op.toFixed(2):0.35}"/>${v&&cwid>=14?`<text class="v${op>0.55?' inv':''}" x="${(xx+cwid/2).toFixed(1)}" y="${y+rh/2+2}" text-anchor="middle">${v}</text>`:''}</g>`}).join('');
+    const tt=esc(JSON.stringify({t:`${x.r.name} · ${x.r.zone} · ca ${x.sf?shiftLabel(x.sf):'chưa có lịch'}`,l:[[C_OK,`Hoàn thành ngày ${fmtD(A)}`,x.tot]]}));
+    const tag=x.tot?'':x.off?(narrow?'':` · ${x.sf.code==='T'?'đi thi công':x.sf.code==='W'?'nghỉ tuần':'nghỉ'}`):(narrow?'':' · chưa hoàn thành task');const cls=x.tot?'':x.off?' class="m"':' style="fill:var(--urg)"';
+    return `<g class="tg" data-tip="${tt}" data-key="${x.r.id}|-1"><text x="${lw-6}" y="${y+rh/2+2}" text-anchor="end"${cls}>${esc(nm+tag)}</text><text x="${W-tw/2}" y="${y+rh/2+2}" text-anchor="middle" font-weight="700"${cls}>${x.tot}</text></g>`+cells}).join('');
+  const busy=rows.some(x=>x.tot)?H.map((h,i)=>[h,rows.reduce((a,x)=>a+x.v[i],0)]).sort((a,b)=>b[1]-a[1])[0]:null;
+  $('c5n').textContent=`${rows.length-idle.length-offN}/${rows.length} nhân viên có task hoàn thành ngày ${fmtD(A)}${idle.length?` · ${idle.length} người đi làm nhưng chưa hoàn thành task nào (${idle.map(x=>x.r.name.split(' ').pop()).join(', ')})`:''}${offN?` · ${offN} người nghỉ / đi thi công`:''}${busy?` · cao điểm ${busy[0]}h–${busy[0]+1}h (${busy[1]} task)`:''} · màu càng đậm càng nhiều task · bấm ô để xem danh sách`;
+  el.innerHTML=`<svg class="hm" viewBox="0 0 ${W} ${Ht}" role="img" aria-label="Task hoàn thành theo nhân viên và khung giờ">${head}${body}</svg>`}
+function RL(v){const td=ymd(new Date());return v===td?'hôm nay':v===ymd(new Date(Date.now()-864e5))?'hôm qua':'ngày '+fmtD(v)}
+function repUI(){const td=ymd(new Date());$('dPick').max=td;$('dPick').min=ymd(new Date(Date.now()-(DONE_DAYS-1)*864e5));$('dPick').value=$('dA').value;
+  document.querySelectorAll('#viewDue .dayp [data-od]').forEach(b=>b.classList.toggle('on',$('dA').value===ymd(new Date(Date.now()+(+b.dataset.od)*864e5))))}
+function setRep(v){if(staleGuard())return;const td=ymd(new Date()),mn=$('dPick').min||'';if(!v){repUI();return}
+  if(v>td){toast('Chỉ xem được đến hôm nay');v=td}if(mn&&v<mn){toast(`Chỉ xem được ${DONE_DAYS} ngày gần nhất`);v=mn}
+  $('dA').value=v;$('dB').value=ymd(new Date(new Date(v+'T12:00:00').getTime()+864e5));DSEL=null;$('dDet').hidden=true;
+  const need=[v,$('dB').value].some(x=>{const d=new Date(x+'T12:00:00');return !SCHEDM.has(d.getFullYear()+'-'+(d.getMonth()+1))});
+  if(need&&TASKS.length)loadSched();else dRender()}
+$('dPick').onchange=e=>setRep(e.target.value);
+document.querySelectorAll('#viewDue .dayp [data-od]').forEach(b=>b.onclick=()=>setRep(ymd(new Date(Date.now()+(+b.dataset.od)*864e5))));
 if(innerWidth<760)document.querySelectorAll('details.fbox').forEach(d=>d.open=false);
 if(tok())setTimeout(()=>$('load').click(),50);else{$('boot').hidden=true;$('auth').hidden=false;setChip('err','Chưa kết nối')}
 </script>
