@@ -206,6 +206,9 @@ td select{max-width:230px;font-size:12.5px;padding:5px 8px;min-height:32px}
   .cards.tbl{border:0;background:none;box-shadow:none;max-height:none;overflow:visible}
 }
 @media (min-width:761px){.navwrap{border-bottom:1px solid var(--line);background:var(--panel)}}
+.tlink{color:var(--accent);text-decoration:none;border-bottom:1px dashed currentColor;font-weight:600}.tlink:hover{border-bottom-style:solid}#shT .tlink{font-size:.95em}.tlinks{display:flex;flex-wrap:wrap;gap:4px 10px;margin-top:6px;font-size:13px;font-weight:500}
+.sug{color:var(--muted);font-style:italic}
+.dayp{display:flex;gap:6px;align-items:center;flex-wrap:wrap;margin-top:8px}.dayp .on{background:var(--accent);color:#fff;border-color:var(--accent)}.dayp input[type=date]{height:32px;padding:0 8px;border:1px solid var(--line);border-radius:8px;background:var(--bg2,transparent);color:inherit;font:inherit;font-size:13px;color-scheme:light dark}
 </style>
 </head>
 <body>
@@ -223,7 +226,7 @@ td select{max-width:230px;font-size:12.5px;padding:5px 8px;min-height:32px}
 <div class="navwrap" id="navwrap" hidden>
   <nav class="nav" role="tablist" aria-label="Mục">
     <button role="tab" id="tabD" aria-selected="true"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>Tổng quan</button>
-    <button role="tab" id="tabB" aria-selected="false"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Ngày mai</button>
+    <button role="tab" id="tabB" aria-selected="false"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Điều phối</button>
     <button role="tab" id="tabT" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Task</button>
     <button role="tab" id="tabC" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M12 3v18M5 8l-3 6h6zM19 8l-3 6h6zM5 8h14"/></svg>Cân tải</button>
   </nav>
@@ -270,18 +273,19 @@ td select{max-width:230px;font-size:12.5px;padding:5px 8px;min-height:32px}
 
     <!-- ===== ĐIỀU PHỐI NGÀY MAI ===== -->
     <section id="viewBoard" class="view" hidden>
-      <div class="vhead"><div><h2>Điều phối ngày mai</h2><p class="sub" id="bInfo"></p></div>
+      <div class="vhead"><div><h2>Điều phối công việc</h2><p class="sub" id="bInfo"></p>
+        <div class="dayp" role="group" aria-label="Ngày điều phối"><button class="btn sec sm" data-dd="0">Hôm nay</button><button class="btn sec sm" data-dd="1">Ngày mai</button><input type="date" id="bDay" aria-label="Chọn ngày điều phối"></div></div>
         <button class="btn" id="bUpd">Ghi người thực hiện lên Work</button></div>
       <details class="fbox" open><summary>Zone, nghiệp vụ &amp; gợi ý</summary><div class="filters">
-        <select id="bZone" aria-label="Zone"><option>Zone 1</option><option>Zone 2</option><option>Zone 3</option></select>
+        <select id="bZone" aria-label="Zone"><option value="">Tất cả Zone</option><option selected>Zone 1</option><option>Zone 2</option><option>Zone 3</option></select>
         <select id="bTr" aria-label="Nghiệp vụ"><option value="KT">Điện / Điện Lạnh</option><option value="IT">IT Helpdesk</option></select>
         <label class="chk" title="Giờ tối đa mỗi người; có lịch ca thì lấy theo giờ ca (trừ 1h nghỉ trưa)">Giờ tối đa <input type="number" id="bCap" value="8" min="1" max="14" step="0.5" style="width:70px"></label>
         <button class="btn sec" id="bAuto">Gợi ý tự động</button>
         <button class="btn sec" id="bClear">Xoá kế hoạch Zone này</button>
-        <label class="chk" title="Bật: kéo thả là ghi ngay người làm + hạn ngày mai lên Work. Tắt: chỉ lưu trên máy, bấm Ghi ngay để ghi."><input type="checkbox" id="bAutoW" checked> Tự ghi lên Work khi kéo thả</label>
+        <label class="chk" title="Bật: kéo thả là ghi ngay người làm + hạn = ngày điều phối lên Work. Tắt: chỉ lưu trên máy, bấm Ghi ngay để ghi."><input type="checkbox" id="bAutoW" checked> Tự ghi lên Work khi kéo thả</label>
       </div></details>
       <div class="pend" id="bPend" hidden><span id="bPendT"></span><button class="btn sm" id="bPendGo">Ghi ngay</button></div>
-      <p class="sub" style="font-size:12.5px">Kéo thả task (hoặc tên chi nhánh để chuyển cả cụm) sang cột nhân viên. Trên điện thoại: <b>chạm vào task</b> để chọn người. Khi xếp, task được ghi lên Work: <b>người thực hiện</b> và <b>hạn = ngày mai 23:59</b>. Bỏ khỏi kế hoạch thì trả lại hạn cũ.</p>
+      <p class="sub" style="font-size:12.5px">Kéo thả task (hoặc tên chi nhánh để chuyển cả cụm) sang cột nhân viên. Trên điện thoại: <b>chạm vào task</b> để chọn người. Khi xếp, task được ghi lên Work: <b>người thực hiện</b> và <b>hạn = ngày điều phối 23:59</b>. Bỏ khỏi kế hoạch thì trả lại hạn cũ.</p>
       <div class="board">
         <aside class="pool" id="pool"><header><b id="poolT">Chưa xếp</b><input type="search" id="bQ" placeholder="Tìm chi nhánh, mã, hạng mục…" aria-label="Tìm trong chưa xếp"><select id="bSort" aria-label="Sắp xếp"><option value="late">Ưu tiên trễ hạn / gấp</option><option value="nv">Theo người đang được giao</option><option value="st">Theo tên chi nhánh</option></select></header><div class="body" id="poolB" data-drop=""></div></aside>
         <div class="cols" id="cols"></div>
@@ -322,7 +326,7 @@ td select{max-width:230px;font-size:12.5px;padding:5px 8px;min-height:32px}
   <div class="dlg">
     <div class="row"><h2 id="mT">Ghi người thực hiện lên Work</h2><span class="pill p-kt" id="mCnt"></span><button class="x" id="mX" aria-label="Đóng">×</button></div>
     <p class="sub" style="font-size:13px">Mỗi task được ghi <b>toàn bộ</b> danh sách người thực hiện bên dưới. Người hiện tại không có trong danh sách mới sẽ bị gỡ khỏi task.</p>
-    <div class="filters"><select id="mScope" aria-label="Phạm vi"><option value="">Tất cả task đổi người</option><option value="plan">Chỉ task đã xếp ngày mai</option></select><select id="mZone" aria-label="Zone"><option value="">Tất cả Zone</option><option>Zone 1</option><option>Zone 2</option><option>Zone 3</option></select>
+    <div class="filters"><select id="mScope" aria-label="Phạm vi"><option value="">Tất cả task đổi người</option><option value="plan">Chỉ task đã xếp (ngày điều phối)</option></select><select id="mZone" aria-label="Zone"><option value="">Tất cả Zone</option><option>Zone 1</option><option>Zone 2</option><option>Zone 3</option></select>
       <input type="password" id="tok2" placeholder="Token riêng để ghi (không bắt buộc)" autocomplete="off" aria-label="Token ghi"></div>
     <div class="row"><button class="btn sec" id="mTest">Chạy thử 1 task</button><button class="btn" id="mGo">Ghi lên Work</button><span class="sub" id="mMsg"></span></div>
     <div class="note" id="mConf" hidden></div>
@@ -355,7 +359,7 @@ let TASKS=[],LOCS={},OUTS={},OPENROWS=[],DONE=[],DONEINFO={st:'',days:0},SCHED={
 // API staff-schedule: phòng 135, nghiệp vụ 6 + 68. Mã ca: HC/PM = ca làm (giờ vào–ra), W = nghỉ tuần, T = đi thi công (không nhận task B2), leave_id > 0 = có đơn nghỉ phép
 const SCHED_Q=(y,m)=>{const fr=Math.floor(new Date(y,m-1,1)/1000),to=Math.floor(new Date(y,m,1)/1000)-1;return `/staff-schedule?year=${y}&month=${m}&department_id=135&major_id%5B%5D=6&major_id%5B%5D=68&is_manager=true&from_date=${fr}&to_date=${to}`};
 async function loadSched(){SCHEDINFO={st:'run'};
-  try{const ms=new Set([0,1].map(k=>{const d=new Date(Date.now()+k*864e5);return d.getFullYear()+'-'+(d.getMonth()+1)}));SCHED={};
+  try{const ms=new Set([new Date(),new Date(Date.now()+864e5),TMR].map(d=>d.getFullYear()+'-'+(d.getMonth()+1)));SCHEDM=ms;SCHED={};
     for(const ym of ms){const [y,m]=ym.split('-').map(Number);const j=await apiRetry(SCHED_Q(y,m));
       (j.data?.rows||[]).forEach(r=>{const id=+r.staffsche_staff_id;if(!BYID[id])return;const i=String(r.staffsche_time_in_str||''),o=String(r.staffsche_time_out_str||''),day=i.slice(0,10);if(!day)return;
         const code=String(r.staffsche_shift||'').trim(),hi=i.slice(11,16),ho=o.slice(11,16);const span=(Date.parse(o.replace(' ','T'))-Date.parse(i.replace(' ','T')))/36e5||0;
@@ -375,7 +379,7 @@ async function setField(tid,field,value){try{const r=await fetch(API+'/projects/
   return {ok,msg:ok?'':('Lỗi '+r.status+': '+String(j&&(j.message||j.msg)||tx).slice(0,120))}}catch(e){return {ok:false,msg:'Không gọi được API ('+e.message+')'}}}
 if(DEFAULT_TOKEN){try{localStorage.removeItem('b2tok')}catch(e){}}else{try{const t=localStorage.getItem('b2tok');if(t){$('tok').value=t;$('rem').checked=true}}catch(e){}}
 function setChip(st,txt){$('chip').className='chip'+(st?' '+st:'');$('status').textContent=txt}
-$('reload').onclick=()=>{if(!tok()){$('auth').hidden=false;$('tok').focus();return}$('load').click()};
+$('reload').onclick=()=>{if(staleGuard())return;if(!tok()){$('auth').hidden=false;$('tok').focus();return}$('load').click()};
 const tok=()=>($('tok').value.trim()||DEFAULT_TOKEN).replace(/^Bearer\s+/i,'');
 async function api(path){const r=await fetch(API+path,{headers:{Authorization:'Bearer '+tok(),'x-locale':'vi'}});if(r.status===401||r.status===403)throw new Error('Token sai hoặc hết hạn ('+r.status+')');const j=await r.json();if(j&&j.error&&!j.data)throw new Error(j.message||'Lỗi API');return j}
 async function apiRetry(path,n=3){let e;for(let i=0;i<n;i++){try{return await api(path)}catch(x){e=x;if(/Token/.test(x.message))throw x;await new Promise(r=>setTimeout(r,800*(i+1)))}}throw e}
@@ -506,9 +510,9 @@ $('reset').onclick=()=>{TASKS.forEach(t=>t.new=t.cur.slice());planSave();$('balI
 
 /* ---------- điều phối ngày mai (kéo thả) ---------- */
 let PLAN={};
-const TMR=(()=>{const d=new Date(Date.now()+864e5);return d})();
-const TMRK='b2plan-'+TMR.toISOString().slice(0,10);
-const TMRL=['Chủ nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'][TMR.getDay()]+', '+TMR.toLocaleDateString('vi-VN');
+let TMR=initDay();
+let TMRK='b2plan-'+TMR.toISOString().slice(0,10);
+let TMRL=['Chủ nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'][TMR.getDay()]+', '+TMR.toLocaleDateString('vi-VN');
 const DUE=()=>`${TMRD()} 23:59:59`;
 const needDate=t=>!!PLAN[t.tid]&&t.dl!==TMRD();
 const pending=t=>!!PLAN[t.tid]&&(changed(t)||t.dl!==TMRD());
@@ -526,17 +530,18 @@ async function syncTask(t,mode){WS[t.tid]='run';bRender();
   else if(o){if(mode==='undo'&&[...t.cur].sort().join()!==[...o.ids].sort().join()){t.new=o.ids.slice();await asg(o.ids)}if(ok&&o.de&&t.de0!==o.de)await due(o.de);if(ok){delete ORIG[t.tid];origSave()}}
   WS[t.tid]=ok?(mode==='plan'?'ok':''):'er';WS[t.tid+'m']=msg;return ok}
 async function syncMany(ts,mode){const q=ts.slice();let okN=0,bad=0;const w=async()=>{while(q.length){const t=q.shift();(await syncTask(t,mode))?okN++:bad++}};await Promise.all([w(),w(),w()]);planSave();render();return {okN,bad}}
-async function writePlanned(ts,label){if(!ts.length)return;toast(`Đang ghi ${ts.length} task lên Work…`);const {okN,bad}=await syncMany(ts,'plan');
+async function writePlanned(ts,label){if(staleGuard()||!ts.length)return;toast(`Đang ghi ${ts.length} task lên Work…`);const {okN,bad}=await syncMany(ts,'plan');
   toast(bad?`${label}: ghi được ${okN} task, ${bad} task lỗi (bấm "Ghi lại" để thử lại)`:`${label}: đã ghi ${okN} task lên Work (người làm + hạn ${fmtD(TMRD())})`,bad?null:'Hoàn tác',async()=>{const ids=ts.map(t=>t.tid);ts.forEach(t=>delete PLAN[t.tid]);planSave();const r=await syncMany(ts,'undo');toast(r.bad?`Hoàn tác: ${r.bad} task lỗi`:`Đã hoàn tác ${r.okN} task trên Work`)})}
 function planSave(){try{const o={};Object.keys(PLAN).forEach(k=>{const t=TASKS.find(x=>x.tid==k);if(t)o[k]=t.new});localStorage.setItem(TMRK,JSON.stringify(o))}catch(e){}}
 function planRestore(){PLAN={};try{const o=JSON.parse(localStorage.getItem(TMRK)||'{}');Object.entries(o).forEach(([k,ids])=>{const t=TASKS.find(x=>x.tid==k);if(!t)return;const v=(ids||[]).map(Number).filter(i=>BYID[i]);if(v.length)t.new=[...new Set(v)];PLAN[k]=1})}catch(e){}}
-const bTasks=()=>TASKS.filter(t=>t.zone===$('bZone').value&&t.tr===$('bTr').value);
+const zOK=z=>!$('bZone').value||z===$('bZone').value;
+const bTasks=()=>TASKS.filter(t=>zOK(t.zone)&&t.tr===$('bTr').value);
 const pScore=t=>(t.pri==3?1000:0)+Math.max(0,t.od);
 const isLanhBlock=(t,id)=>t.lanh&&BYID[id]?.skill==='Điện';
 function grpStores(L){const g={};L.forEach(t=>(g[t.store]??=[]).push(t));return Object.entries(g)}
 function chip(t,from){const who=from?t.new.filter(i=>i!=from).map(i=>BYID[i]?.name.split(' ').pop()):t.new.map(i=>BYID[i]?.name.split(' ').pop());
   return `<div class="card" draggable="true" data-tid="${t.tid}" data-from="${from||''}">${from?`<button class="rm" data-unplan="${t.tid}" aria-label="Bỏ khỏi kế hoạch" title="Bỏ khỏi kế hoạch">×</button>`:''}
-  <div class="t">${esc(t.name)}</div><div class="m"><span class="mono">${esc(t.code)}</span>${t.pri==3?'<span class="pill p-urg">Gấp</span>':''}${t.od>0?`<span class="pill p-late">trễ ${t.od}n</span>`:''}${t.lanh?'<span class="pill p-it">Lạnh</span>':''}${t.remote?'<span class="pill p-rm">Từ xa</span>':''}${from?(WS[t.tid]==='run'?'<span class="pill p-rm">đang ghi…</span>':WS[t.tid]==='er'?`<span class="pill p-urg" title="${esc(WS[t.tid+'m']||'')}">lỗi ghi</span>`:pending(t)?'<span class="pill p-late">chưa ghi</span>':'<span class="pill p-kt">✓ đã ghi</span>'):''}<span>${t.est}′</span>${who.length?`<span>· ${from?'cùng ':''}${esc(who.join(', '))}</span>`:''}</div></div>`}
+  <div class="t">${esc(t.name)}</div><div class="m"><a class="mono tlink" draggable="false" href="https://work.hasaki.vn/tasks?task_id=${t.tid}" target="_blank" rel="noopener" title="Mở task trên Work">${esc(t.code)}</a>${t.pri==3?'<span class="pill p-urg">Gấp</span>':''}${t.od>0?`<span class="pill p-late">trễ ${t.od}n</span>`:''}${t.lanh?'<span class="pill p-it">Lạnh</span>':''}${t.remote?'<span class="pill p-rm">Từ xa</span>':''}${from?(WS[t.tid]==='run'?'<span class="pill p-rm">đang ghi…</span>':WS[t.tid]==='er'?`<span class="pill p-urg" title="${esc(WS[t.tid+'m']||'')}">lỗi ghi</span>`:pending(t)?'<span class="pill p-late">chưa ghi</span>':'<span class="pill p-kt">✓ đã ghi</span>'):''}<span>${t.est}′</span>${from?(who.length?`<span>· cùng ${esc(who.join(', '))}</span>`:''):poolWho(t)}</div></div>`}
 function grpHtml(store,L,from){const m=L.reduce((a,t)=>a+t.est,0);
   return `<div class="grp"><div class="gh" draggable="true" data-store="${esc(store)}" data-from="${from||''}" title="Kéo cả cụm chi nhánh"><span>${esc(store)}</span><small>${L.length} task · ${(m/60).toFixed(1)}h</small></div>${L.map(t=>chip(t,from)).join('')}</div>`}
 function pLoad(id,L){const mine=L.filter(t=>PLAN[t.tid]&&t.new.includes(id));const st=new Set(mine.filter(t=>!t.remote).map(t=>t.store));return {mine,h:(mine.reduce((a,t)=>a+t.est,0)+TRAVEL*st.size)/60,st:st.size}}
@@ -552,13 +557,13 @@ function bRender(){
   gs.forEach(g=>g[1].sort((a,b)=>pScore(b)-pScore(a)));
   $('poolT').textContent=`Chưa xếp · ${pool.length} task · ${gs.length} chi nhánh`;
   $('poolB').innerHTML=gs.length?gs.map(([s,l])=>grpHtml(s,l,'')).join(''):'<div class="hint">Đã xếp hết task của Zone này.</div>';
-  const ppl=ROSTER.filter(r=>r.zone===$('bZone').value&&r.tr===$('bTr').value);
+  const ppl=ROSTER.filter(r=>zOK(r.zone)&&r.tr===$('bTr').value);
   const planned=L.filter(t=>PLAN[t.tid]).length;
-  $('bInfo').textContent=`${TMRL} · đã xếp ${planned}/${L.length} task của ${$('bZone').value}`;
+  $('bInfo').textContent=`${TMRL} · đã xếp ${planned}/${L.length} task của ${$('bZone').value||'tất cả Zone'}`;
   const pd=L.filter(t=>pending(t)&&WS[t.tid]!=='run');$('bPend').hidden=!pd.length;$('bPendT').textContent=`${pd.length} task đã xếp chưa ghi lên Work (người làm / hạn ${fmtD(TMRD())})`;$('bPendGo').onclick=()=>writePlanned(pd,'Ghi kế hoạch');
   $('cols').innerHTML=ppl.map(r=>{const o=pLoad(r.id,L),sf=shiftOf(r.id,TMRD()),un=unavailable(sf),cap=capOf(r.id),over=o.h>cap+1e-9;
-    return `<section class="col${un?' offc':''}" data-drop="${r.id}"><header><div class="nm"><span>${esc(r.name)} <small>${r.tr==='IT'?'IT':r.skill==='Điện'?'Điện':'Đ.Lạnh'}</small></span><button class="icon" data-copy="${r.id}" title="Sao chép danh sách việc để gửi Zalo">Sao chép</button></div>
-      <div>Ca ngày mai: ${shiftPill(sf)}</div>
+    return `<section class="col${un?' offc':''}" data-drop="${r.id}"><header><div class="nm"><span>${esc(r.name)} <small>${r.tr==='IT'?'IT':r.skill==='Điện'?'Điện':'Đ.Lạnh'}${$('bZone').value?'':' · '+r.zone.replace('Zone ','Z')}</small></span><button class="icon" data-copy="${r.id}" title="Sao chép danh sách việc để gửi Zalo">Sao chép</button></div>
+      <div>Ca ${DLBL()}: ${shiftPill(sf)}</div>
       <div class="cap${over?' over':''}"><i style="width:${cap?Math.min(100,o.h/cap*100):(o.h?100:0)}%"></i></div><div class="hrs${over?' over':''}">${o.h.toFixed(1)}h / ${cap}h · ${o.mine.length} task · ${o.st} chi nhánh${over?(un?(sf.code==='T'?' · đi thi công':' · đang nghỉ'):' · quá giờ'):''}</div></header>
       <div class="body">${o.mine.length?grpStores(o.mine).map(([s,l])=>grpHtml(s,l,r.id)).join(''):'<div class="hint">Kéo task vào đây</div>'}</div></section>`}).join('')||'<div class="empty">Zone này không có người cho nghiệp vụ đã chọn.</div>';
 }
@@ -572,7 +577,7 @@ $('viewBoard').addEventListener('dragover',e=>{const z=e.target.closest('[data-d
   const id=+z.dataset.drop;z.classList.toggle('no',!!id&&DRAG.tids.every(k=>isLanhBlock(TASKS.find(t=>t.tid==k),id)))});
 $('viewBoard').addEventListener('dragleave',e=>{const z=e.target.closest('[data-drop]');if(z&&!z.contains(e.relatedTarget))z.classList.remove('drop','no')});
 $('viewBoard').addEventListener('drop',e=>{const z=e.target.closest('[data-drop]');if(!z||!DRAG)return;e.preventDefault();doDrop(DRAG,+z.dataset.drop||0);DRAG=null});
-function doDrop(d,to){let n=0,blk=0;const aff=[];
+function doDrop(d,to){if(staleGuard())return;let n=0,blk=0;const aff=[];
   d.tids.forEach(k=>{const t=TASKS.find(x=>x.tid==k);if(!t)return;
     if(!to){delete PLAN[k];n++;if(ORIG[k])aff.push(t);return}
     if(isLanhBlock(t,to)){blk++;return}
@@ -586,31 +591,32 @@ function doDrop(d,to){let n=0,blk=0;const aff=[];
   else if(n&&unavailable(sfT))toast(`Lưu ý: ${BYID[to].name} ngày mai ${shiftLabel(sfT)}`);
   else if(n)toast(to?`Đã xếp ${n} task cho ${BYID[to].name}`:`Đã bỏ ${n} task khỏi kế hoạch`)}
 function openMove(el){const d={tids:dragTids(el),from:el.dataset.from?+el.dataset.from:0};const ts=d.tids.map(k=>TASKS.find(t=>t.tid==k)).filter(Boolean);if(!ts.length)return;
-  const L=bTasks();$('shT').textContent=ts.length>1?`Chuyển ${ts.length} task · ${ts[0].store}`:`${ts[0].code} · ${ts[0].name}`;
-  $('shSub').textContent=ts.length>1?'Chọn người làm cả cụm chi nhánh này ngày mai':`${ts[0].store}${d.from?' · đang xếp cho '+BYID[d.from].name:''}`;
-  const ppl=ROSTER.filter(r=>r.zone===$('bZone').value&&r.tr===$('bTr').value);
+  const L=bTasks();const WL=t=>`<a class="tlink mono" href="https://work.hasaki.vn/tasks?task_id=${t.tid}" target="_blank" rel="noopener" title="Mở task trên Work">${esc(t.code)} ↗</a>`;$('shT').innerHTML=ts.length>1?`Chuyển ${ts.length} task · ${esc(ts[0].store)}<div class="tlinks">${ts.map(WL).join('')}</div>`:`${WL(ts[0])} · ${esc(ts[0].name)}`;
+  $('shSub').textContent=ts.length>1?`Chọn người làm cả cụm chi nhánh này ${DLBL()}`:`${ts[0].store}${d.from?' · đang xếp cho '+BYID[d.from].name:''}`;
+  const ppl=ROSTER.filter(r=>zOK(r.zone)&&r.tr===$('bTr').value).sort((a,b)=>(a.zone!==ts[0].zone)-(b.zone!==ts[0].zone));
   $('shList').innerHTML=ppl.map(r=>{const o=pLoad(r.id,L),sf=shiftOf(r.id,TMRD()),un=unavailable(sf),blk=ts.every(t=>isLanhBlock(t,r.id));
-    return `<button data-to="${r.id}" class="${r.id===d.from?'cur':''}${un||blk?' off':''}"><span><b>${esc(r.name)}</b><br><small>${esc(sf?shiftLabel(sf):'chưa có lịch')}${blk?' · không làm việc lạnh':''}</small></span><small>${o.h.toFixed(1)}h / ${capOf(r.id)}h</small></button>`}).join('')
+    return `<button data-to="${r.id}" class="${r.id===d.from?'cur':''}${un||blk?' off':''}"><span><b>${esc(r.name)}</b>${$('bZone').value?'':` <small>· ${esc(r.zone)}</small>`}<br><small>${esc(sf?shiftLabel(sf):'chưa có lịch')}${blk?' · không làm việc lạnh':''}</small></span><small>${o.h.toFixed(1)}h / ${capOf(r.id)}h</small></button>`}).join('')
     +(d.from||ts.some(t=>PLAN[t.tid])?'<button data-to="0"><span><b>Bỏ khỏi kế hoạch</b><br><small>Trả về "Chưa xếp"</small></span></button>':'');
   $('shList').onclick=e=>{const b=e.target.closest('button[data-to]');if(!b)return;$('sheet').hidden=true;doDrop(d,+b.dataset.to)};
   $('sheet').hidden=false}
 $('shX').onclick=()=>$('sheet').hidden=true;$('sheet').addEventListener('click',e=>{if(e.target.id==='sheet')$('sheet').hidden=true});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')$('sheet').hidden=true});
-$('viewBoard').addEventListener('click',async e=>{const cd=e.target.closest('.card,.gh');if(cd&&!e.target.closest('button')){openMove(cd);return}
+$('viewBoard').addEventListener('click',async e=>{if(e.target.closest('a'))return;const cd=e.target.closest('.card,.gh');if(cd&&!e.target.closest('button')){openMove(cd);return}
   const b=e.target.closest('button');if(!b)return;
   if(b.dataset.unplan){doDrop({tids:[b.dataset.unplan],from:0},0);return}
   if(b.dataset.copy){const id=+b.dataset.copy,o=pLoad(id,bTasks());if(!o.mine.length){toast('Chưa có việc để sao chép');return}
-    const txt=`Việc ngày mai ${TMRL} – ${BYID[id].name} (${o.mine.length} task, ~${o.h.toFixed(1)}h)\n`+grpStores(o.mine).map(([s,l],i)=>{const a=l[0].addr?` – ${l[0].addr}`:'';
+    const txt=`Việc ${TMRL} – ${BYID[id].name} (${o.mine.length} task, ~${o.h.toFixed(1)}h)\n`+grpStores(o.mine).map(([s,l],i)=>{const a=l[0].addr?` – ${l[0].addr}`:'';
       return `${i+1}. ${s}${a}\n`+l.map(t=>`   • ${t.code} ${t.name}${t.new.length>1?' (cùng '+t.new.filter(x=>x!=id).map(x=>BYID[x].name).join(', ')+')':''}`).join('\n')}).join('\n');
     try{await navigator.clipboard.writeText(txt);toast('Đã sao chép, dán vào Zalo để gửi')}catch(_){const ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');ta.remove();toast('Đã sao chép')}}});
 $('bAuto').onclick=()=>{const L=bTasks();let n=0,skip=[];
-  ROSTER.filter(r=>r.zone===$('bZone').value&&r.tr===$('bTr').value).forEach(r=>{if(unavailable(shiftOf(r.id,TMRD()))){skip.push(r.name.split(' ').pop());return}
+  ROSTER.filter(r=>zOK(r.zone)&&r.tr===$('bTr').value).forEach(r=>{if(unavailable(shiftOf(r.id,TMRD()))){skip.push(r.name.split(' ').pop());return}
     const cand=grpStores(L.filter(t=>!PLAN[t.tid]&&t.new.includes(r.id))).sort((a,b)=>Math.max(...b[1].map(pScore))-Math.max(...a[1].map(pScore)));
     cand.forEach(([s,l])=>{l.sort((a,b)=>pScore(b)-pScore(a)).forEach(t=>{const fits=t.new.every(id=>{const h=pLoad(id,L).h,here=L.some(x=>PLAN[x.tid]&&x.new.includes(id)&&x.store===t.store);const cap=capOf(id);if(!cap)return false;return h===0||h+(t.est+(t.remote||here?0:TRAVEL))/60<=cap+1e-9});if(fits){PLAN[t.tid]=1;n++}})})});
-  planSave();render();toast((n?`Đã gợi ý ${n} task (theo giờ ca ngày mai, ưu tiên trễ hạn/gấp)`:'Không còn task phù hợp để gợi ý')+(skip.length?` · bỏ qua người nghỉ / đi thi công: ${skip.join(', ')}`:''))};
+  planSave();render();toast((n?`Đã gợi ý ${n} task (theo giờ ca ${DLBL()}, ưu tiên trễ hạn/gấp)`:'Không còn task phù hợp để gợi ý')+(skip.length?` · bỏ qua người nghỉ / đi thi công: ${skip.join(', ')}`:''))};
 $('bClear').onclick=()=>{const ts=bTasks().filter(t=>PLAN[t.tid]);if(!ts.length){toast('Zone này chưa có kế hoạch');return}if(!confirmTwice('bClear',`Bấm lần nữa để xoá kế hoạch ${ts.length} task${autoW()?' (trả lại hạn cũ trên Work cho task đã ghi)':''}`))return;doDrop({tids:ts.map(t=>t.tid),from:0},0)};
 function confirmTwice(id,msg){const b=$(id);if(b.dataset.arm){delete b.dataset.arm;b.classList.remove('warn');return true}b.dataset.arm=1;b.classList.add('warn');toast(msg);setTimeout(()=>{delete b.dataset.arm;b.classList.remove('warn')},5000);return false}
-['bZone','bTr','bCap','bSort'].forEach(i=>$(i).onchange=bRender);$('bQ').oninput=bRender;
+try{const z=localStorage.getItem('b2zone');if(z!==null&&[...$('bZone').options].some(o=>o.value===z))$('bZone').value=z}catch(e){}
+['bZone','bTr','bCap','bSort'].forEach(i=>$(i).onchange=bRender);$('bZone').addEventListener('change',()=>{try{localStorage.setItem('b2zone',$('bZone').value)}catch(e){}});$('bQ').oninput=bRender;
 $('bUpd').onclick=()=>{$('mScope').value='plan';$('mZone').value=$('bZone').value;openModal()};
 function tab(v){[['tabD','viewDue','d'],['tabB','viewBoard','b'],['tabT','viewTbl','t'],['tabC','viewBal','c']].forEach(([a,b,k])=>{$(a).setAttribute('aria-selected',v===k);$(b).hidden=v!==k});try{localStorage.setItem('b2tab',v)}catch(e){}window.scrollTo({top:0});render()}
 $('tabD').onclick=()=>tab('d');$('tabB').onclick=()=>tab('b');$('tabT').onclick=()=>tab('t');$('tabC').onclick=()=>tab('c');
@@ -779,7 +785,7 @@ async function mOne(t,tk){let ok=true,msg='';
   if(changed(t)){const r=await setField(t.tid,'assign_staff',t.new.join(','));if(r.ok){t.cur=t.new.slice();t.curNames=t.cur.map(i=>BYID[i].name)}else{ok=false;msg=r.msg}}
   if(ok&&needDate(t)){if(!ORIG[t.tid]){ORIG[t.tid]={ids:t.cur.slice(),de:t.de0};origSave()}const r=await setField(t.tid,'date_end',DUE());if(r.ok){t.de0=DUE();t.dl=TMRD();t.od=0}else{ok=false;msg=r.msg}}
   M.res[t.tid]={ok,msg:ok?(needDate(t)||PLAN[t.tid]?`Đã cập nhật (hạn ${fmtD(TMRD())})`:'Đã cập nhật'):msg};if(ok)WS[t.tid]='ok'}
-async function mRun(L){const tk=($('tok2').value.trim()||tok()).replace(/^Bearer\s+/i,'');if(!tk){toast('Chưa có token');return}
+async function mRun(L){if(staleGuard())return;const tk=($('tok2').value.trim()||tok()).replace(/^Bearer\s+/i,'');if(!tk){toast('Chưa có token');return}
   M.running=true;$('mGo').disabled=$('mTest').disabled=true;let d=0;const q=L.slice();
   const w=async()=>{while(q.length){const t=q.shift();await mOne(t,tk);d++;setProg('mProg',d/L.length);if(d%5===0)mRender()}};await Promise.all([w(),w(),w()]);
   M.running=false;$('mGo').disabled=$('mTest').disabled=false;
@@ -792,6 +798,28 @@ $('mTest').onclick=()=>{const t=mList()[0];if(t)mRun([t])};
 $('mGo').onclick=()=>{if(M.running)return;const L=mList();if(!L.length){toast('Không còn task nào cần cập nhật');return}
   const b=$('mConf');b.hidden=false;b.className='note';b.innerHTML=`Sẽ ghi người thực hiện cho <b>${L.length} task</b> trên Work. <button class="btn" id="mYes" style="margin-left:6px">Xác nhận cập nhật ${L.length} task</button> <button class="btn sec" id="mNo">Huỷ</button>`;
   $('mYes').onclick=()=>{b.textContent='Đang cập nhật…';mRun(L)};$('mNo').onclick=()=>b.hidden=true};
+const LOADDAY=new Date().toDateString();
+function staleGuard(){if(new Date().toDateString()===LOADDAY)return false;if(!window.__stale){window.__stale=1;toast('Đã sang ngày mới · đang tải lại trang để tính đúng hạn "ngày mai"…');setTimeout(()=>location.reload(),1500)}return true}
+setInterval(staleGuard,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)staleGuard()});addEventListener('focus',staleGuard);
+function poolWho(t){const nm=i=>BYID[i]?BYID[i].name.split(' ').pop():('#'+i);const c=t.cur.map(nm),g=[...t.new].sort().join()!==[...t.cur].sort().join()?t.new.map(nm):[];
+  return (c.length?`<span title="Người đang giữ task trên Work">· đang giữ: <b>${esc(c.join(', '))}</b></span>`:'<span>· chưa có người</span>')+(g.length?`<span class="sug" title="Gợi ý cân tải (chưa ghi lên Work)">→ gợi ý ${esc(g.join(', '))}</span>`:'')}
+let SCHEDM=new Set();
+function initDay(){const ymd=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;const td=ymd(new Date());let v=null;try{v=localStorage.getItem('b2day')}catch(e){}
+  if(!v||v<td)v=ymd(new Date(Date.now()+864e5));return new Date(v+'T12:00:00')}
+function DLBL(){const d=TMRD(),td=ymd(new Date()),tm=ymd(new Date(Date.now()+864e5));return d===td?'hôm nay':d===tm?'ngày mai':'ngày '+fmtD(d)}
+function dayUI(){const td=ymd(new Date()),tm=ymd(new Date(Date.now()+864e5));$('bDay').min=td;$('bDay').value=TMRD();
+  document.querySelectorAll('.dayp [data-dd]').forEach(b=>b.classList.toggle('on',TMRD()===(b.dataset.dd==='0'?td:tm)))}
+function setDay(v){if(staleGuard())return;const td=ymd(new Date());if(!v||v<td){toast('Không điều phối cho ngày đã qua');dayUI();return}
+  if(v===TMRD()){dayUI();return}
+  TMR=new Date(v+'T12:00:00');TMRK='b2plan-'+TMR.toISOString().slice(0,10);TMRL=['Chủ nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'][TMR.getDay()]+', '+TMR.toLocaleDateString('vi-VN');
+  try{ORIG=JSON.parse(localStorage.getItem(TMRK+'-orig')||'{}')}catch(e){ORIG={}}Object.keys(WS).forEach(k=>delete WS[k]);
+  try{localStorage.setItem('b2day',v)}catch(e){}
+  if(TASKS.length){rebalance();planRestore()}dayUI();
+  const ym=TMR.getFullYear()+'-'+(TMR.getMonth()+1);if(TASKS.length&&!SCHEDM.has(ym))loadSched();else render();
+  toast(`Đang điều phối cho ${TMRL}`)}
+$('bDay').onchange=e=>setDay(e.target.value);
+document.querySelectorAll('.dayp [data-dd]').forEach(b=>b.onclick=()=>setDay(ymd(new Date(Date.now()+(+b.dataset.dd)*864e5))));
+dayUI();
 if(innerWidth<760)document.querySelectorAll('details.fbox').forEach(d=>d.open=false);
 if(tok())setTimeout(()=>$('load').click(),50);else{$('boot').hidden=true;$('auth').hidden=false;setChip('err','Chưa kết nối')}
 </script>
