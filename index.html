@@ -532,7 +532,7 @@ let TMR=initDay();
 let TMRK='b2plan-'+TMR.toISOString().slice(0,10);
 let TMRL=['Chủ nhật','Thứ Hai','Thứ Ba','Thứ Tư','Thứ Năm','Thứ Sáu','Thứ Bảy'][TMR.getDay()]+', '+TMR.toLocaleDateString('vi-VN');
 const DUE=()=>`${TMRD()} 23:59:59`;
-const isDue=(t,D)=>t.pdl===D||t.dl===D;
+const isDue=(t,D)=>t.dl===D;
 const needDate=t=>!!PLAN[t.tid]&&!isDue(t,TMRD());
 const pending=t=>!!PLAN[t.tid]&&(changed(t)||!isDue(t,TMRD()));
 let ORIG={};try{ORIG=JSON.parse(localStorage.getItem(TMRK+'-orig')||'{}')}catch(e){ORIG={}}
@@ -546,7 +546,7 @@ async function syncTask(t,mode){WS[t.tid]='run';bRender();
   const asg=async ids=>{const r=await setField(t.tid,'assign_staff',ids.join(','));if(r.ok){t.cur=ids.slice();t.curNames=t.cur.map(i=>BYID[i]?.name||('#'+i))}else{ok=false;msg=r.msg}};
   const due=async(v,pv)=>{const r=await setDue(t,v,pv);if(!r.ok){ok=false;msg=r.msg}};
   if(mode==='plan'){if(changed(t))await asg(t.new);if(ok&&needDate(t))await due(DUE(),DUE())}
-  else if(o){if(mode==='undo'&&[...t.cur].sort().join()!==[...o.ids].sort().join()){t.new=o.ids.slice();await asg(o.ids)}if(ok&&((o.pde&&t.pde0!==o.pde)||(o.de&&t.de0!==o.de)))await due(o.de||t.de0,o.pde||o.de);if(ok){delete ORIG[t.tid];origSave()}}
+  else if(o){if(mode==='undo'&&[...t.cur].sort().join()!==[...o.ids].sort().join()){t.new=o.ids.slice();await asg(o.ids)}if(ok&&o.de&&t.de0!==o.de)await due(o.de);if(ok){delete ORIG[t.tid];origSave()}}
   WS[t.tid]=ok?(mode==='plan'?'ok':''):'er';WS[t.tid+'m']=msg;return ok}
 async function syncMany(ts,mode){const q=ts.slice();let okN=0,bad=0;const w=async()=>{while(q.length){const t=q.shift();(await syncTask(t,mode))?okN++:bad++}};await Promise.all([w(),w(),w()]);planSave();render();return {okN,bad}}
 async function writePlanned(ts,label){if(staleGuard()||!ts.length)return;toast(`Đang ghi ${ts.length} task lên Work…`);const {okN,bad}=await syncMany(ts,'plan');
@@ -905,16 +905,64 @@ function openPair(d,to,t,base){const nm=i=>BYID[i]?.name||('#'+i),sh=i=>{const s
   $('prOk').onclick=()=>{const ids=pick();close();doDrop({...d,_ids:ids},to,'move')};
   $('pair').hidden=false;$('prOk').focus()}
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('pair').hidden)$('pair').hidden=true});
-// Hạn hiển thị trên Work nằm ở task cha (id = p.id): ghi task cha trước, rồi ghi kèm task con bước B2
-async function setDue(t,v,pv){pv=pv||v;const odf=x=>Math.max(0,Math.round((new Date(new Date().toDateString())-new Date(x+'T00:00'))/864e5));
-  if(t.pid&&t.pde0!==pv){const r=await setField(t.pid,'date_end',pv);if(!r.ok)return r;t.pde0=pv;t.pdl=pv.slice(0,10)}
-  if(t.de0!==v){const r=await setField(t.tid,'date_end',v);if(r.ok){t.de0=v;t.dl=v.slice(0,10);t.od=odf(t.dl)}else return {ok:false,msg:'Đã ghi hạn task, lỗi ghi hạn bước B2: '+r.msg}}
-  return {ok:true}}
+// Hạn chỉ ghi vào task con bước B2 (không đụng task cha)
+async function setDue(t,v){if(t.de0===v)return {ok:true};const r=await setField(t.tid,'date_end',v);if(!r.ok)return r;t.de0=v;t.dl=v.slice(0,10);t.od=Math.max(0,Math.round((new Date(new Date().toDateString())-new Date(t.dl+'T00:00'))/864e5));return {ok:true}}
 let AUTO={};
 function axGet(){try{return JSON.parse(localStorage.getItem(TMRK+'-x')||'{}')}catch(e){return {}}}
 function axAdd(k){const x=axGet();x[k]=1;try{localStorage.setItem(TMRK+'-x',JSON.stringify(x))}catch(e){}}
 // Task có hạn (task hoặc bước B2) đúng ngày điều phối và đang có người giữ → tự vào cột người đó (không ghi gì lên Work)
 function autoPlan(){const D=TMRD(),X=axGet();let n=0;TASKS.forEach(t=>{if(PLAN[t.tid]||X[t.tid]||!t.cur.length||!isDue(t,D))return;PLAN[t.tid]=1;AUTO[t.tid]=1;t.new=t.cur.slice();n++});return n}
+const LIM=200,WK=8;
+async function pageAll2(mk,onProg){const rows=[];let i=0,end=Infinity,pg=0;const w=async()=>{while(true){const o=(i++)*LIM;if(o>=end)return;const j=await apiRetry(mk(o));const rr=j.data?.rows||[];rows.push(...rr);pg++;onProg&&onProg(rows.length,pg);if(rr.length<LIM)end=Math.min(end,o+LIM)}};await Promise.all(Array.from({length:WK},w));return rows}
+const KV={_d:null,db(){return this._d||(this._d=new Promise(res=>{try{const r=indexedDB.open('b2cache',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>res(null)}catch(e){res(null)}}))},
+  async get(k){const d=await this.db();if(!d)return null;return new Promise(res=>{try{const q=d.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>res(q.result??null);q.onerror=()=>res(null)}catch(e){res(null)}})},
+  async set(k,v){const d=await this.db();if(!d)return;try{d.transaction('kv','readwrite').objectStore('kv').put(v,k)}catch(e){}}};
+function cP(p){const c=(p.data&&!Array.isArray(p.data)&&p.data.configs)||{};return {id:p.id,code:p.code,name:p.name||'',piority:p.piority,current_step_id:p.current_step_id,date_end:p.date_end,data:{configs:{chinhanh00:c.chinhanh00,hangmuc00:c.hangmuc00}},
+  subtasks:(p.subtasks||[]).filter(s=>s.workflow_step_id==B2).map(s=>({id:s.id,workflow_step_id:s.workflow_step_id,status:s.status,staff_ids:s.staff_ids,date_end:s.date_end,finished_at:s.finished_at,staff:(s.staff||[]).filter(x=>!BYID[x.staff_id]).map(x=>({staff_id:x.staff_id,info:{staff_name:x.info?.staff_name}}))}))}}
+const cL=l=>({id:l.id,name:l.name,address:l.address,city_name:l.city_name,coordinates:l.coordinates});
+let DONEROWS=[];
+function processDone(rows){DONEROWS=rows;const u=new Map();OPENROWS.forEach(r=>u.set(r.id,r));rows.forEach(r=>u.set(r.id,r));
+  DONE=[];u.forEach(p=>{const cfg=(p.data&&!Array.isArray(p.data)&&p.data.configs)||{};const loc=LOCS[cfg.chinhanh00];
+    (p.subtasks||[]).forEach(s=>{if(s.workflow_step_id!=B2||s.status!=2||!s.finished_at)return;const ids=[...new Set((s.staff_ids||[]).map(Number))].filter(i=>BYID[i]);if(!ids.length)return;
+      const store=loc?loc.name:(p.name.split('_')[0]||'');const tr=ids.some(i=>BYID[i].tr==='IT')?'IT':'KT';
+      DONE.push({tid:s.id,code:p.code,store,addr:loc?.address||'',name:p.name.replace(store,'').replace(/^_?\d{13,19}_/,'').replace(/^_/,''),hm:(cfg.hangmuc00||'').split('-')[1]||'',
+        fin:s.finished_at,day:s.finished_at.slice(0,10),dl:(s.date_end||'').slice(0,10),ids,tr,zone:ZONEOF[nm(store)]||BYID[ids[0]].zone,est:est(p.name),remote:false,pri:p.piority,od:0,lanh:false,done:true})})});return u.size}
+const qOpen=o=>{const to=ymd(new Date(Date.now()+864e5));return `/workflows/detail-workflow-task/${WF}?from_date=2025-01-01&to_date=${to}&search_type=board&wfid=${WF}&workflow_step_id=${B2}&status[]=0&limit=${LIM}&offset=${o}`};
+const qDone=o=>{const to=ymd(new Date(Date.now()+864e5)),fr=ymd(new Date(Date.now()-DONE_DAYS*864e5));return `/workflows/detail-workflow-task/${WF}?from_date=${fr}&to_date=${to}&search_type=board&wfid=${WF}&workflow_step_id=${B2}&limit=${LIM}&offset=${o}`};
+const keepDone=rows=>rows.map(cP).filter(p=>p.subtasks.some(s=>s.status==2&&s.finished_at));
+function applyOpen(rows){build(rows);OPENROWS=rows;rebalance();planRestore();$('boot').hidden=true;$('main').hidden=false;$('navwrap').hidden=false;
+  $('chip').title=`${rows.length} đơn đang mở trong WF398 · ${TASKS.length+Object.values(OUTS).reduce((a,b)=>a+b.n,0)} task đang ở B2`;render()}
+const hm=t=>new Date(t).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
+async function loadDone(){DONEINFO={st:'run'};if(!$('viewDue').hidden)dRender();
+  try{const rows=keepDone(await pageAll2(qDone,(n,pg)=>{DONEINFO.msg=`Đang tải task đã hoàn thành… ${n} đơn (${pg} trang)`;const e=$('dLoad');if(e&&!$('viewDue').hidden)e.textContent=DONEINFO.msg}));
+    const n=processDone(rows);DONEINFO={st:'ok',n,at:new Date()};KV.set('v1',{at:Date.now(),locs:LOCS,open:OPENROWS,done:rows})}catch(e){DONEINFO={st:'er',msg:e.message}}
+  render()}
+$('load').onclick=async()=>{
+  if(!tok()){toast('Dán token trước');$('tok').focus();return}
+  try{if(!DEFAULT_TOKEN){if($('rem').checked)localStorage.setItem('b2tok',tok());else localStorage.removeItem('b2tok')}}catch(e){}
+  const first=$('main').hidden;$('auth').hidden=true;$('load').disabled=$('reload').disabled=true;setProg('prog',0.03);
+  let cached=false;
+  if(first){const c=await KV.get('v1');if(c&&c.open&&c.locs&&Date.now()-c.at<7*864e5){try{LOCS=c.locs;applyOpen(c.open);if(c.done){const n=processDone(c.done);DONEINFO={st:'ok',n,at:new Date(c.at)}}loadSched();render();cached=true;setChip('busy',`Dữ liệu lúc ${hm(c.at)} · đang cập nhật…`)}catch(e){cached=false}}
+    if(!cached){$('boot').hidden=false;$('bootMsg').textContent='Đang tải dữ liệu…';setChip('busy','Đang tải…')}}
+  else setChip('busy','Đang tải…');
+  let nO=0,nD=0,pO=0,pD=0;const prog=()=>{const t=`Đang tải ${nO} đơn mở · ${nD} đơn đã xong…`;if(!cached)setChip('busy',t);if($('bootMsg'))$('bootMsg').textContent=t;setProg('prog',Math.min(.95,.05+(pO+pD)/60))};
+  try{
+    const pB=api('/staff/base-data');
+    const pOpen=pageAll2(qOpen,(n,pg)=>{nO=n;pO=pg;prog()});
+    const pDone=pageAll2(qDone,(n,pg)=>{nD=n;pD=pg;prog()}).catch(e=>({err:e}));
+    const bd=await pB;const L={};(bd.data?.locations||[]).forEach(l=>L[l.id]=cL(l));LOCS=L;
+    const oRows=[...new Map((await pOpen).map(r=>[r.id,cP(r)])).values()];
+    applyOpen(oRows);if(!cached)loadSched();
+    if(!DONEINFO||DONEINFO.st!=='ok'){DONEINFO={st:'run',msg:'Đang tải task đã hoàn thành…'};}
+    setChip('busy','Đang tải task đã hoàn thành…');render();
+    const d=await pDone;
+    if(d&&d.err){DONEINFO={st:'er',msg:d.err.message}}
+    else{const dRows=keepDone(d);const n=processDone(dRows);DONEINFO={st:'ok',n,at:new Date()};KV.set('v1',{at:Date.now(),locs:LOCS,open:oRows,done:dRows})}
+    setProg('prog',1);setTimeout(()=>{$('prog').hidden=true},700);setChip('',`Cập nhật ${hm(Date.now())}`);render();
+  }catch(e){$('prog').hidden=true;
+    if(cached){setChip('err',`Lỗi cập nhật · đang xem dữ liệu lúc ${$('chip').textContent.match(/\d\d:\d\d/)?.[0]||''}`);toast('Không cập nhật được: '+e.message)}
+    else{setChip('err','Lỗi tải dữ liệu');if(first){$('boot').hidden=false;$('bootMsg').innerHTML=`<span class="er">Không tải được: ${esc(e.message)}</span><br>Kiểm tra token rồi bấm nút tải lại ở góc trên.`;if(!DEFAULT_TOKEN)$('auth').hidden=false}else toast('Không tải được: '+e.message)}}
+  finally{$('load').disabled=$('reload').disabled=false}};
 if(innerWidth<760)document.querySelectorAll('details.fbox').forEach(d=>d.open=false);
 if(tok())setTimeout(()=>$('load').click(),50);else{$('boot').hidden=true;$('auth').hidden=false;setChip('err','Chưa kết nối')}
 </script>
