@@ -218,6 +218,7 @@ td select{max-width:230px;font-size:12.5px;padding:5px 8px;min-height:32px}
 .mv button.inp{opacity:.55;pointer-events:none}
 .pairdlg{width:min(520px,100%)}.pairdlg h4{margin:6px 0 6px;font-size:14px}.pairdlg .opt{display:flex;flex-wrap:wrap;gap:6px}.pairdlg .opt label{display:flex;align-items:center;gap:6px;padding:8px 12px;border:1px solid var(--line);border-radius:10px;cursor:pointer;font-size:14px}.pairdlg .opt label:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
 .pairdlg .rp{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center;margin:4px 0}.pairdlg select{height:38px;border:1px solid var(--line);border-radius:10px;background:var(--panel);color:inherit;font:inherit;padding:0 8px}.pairdlg .res{font-size:13.5px;padding:8px 10px;border-radius:10px;background:var(--panel2)}
+.dlt{font-size:12px;font-weight:600;color:var(--muted);white-space:nowrap}.dlt.late{color:var(--c-late)}.dlt.today{color:var(--c-wait)}
 </style>
 </head>
 <body>
@@ -560,7 +561,7 @@ const isLanhBlock=(t,id)=>!!BYID[id]&&BYID[id].tr!==t.tr;
 function grpStores(L){const g={};L.forEach(t=>(g[t.store]??=[]).push(t));return Object.entries(g)}
 function chip(t,from){const who=from?t.new.filter(i=>i!=from).map(i=>BYID[i]?.name.split(' ').pop()):t.new.map(i=>BYID[i]?.name.split(' ').pop());
   return `<div class="card" draggable="true" data-tid="${t.tid}" data-from="${from||''}">${from?`<button class="rm" data-unplan="${t.tid}" data-rmfrom="${from}" aria-label="${t.new.length>1?'Bỏ người này khỏi task':'Bỏ khỏi kế hoạch'}" title="${t.new.length>1?'Bỏ '+esc(BYID[from]?.name||'')+' khỏi task (giữ người còn lại)':'Bỏ khỏi kế hoạch'}">×</button>`:''}
-  <div class="t">${esc(t.name)}</div><div class="m"><a class="mono tlink" draggable="false" href="https://work.hasaki.vn/tasks?task_id=${t.tid}" target="_blank" rel="noopener" title="Mở task trên Work">${esc(t.code)}</a>${t.pri==3?'<span class="pill p-urg">Gấp</span>':''}${t.od>0?`<span class="pill p-late">trễ ${t.od}n</span>`:''}${t.lanh?'<span class="pill p-it">Lạnh</span>':''}${t.remote?'<span class="pill p-rm">Từ xa</span>':''}${from?(WS[t.tid]==='run'?'<span class="pill p-rm">đang ghi…</span>':WS[t.tid]==='er'?`<span class="pill p-urg" title="${esc(WS[t.tid+'m']||'')}">lỗi ghi</span>`:pending(t)?'<span class="pill p-late">chưa ghi</span>':(AUTO[t.tid]&&!changed(t)?'<span class="pill p-kt" title="Task đã có hạn đúng ngày này trên Work">theo hạn</span>':'<span class="pill p-kt">✓ đã ghi</span>')):''}<span>${t.est}′</span>${from?(who.length?`<span>· cùng ${esc(who.join(', '))}</span>`:''):poolWho(t)}</div></div>`}
+  <div class="t">${esc(t.name)}</div><div class="m"><a class="mono tlink" draggable="false" href="https://work.hasaki.vn/tasks?task_id=${t.tid}" target="_blank" rel="noopener" title="Mở task trên Work">${esc(t.code)}</a>${t.pri==3?'<span class="pill p-urg">Gấp</span>':''}${t.od>0?`<span class="pill p-late">trễ ${t.od}n</span>`:''}${t.lanh?'<span class="pill p-it">Lạnh</span>':''}${t.remote?'<span class="pill p-rm">Từ xa</span>':''}${from?(WS[t.tid]==='run'?'<span class="pill p-rm">đang ghi…</span>':WS[t.tid]==='er'?`<span class="pill p-urg" title="${esc(WS[t.tid+'m']||'')}">lỗi ghi</span>`:pending(t)?'<span class="pill p-late">chưa ghi</span>':(AUTO[t.tid]&&!changed(t)?'<span class="pill p-kt" title="Task đã có hạn đúng ngày này trên Work">theo hạn</span>':'<span class="pill p-kt">✓ đã ghi</span>')):''}<span>${t.est}′</span>${from?'':dlTag(t)}${from?(who.length?`<span>· cùng ${esc(who.join(', '))}</span>`:''):poolWho(t)}</div></div>`}
 function grpHtml(store,L,from){const m=L.reduce((a,t)=>a+t.est,0);
   return `<div class="grp"><div class="gh" draggable="true" data-store="${esc(store)}" data-from="${from||''}" title="Kéo cả cụm chi nhánh"><span>${esc(store)}</span><small>${L.length} task · ${(m/60).toFixed(1)}h</small></div>${L.map(t=>chip(t,from)).join('')}</div>`}
 function pLoad(id,L){const mine=L.filter(t=>PLAN[t.tid]&&t.new.includes(id));const st=new Set(mine.filter(t=>!t.remote).map(t=>t.store));return {mine,h:(mine.reduce((a,t)=>a+t.est,0)+TRAVEL*st.size)/60,st:st.size}}
@@ -963,6 +964,9 @@ $('load').onclick=async()=>{
     if(cached){setChip('err',`Lỗi cập nhật · đang xem dữ liệu lúc ${$('chip').textContent.match(/\d\d:\d\d/)?.[0]||''}`);toast('Không cập nhật được: '+e.message)}
     else{setChip('err','Lỗi tải dữ liệu');if(first){$('boot').hidden=false;$('bootMsg').innerHTML=`<span class="er">Không tải được: ${esc(e.message)}</span><br>Kiểm tra token rồi bấm nút tải lại ở góc trên.`;if(!DEFAULT_TOKEN)$('auth').hidden=false}else toast('Không tải được: '+e.message)}}
   finally{$('load').disabled=$('reload').disabled=false}};
+function dlTag(t){if(!t.de0)return '<span class="dlt">chưa có hạn</span>';const d=t.de0.slice(0,10),hh=t.de0.slice(11,16),td=ymd(new Date()),tm=ymd(new Date(Date.now()+864e5));
+  const lab=d===td?'hôm nay':d===tm?'mai':fmtD(d)+(d.slice(0,4)!==td.slice(0,4)?'/'+d.slice(0,4):'');const cls=d<td?' late':d===td?' today':'';
+  return `<span class="dlt${cls}" title="Hạn bước B2: ${esc(t.de0)}">⏰ ${lab}${hh&&hh!=='00:00'?' '+hh:''}</span>`}
 if(innerWidth<760)document.querySelectorAll('details.fbox').forEach(d=>d.open=false);
 if(tok())setTimeout(()=>$('load').click(),50);else{$('boot').hidden=true;$('auth').hidden=false;setChip('err','Chưa kết nối')}
 </script>
