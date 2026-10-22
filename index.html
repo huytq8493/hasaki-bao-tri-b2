@@ -505,6 +505,19 @@ body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none
 .btn:not(.sec):not(.warn){background-size:200% 100%;background-image:linear-gradient(110deg,var(--g1),var(--g2) 40%,var(--g3) 60%,var(--g1));animation:flow 8s linear infinite}
 @media (prefers-reduced-motion:reduce){body::before,.mark,.chip i::after,.nav button,.btn,.ring .rv,.chart svg rect,.card,#dBody tr,.col.drop{animation:none!important}}
 
+/* tổng task còn treo */
+.openbox{display:grid;grid-template-columns:auto 1fr auto;gap:28px;align-items:center;padding:22px 26px;border-radius:24px;background:var(--glass)!important;border:1px solid var(--glass-brd);box-shadow:var(--shadow);-webkit-backdrop-filter:blur(18px);backdrop-filter:blur(18px);position:relative;overflow:hidden;animation:rise .5s both}
+.openbox:empty{display:none}
+.openbox::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:linear-gradient(180deg,var(--c-late),var(--c-wait))}
+.ob{display:grid;gap:2px;min-width:180px}.ob .ol{font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.ob b{font-size:56px;line-height:1;font-weight:800;letter-spacing:-.04em;color:var(--c-late)}.ob .os{font-size:12.5px;color:var(--muted)}
+.om{display:grid;gap:10px;min-width:0}
+.obar{display:flex;height:16px;border-radius:99px;overflow:hidden;gap:3px;background:color-mix(in srgb,var(--muted) 12%,transparent)}
+.obar i{display:block;min-width:4px}.obar .r{background:var(--c-late)}.obar .w{background:var(--c-wait)}.obar .g{background:var(--c-done)}.obar .n{background:var(--muted)}
+.olg{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted)}.olg span{display:inline-flex;align-items:center;gap:6px}.olg i{width:10px;height:10px;border-radius:3px}.olg b{color:var(--ink);font-size:15px}.olg small{font-size:11.5px}
+.olg .r i{background:var(--c-late)}.olg .w i{background:var(--c-wait)}.olg .g i{background:var(--c-done)}.olg .n i{background:var(--muted)}
+.oz{display:flex;gap:8px;flex-wrap:wrap}.oz span{padding:4px 11px;border-radius:99px;border:1px solid var(--glass-brd);background:color-mix(in srgb,var(--panel) 55%,transparent);font-size:12.5px;color:var(--muted)}.oz b{color:var(--ink)}
+@media (max-width:760px){.openbox{grid-template-columns:1fr;gap:14px;padding:18px}.ob b{font-size:46px}}
 </style>
 </head>
 <body>
@@ -558,6 +571,7 @@ body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none
         <select id="dWho" aria-label="Tính theo"><option value="cur">Theo người đang giao trên Work</option><option value="new">Theo người sau khi cân / điều phối</option></select>
       </div></details>
       <section class="hero" id="dHeroW"><div class="heroin" id="dHero"></div></section>
+      <section class="openbox" id="dOpen"></section>
       <div class="kpis" id="dK"></div>
       <div class="charts">
         <section class="chart"><h3 id="c1t">Task hạn hôm nay theo Zone</h3><p class="sub" id="c1n"></p><div id="c1"></div></section>
@@ -995,7 +1009,7 @@ function dRender(){const P=dBuckets(),A=$('dA').value,B=$('dB').value;repUI();
   $('dK').innerHTML=[[ok?dA:'…',`task hạn ${fmtD(A)} đã xong`,'k-ok'],[T.a.length,`task hạn ${fmtD(A)} chờ xử lý`,'k-bad'],[ok&&rate!=null?rate+'%':'–',`hoàn thành task hạn ${fmtD(A)}${ok?` (${dA}/${dA+T.a.length})`:''}`,'k-acc'],
     [ok?T.done.length:'…',`task đã làm ${fmtD(A)} (mọi hạn)${ok&&T.done.length?` · ${T.done.length-ontime} xong trễ hạn`:''}`,''],[T.late.length,`task quá hạn chưa xử lý (tính đến hết ${fmtD(A)})`,'k-warn'],
     [T.tom.length,`task ${B===ymd(new Date(Date.now()+864e5))?'ngày mai ':''}${fmtD(B)} (${uniqT(Object.values(P).flatMap(o=>o.b)).length} theo hạn · ${uniqT(Object.values(P).flatMap(o=>o.plan)).length} đã xếp)`,'k-acc']]
-    .map(([b,x,c],i)=>`<div class="kpi ${c||''}"><i class="shine"></i><em class="ki">${KICO[i]||''}</em><b>${b}</b><span>${x}</span></div>`).join('');heroRender(P,T,A,ok,rate);countUp();
+    .map(([b,x,c],i)=>`<div class="kpi ${c||''}"><i class="shine"></i><em class="ki">${KICO[i]||''}</em><b>${b}</b><span>${x}</span></div>`).join('');heroRender(P,T,A,ok,rate);openRender(P,A);countUp();
   const TK=['late','hang'];
   const rat=(x,n,k,id,lab)=>{if(!n)return `<td class="n z" data-l="${lab}">–</td>`;const pc=k==='a'?100-Math.round((n-x)/n*100):Math.round(x/n*100);return `<td class="n" data-l="${lab}"><span>${x&&id?`<button data-d="${id}|${k}">${x}</button>`:`<b>${x}</b>`}<small> / ${n}</small> <small class="pc ${k==='doneA'?(pc>=80?'g':pc>=50?'w':'r'):(pc<=20?'g':pc<=50?'w':'r')}">${pc}%</small></span></td>`};
   const cols=(o,id,tot)=>{const n=o.doneA.length+o.a.length;return rat(o.doneA.length,n,'doneA',id,`Đã xong (hạn ${fmtD(A)})`)+rat(o.a.length,n,'a',id,`Chờ xử lý (hạn ${fmtD(A)})`)+TK.map(k=>tot?`<td class="n" data-l="${DLH[k]}">${o[k].length||'–'}</td>`:dCell(o[k],id,k)).join('')};
@@ -1267,7 +1281,7 @@ function dlTag(t){if(!t.de0)return '<span class="dlt">chưa có hạn</span>';co
 const ICO=p=>`<svg viewBox="0 0 24 24">${p}</svg>`;
 const KICO=[ICO('<path d="M20 6 9 17l-5-5"/>'),ICO('<circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/>'),ICO('<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>'),ICO('<path d="M13 2 4 14h7l-1 8 9-12h-7z"/>'),ICO('<path d="M12 3 2 20h20z"/><path d="M12 10v4M12 17h.01"/>'),ICO('<rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/>')];
 function AV(id){const r=BYID[id];if(!r)return '';const w=r.name.trim().split(/\s+/),ini=(w.length>1?w[w.length-2][0]:'')+w[w.length-1][0];let h=0;for(const c of r.name)h=(h*31+c.charCodeAt(0))%360;return `<span class="av" style="--h:${h}" title="${esc(r.name)}">${esc(ini.toUpperCase())}</span>`}
-function countUp(){document.querySelectorAll('#dK .kpi b,#dHero [data-cu]').forEach(el=>{const t=el.textContent.trim(),m=t.match(/^(\d+)(.*)$/);if(!m)return;const to=+m[1],suf=m[2];const from=el.dataset.v!=null?+el.dataset.v:(el.closest('.kpi,.hero')?.dataset.seen?to:0);el.dataset.v=to;if(from===to||matchMedia('(prefers-reduced-motion:reduce)').matches)return;const t0=performance.now(),d=650;const st=n=>{const k=Math.min(1,(n-t0)/d),e=1-Math.pow(1-k,3);el.textContent=Math.round(from+(to-from)*e)+suf;if(k<1)requestAnimationFrame(st)};requestAnimationFrame(st)});document.querySelectorAll('#dK .kpi,#dHero').forEach(x=>x.dataset.seen=1)}
+function countUp(){document.querySelectorAll('#dK .kpi b,#dHero [data-cu],#dOpen [data-cu]').forEach(el=>{const t=el.textContent.trim(),m=t.match(/^(\d+)(.*)$/);if(!m)return;const to=+m[1],suf=m[2];const from=el.dataset.v!=null?+el.dataset.v:(el.closest('.kpi,.hero')?.dataset.seen?to:0);el.dataset.v=to;if(from===to||matchMedia('(prefers-reduced-motion:reduce)').matches)return;const t0=performance.now(),d=650;const st=n=>{const k=Math.min(1,(n-t0)/d),e=1-Math.pow(1-k,3);el.textContent=Math.round(from+(to-from)*e)+suf;if(k<1)requestAnimationFrame(st)};requestAnimationFrame(st)});document.querySelectorAll('#dK .kpi,#dHero').forEach(x=>x.dataset.seen=1)}
 function heroRender(P,T,A,ok,rate){const el=$('dHero');if(!el)return;const ids=Object.keys(P).map(Number);const work=ids.filter(i=>{const x=shiftOf(i,A);return !unavailable(x)}).length,off=ids.length-work;
   const dA=T.doneA.length,n=dA+T.a.length,pc=ok&&n?Math.round(dA/n*100):0;window.HERO_PC=pc;const R=52,C=2*Math.PI*R,col=pc>=80?'var(--c-done)':pc>=50?'var(--c-wait)':'var(--c-late)';
   const h=new Date().getHours(),greet=A!==ymd(new Date())?`Báo cáo ${RL(A)}`:h<11?'Chào buổi sáng':h<14?'Chào buổi trưa':h<18?'Chào buổi chiều':'Chào buổi tối';
@@ -1326,6 +1340,19 @@ document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLower
 function finStaff(s){if(s.status==2)return [];return (s.staff||[]).filter(x=>x.status==2&&x.finished_at).map(x=>+x.staff_id)}
 function doneRecs(s){if(s.status==2&&s.finished_at)return [{id:s.id,finished_at:s.finished_at,date_end:s.date_end,ids:[...new Set((s.staff_ids||[]).map(Number))].filter(i=>BYID[i])}];
   return (s.staff||[]).filter(x=>x.status==2&&x.finished_at&&BYID[+x.staff_id]).map(x=>({id:s.id,finished_at:x.finished_at,date_end:s.date_end,ids:[+x.staff_id]}))}
+KICO[6]=ICO('<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>');
+function openAll(P,A){const who=$('dWho').value,tr=$('dTr').value;const L=TASKS.filter(t=>(!tr||t.tr===tr)&&(who==='cur'?t.cur:t.new).some(i=>P[i]));
+  return {n:L.length,late:L.filter(t=>t.dl&&t.dl<A).length,today:L.filter(t=>t.dl===A).length,later:L.filter(t=>t.dl&&t.dl>A).length,none:L.filter(t=>!t.dl).length,L}}
+function openRender(P,A){const el=$('dOpen');if(!el)return;const o=openAll(P,A),n=o.n||1;
+  const seg=[['r',o.late,'Quá hạn'],['w',o.today,`Hạn ${fmtD(A)}`],['g',o.later,'Hạn sau'],['n',o.none,'Chưa có hạn']].filter(x=>x[1]);
+  const zs=['Zone 1','Zone 2','Zone 3'].map(z=>[z,o.L.filter(t=>t.zone===z).length]).filter(x=>x[1]);
+  el.innerHTML=`<div class="ob"><span class="ol">Tổng task còn treo</span><b data-cu>${o.n}</b><span class="os">task B2 chưa xong${$('dZ').value?' · '+esc($('dZ').value):''}${$('dTr').value?' · '+($('dTr').value==='IT'?'IT Helpdesk':'Điện / Điện Lạnh'):''}</span></div>
+    <div class="om"><div class="obar">${seg.map(([c,v,l])=>`<i class="${c}" style="flex:${v}" title="${esc(l)}: ${v}"></i>`).join('')}</div>
+      <div class="olg">${seg.map(([c,v,l])=>`<span class="${c}"><i></i>${esc(l)} <b>${v}</b> <small>${Math.round(v/n*100)}%</small></span>`).join('')}</div>
+      ${zs.length>1?`<div class="oz">${zs.map(([z,v])=>`<span>${esc(z)} <b>${v}</b></span>`).join('')}</div>`:''}</div>
+    <button class="btn sec" id="oList">Xem danh sách →</button>`;$('oList').onclick=()=>openList()}
+function openList(){const P=dBuckets(),A=$('dA').value,o=openAll(P,A);
+  renderDrill(`Tất cả task còn treo`,[['Quá hạn',o.L.filter(t=>t.dl&&t.dl<A).sort((a,b)=>b.od-a.od),false],[`Hạn ${fmtD(A)}`,o.L.filter(t=>t.dl===A),false],['Hạn sau',o.L.filter(t=>!t.dl||t.dl>A).sort((a,b)=>(a.dl||'9').localeCompare(b.dl||'9')),false]])}
 if(innerWidth<760)document.querySelectorAll('details.fbox').forEach(d=>d.open=false);
 if(tok())setTimeout(()=>$('load').click(),50);else{$('boot').hidden=true;$('auth').hidden=false;setChip('err','Chưa kết nối')}
 </script>
