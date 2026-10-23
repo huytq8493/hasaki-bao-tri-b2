@@ -701,7 +701,7 @@ async function loadSched(){SCHEDINFO={st:'run'};
     for(const ym of ms){const [y,m]=ym.split('-').map(Number);const j=await apiRetry(SCHED_Q(y,m));
       (j.data?.rows||[]).forEach(r=>{const id=+r.staffsche_staff_id;if(!BYID[id])return;const i=String(r.staffsche_time_in_str||''),o=String(r.staffsche_time_out_str||''),day=i.slice(0,10);if(!day)return;
         const code=String(r.staffsche_shift||'').trim(),hi=i.slice(11,16),ho=o.slice(11,16);const span=(Date.parse(o.replace(' ','T'))-Date.parse(i.replace(' ','T')))/36e5||0;
-        const off=/^(W|T)$/i.test(code)||span<=0;const leave=+r.staffsche_leave_id>0;
+        const off=/^(W|T)$/i.test(code)||span<=0;const leave=false;
         (SCHED[id]??={})[day]={code,hi,ho,off,leave,hours:off?0:Math.max(0,span-(span>=8?1:0))}})}
     SCHEDINFO={st:'ok',at:new Date()}}catch(e){SCHEDINFO={st:'er',msg:e.message}}
   render()}
@@ -1185,7 +1185,7 @@ function c5Render(P,A,ok){const el=$('c5');if(!el)return;if(!ok){$('c5n').textCo
   const W=cw('c5'),narrow=W<560,lw=narrow?96:210,sw=narrow?0:96,tw=34,cwid=(W-lw-sw-tw)/H.length,rh=narrow?24:26,top=18,Ht=top+rows.length*rh+4,x0=lw+sw;
   const mx=Math.max(1,...rows.flatMap(x=>x.v));
   const head=(sw?`<text class="m" x="${lw+4}" y="12">Ca làm</text>`:'')+H.map((h,i)=>(narrow&&i%2)?'':`<text class="m" x="${(x0+i*cwid+cwid/2).toFixed(1)}" y="12" text-anchor="middle">${h}h</text>`).join('')+`<text class="m" x="${W-tw/2}" y="12" text-anchor="middle">Tổng</text>`;
-  const hh=t=>{const [a,b]=String(t).split(':');return +a+(b&&b!=='00'?':'+b:'')};const shTxt=sf=>!sf?'chưa có lịch':sf.off?(sf.code==='T'?'Đi thi công':sf.code==='W'?'Nghỉ tuần':'Nghỉ '+sf.code):sf.leave?`Đơn nghỉ · ${hh(sf.hi)}–${hh(sf.ho)}h`:`${sf.code.replace(/\s+/g,'')} · ${hh(sf.hi)}–${hh(sf.ho)}h`;
+  const hh=t=>{const [a,b]=String(t).split(':');return +a+(b&&b!=='00'?':'+b:'')};const shTxt=sf=>!sf?'chưa có lịch':sf.off?(sf.code==='T'?'Đi thi công':sf.code==='W'?'Nghỉ tuần':'Nghỉ '+sf.code):sf.lv&&!sf.half?`Nghỉ phép${sf.lv.ok?'':' (chờ duyệt)'}`:sf.lv&&sf.half?`${sf.code.replace(/\s+/g,'')} · nghỉ ${sf.half==='AM'?'sáng':'chiều'}`:`${sf.code.replace(/\s+/g,'')} · ${hh(sf.hi)}–${hh(sf.ho)}h`;
   const body=rows.map((x,ri)=>{const y=top+ri*rh,nm=narrow?x.r.name.split(' ').pop():shortName(x.r.name);
     const band=x.ins.some(Boolean)?(()=>{let a=x.ins.indexOf(true),b=x.ins.lastIndexOf(true);return `<rect x="${(x0+a*cwid).toFixed(1)}" y="${y-1}" width="${((b-a+1)*cwid).toFixed(1)}" height="${rh+1}" rx="5" fill="var(--c-done)" fill-opacity=".10" stroke="var(--c-done)" stroke-opacity=".45" stroke-dasharray="3 3"/>`})():'';
     const cells=x.v.map((v,i)=>{const xx=x0+i*cwid,op=v?0.18+0.82*v/mx:0,inn=x.ins[i],bad=v&&!inn&&x.sf&&mins(x.sf.hi)!=null||(v&&x.off);
@@ -1363,7 +1363,7 @@ function openList(){const P=dBuckets(),A=$('dA').value,o=openAll(P,A);
   renderDrill(`Tất cả task còn treo`,[['Quá hạn',o.L.filter(t=>t.dl&&t.dl<A).sort((a,b)=>b.od-a.od),false],[`Hạn ${fmtD(A)}`,o.L.filter(t=>t.dl===A),false],['Hạn sau',o.L.filter(t=>!t.dl||t.dl>A).sort((a,b)=>(a.dl||'9').localeCompare(b.dl||'9')),false]])}
 let LEAVES={},LVROWS=[],LVINFO={st:'idle'};
 async function loadLeaves(){LVINFO={st:'run'};try{const fr=ymd(new Date(Date.now()-40*864e5)),to=ymd(new Date(Date.now()+60*864e5));
-    const mk=o=>`/staff-leave?department_id=135&limit=100&offset=${o}&sort=leave_id&is_manager=true&total=1&major_id%5B%5D=6&major_id%5B%5D=68&from_date=${fr}&to_date=${to}`;
+    const mk=o=>`/staff-leave?department_id=135&main_type=1&limit=100&offset=${o}&sort=leave_id&is_manager=true&total=1&major_id%5B%5D=6&major_id%5B%5D=68&from_date=${fr}&to_date=${to}`;
     const rows=[];for(let o=0;o<3000;o+=100){const j=await apiRetry(mk(o));const r=j.data?.rows||[];rows.push(...r);if(r.length<100)break}
     const L={},keep=[];rows.forEach(r=>{const id=+r.staff_id||+r.leave_staff_id;if(!BYID[id]||+r.leave_main_type!==1||+r.leave_status===0||+r.leave_is_valid===0)return;
       const f=String(r.leave_from||'').slice(0,10),t=String(r.leave_to||r.leave_from||'').slice(0,10);if(!f)return;const sh=String(r.leave_shift||'').toUpperCase();
