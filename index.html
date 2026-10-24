@@ -513,9 +513,9 @@ body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none
 .ob b{font-size:56px;line-height:1;font-weight:800;letter-spacing:-.04em;color:var(--c-late)}.ob .os{font-size:12.5px;color:var(--muted)}
 .om{display:grid;gap:10px;min-width:0}
 .obar{display:flex;height:16px;border-radius:99px;overflow:hidden;gap:3px;background:color-mix(in srgb,var(--muted) 12%,transparent)}
-.obar i{display:block;min-width:4px}.obar .r{background:var(--c-late)}.obar .w{background:var(--c-wait)}.obar .g{background:var(--c-done)}.obar .n{background:var(--muted)}
+.obar i{display:block;min-width:4px}.obar .rr{background:color-mix(in srgb,var(--c-late) 70%,#000)}.obar .r{background:var(--c-late)}.obar .w{background:var(--c-wait)}.obar .g{background:var(--c-done)}.obar .n{background:var(--muted)}
 .olg{display:flex;gap:16px;flex-wrap:wrap;font-size:13px;color:var(--muted)}.olg span{display:inline-flex;align-items:center;gap:6px}.olg i{width:10px;height:10px;border-radius:3px}.olg b{color:var(--ink);font-size:15px}.olg small{font-size:11.5px}
-.olg .r i{background:var(--c-late)}.olg .w i{background:var(--c-wait)}.olg .g i{background:var(--c-done)}.olg .n i{background:var(--muted)}
+.olg .rr i{background:color-mix(in srgb,var(--c-late) 70%,#000)}.olg .r i{background:var(--c-late)}.olg .w i{background:var(--c-wait)}.olg .g i{background:var(--c-done)}.olg .n i{background:var(--muted)}
 .oz{display:flex;gap:8px;flex-wrap:wrap}.oz span{padding:4px 11px;border-radius:99px;border:1px solid var(--glass-brd);background:color-mix(in srgb,var(--panel) 55%,transparent);font-size:12.5px;color:var(--muted)}.oz b{color:var(--ink)}
 @media (max-width:760px){.openbox{grid-template-columns:1fr;gap:14px;padding:18px}.ob b{font-size:46px}}
 
@@ -525,6 +525,78 @@ body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none
 .lvi{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:14px;border:1px solid var(--glass-brd);background:color-mix(in srgb,var(--panel) 55%,transparent)}
 .lvi>div{flex:1;min-width:0;display:grid}.lvi b{font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.lvi small{font-size:12px;color:var(--muted)}
 .lvi.now{border-color:color-mix(in srgb,var(--c-wait) 55%,transparent);background:color-mix(in srgb,var(--c-wait) 10%,transparent)}
+
+/* task trễ > 7 ngày ở bảng điều phối */
+.card.late7{background:color-mix(in srgb,var(--c-late) 10%,var(--panel))!important;border:1px solid color-mix(in srgb,var(--c-late) 55%,transparent)!important;box-shadow:inset 4px 0 0 var(--c-late)}
+.card.late7 .t{color:color-mix(in srgb,var(--c-late) 80%,var(--ink));font-weight:700}
+.card.late7:hover{border-color:var(--c-late)!important}
+.pill.p-l7{background:var(--c-late);color:#fff;font-weight:800}
+.pill.p-cl{background:color-mix(in srgb,#ec4899 16%,transparent);color:#db2777}
+.srcsel{min-width:150px}
+
+/* ---------- Report theo nhóm ---------- */
+.rtabs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin:4px 0 12px}
+.rtabs button{all:unset;cursor:pointer;box-sizing:border-box;display:grid;gap:2px;padding:12px 14px;border-radius:var(--r);border:1px solid var(--line);background:var(--panel);box-shadow:var(--shadow);transition:transform .15s,border-color .15s,box-shadow .15s}
+.rtabs button b{font-size:15px}.rtabs button span{font-size:12.5px;color:var(--muted)}.rtabs button em{font-style:normal;color:var(--c-late);font-weight:600}
+.rtabs button:hover{transform:translateY(-1px);border-color:color-mix(in srgb,var(--accent) 45%,var(--line))}
+.rtabs button[aria-selected="true"]{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent),var(--shadow);background:color-mix(in srgb,var(--accent) 8%,var(--panel))}
+.rtabs button[aria-selected="true"] b{color:var(--accent)}
+.rtabs button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.kpis.rk{margin-bottom:12px}.kpi.k-l7 b{color:#a3140c}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .kpi.k-l7 b{color:#ff7b6e}}
+:root[data-theme="dark"] .kpi.k-l7 b{color:#ff7b6e}
+.chart .chd{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+#viewRep .vhead .row select{height:34px}
+#rDet{margin-top:12px}
+@media (max-width:600px){.rtabs{gap:6px}.rtabs button{padding:10px}.rtabs button b{font-size:13.5px}.rtabs button span{font-size:11.5px}}
+
+/* ---------- Report: thẻ phân nhóm + thống kê ---------- */
+.rsec{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin:16px 0 8px}.rsec h3{font-size:17px;margin:0}.rsec .btn{margin-left:auto}
+.rcats{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:10px}
+.rcat{all:unset;box-sizing:border-box;cursor:pointer;display:grid;gap:6px;align-content:start;padding:12px 14px 12px 16px;border-radius:var(--r);background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--cc);box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s,opacity .15s;min-width:0}
+.rcat:hover{transform:translateY(-1px);box-shadow:0 0 0 2px color-mix(in srgb,var(--cc) 30%,transparent),var(--shadow)}
+.rcat:focus-visible{outline:2px solid var(--cc);outline-offset:2px}
+.rcat.on{background:color-mix(in srgb,var(--cc) 10%,var(--panel));box-shadow:0 0 0 2px var(--cc),var(--shadow)}.rcat.dim{opacity:.55}
+.rcat .ct{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.rcat .cv{display:flex;align-items:baseline;gap:8px}.rcat .cv b{font-size:26px;line-height:1.1;font-variant-numeric:tabular-nums}.rcat .cv small{color:var(--muted);font-size:12.5px}
+.rcat .cbar{height:5px;border-radius:9px;background:color-mix(in srgb,var(--ink) 10%,transparent);overflow:hidden}.rcat .cbar i{display:block;height:100%;background:var(--cc);border-radius:9px}
+.rcat .ch{font-size:12px;color:var(--muted);line-height:1.45}.rcat .ch em{font-style:normal;color:var(--c-late);font-weight:600}
+.rlg{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:13px;margin-bottom:10px}.rlg span{display:inline-flex;align-items:center;gap:6px}.rlg i{width:10px;height:10px;border-radius:50%;display:inline-block}
+.rstat{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr));gap:12px}
+.rsl{display:grid;gap:2px;max-height:360px;overflow:auto;padding-right:4px;scrollbar-width:thin}
+.rrow{all:unset;box-sizing:border-box;cursor:pointer;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr) 34px;align-items:center;gap:12px;padding:7px 6px;border-radius:8px;font-size:13.5px}
+.rrow:hover{background:color-mix(in srgb,var(--accent) 8%,transparent)}.rrow:focus-visible{outline:2px solid var(--accent)}
+.rrow .rn{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.rrow b{text-align:right;font-variant-numeric:tabular-nums;color:var(--muted);font-weight:600}
+.rrow .rb{height:9px;border-radius:9px;background:color-mix(in srgb,var(--ink) 7%,transparent);overflow:hidden;display:block}
+.rrow .rb>span{display:flex;height:100%;border-radius:9px;overflow:hidden}.rrow .rb i{display:block;height:100%}
+@media (max-width:600px){.rcats{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.rcat{padding:10px 10px 10px 12px}.rcat .cv b{font-size:22px}.rrow{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) 30px;gap:8px}}
+
+/* ---------- Report: danh sách task ---------- */
+.rlf{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:4px 0 10px}
+.rlf input,.rlf select{height:34px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:inherit;font:inherit;font-size:13px;padding:0 10px}
+.rlf input{flex:1 1 220px;min-width:180px}
+.seg{display:flex;flex-wrap:wrap;gap:6px;width:100%}
+.seg button{all:unset;cursor:pointer;font-size:13px;padding:6px 12px;border-radius:999px;border:1px solid var(--line);background:var(--panel);display:inline-flex;gap:6px;align-items:center;transition:background .15s,border-color .15s}
+.seg button b{font-variant-numeric:tabular-nums;color:var(--muted);font-weight:600}
+.seg button:hover{border-color:color-mix(in srgb,var(--accent) 50%,var(--line))}.seg button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.seg button.on{background:var(--accent);border-color:var(--accent);color:#fff}.seg button.on b{color:#fff}
+.seg button.s-late7.on{background:#a3140c;border-color:#a3140c}.seg button.s-late.on{background:var(--c-late);border-color:var(--c-late)}.seg button.s-today.on{background:var(--c-wait);border-color:var(--c-wait)}.seg button.s-done.on{background:var(--c-done);border-color:var(--c-done)}
+.rlt tr.l7 td{background:color-mix(in srgb,var(--c-late) 7%,transparent)}
+.cdot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;vertical-align:1px}
+.pill.p-w{background:color-mix(in srgb,var(--c-wait) 16%,transparent);color:var(--c-wait)}
+.pill.p-ok{background:color-mix(in srgb,var(--c-done) 16%,transparent);color:var(--c-done)}
+@media (max-width:600px){.rlf select{flex:1 1 45%}.seg{overflow-x:auto;flex-wrap:nowrap;padding-bottom:4px}.seg button{white-space:nowrap}}
+.rlf>*{min-width:0}
+@media (max-width:600px){
+  .rlf input{flex:1 1 100%}.rlf select{flex:1 1 calc(50% - 4px)}
+  .rlt{overflow:visible}.rlt table,.rlt tbody,.rlt tr,.rlt td{display:block;width:auto}.rlt thead{display:none}
+  .rlt tr{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:10px 12px;border-bottom:1px solid var(--line)}
+  .rlt td{padding:0!important;border:0!important;background:none!important}
+  .rlt td.cn{grid-column:1}.rlt td:nth-child(2){grid-column:2;grid-row:1;text-align:right}
+  .rlt td.what{grid-column:1/-1}.rlt td:nth-child(4){grid-column:1}.rlt td:nth-child(5){grid-column:2;text-align:right;font-size:12.5px;color:var(--muted)}
+  .rlt tr.l7{background:color-mix(in srgb,var(--c-late) 7%,transparent)}
+}
+#viewRep{min-width:0;max-width:100%}#viewRep>*{min-width:0;max-width:100%}.seg{min-width:0;max-width:100%}
 </style>
 </head>
 <body>
@@ -544,6 +616,7 @@ body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none
 <div class="navwrap" id="navwrap" hidden>
   <nav class="nav" role="tablist" aria-label="Mục">
     <button role="tab" id="tabD" aria-selected="true"><svg viewBox="0 0 24 24"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 3 5-6"/></svg>Tổng quan</button>
+    <button role="tab" id="tabR" aria-selected="false"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 17v-5M12 17V7M16 17v-8"/></svg>Report</button>
     <button role="tab" id="tabB" aria-selected="false"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Điều phối</button>
     <button role="tab" id="tabT" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Task</button>
     <button role="tab" id="tabC" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M12 3v18M5 8l-3 6h6zM19 8l-3 6h6zM5 8h14"/></svg>Cân tải</button>
@@ -574,6 +647,7 @@ body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none
       <details class="fbox"><summary>Bộ lọc</summary><div class="filters">
         <input type="hidden" id="dA"><input type="hidden" id="dB">
         <select id="dZ" aria-label="Zone"><option value="">Tất cả Zone</option><option>Zone 1</option><option>Zone 2</option><option>Zone 3</option></select>
+        <select id="dSrc" class="srcsel" aria-label="Nguồn task"><option value="">Tất cả bộ phận</option><option value="clinic">Chỉ task Clinic</option><option value="nonclinic">Không gồm Clinic</option></select>
         <select id="dTr" aria-label="Nghiệp vụ"><option value="">Tất cả nghiệp vụ</option><option value="KT">Điện / Điện Lạnh</option><option value="IT">IT Helpdesk</option></select>
         <select id="dWho" aria-label="Tính theo"><option value="cur">Theo người đang giao trên Work</option><option value="new">Theo người sau khi cân / điều phối</option></select>
       </div></details>
@@ -585,12 +659,50 @@ body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none
         <section class="chart"><h3 id="c1t">Task hạn hôm nay theo Zone</h3><p class="sub" id="c1n"></p><div id="c1"></div></section>
         <section class="chart"><h3 id="c2t">Hạn hôm nay theo nhân viên</h3><p class="sub">Đã xong · chờ xử lý · quá hạn chưa xử lý</p><div id="c2"></div></section>
         <section class="chart"><h3>Hoàn thành theo giờ</h3><p class="sub" id="c3n"></p><div id="c3"></div></section>
+        <section class="chart wide"><div class="chd"><h3>Theo nhóm: Hạ tầng · Điện tử · IT Helpdesk</h3><button class="btn sec sm" id="goRep">Xem report chi tiết →</button></div><p class="sub" id="c6n"></p><div id="c6"></div></section>
         <section class="chart wide"><h3>Hoàn thành theo nhân viên & khung giờ</h3><p class="sub" id="c5n"></p><div id="c5"></div></section>
       </div>
       <section class="panel" id="dDet" hidden></section>
       <div class="vhead"><h2>Theo nhân viên</h2><p class="sub">Bấm vào số để xem danh sách task</p></div>
       <div class="tbl dd cards" style="max-height:none"><table><thead><tr><th>Nhân viên</th><th id="hSA">Ca làm việc</th><th style="text-align:right" id="hDA">Đã xong</th><th style="text-align:right" id="hA">Chờ xử lý</th><th style="text-align:right">Quá hạn chưa xử lý</th><th style="text-align:right">Tổng chờ xử lý</th></tr></thead><tbody id="dBody"></tbody></table></div>
       <p class="foot"><b>Đã xong</b> / <b>Chờ xử lý</b> = số task theo tổng task có hạn trong ngày báo cáo. <b>Quá hạn chưa xử lý</b> = task có hạn trước ngày báo cáo mà chưa xong (tính đến hết ngày báo cáo). <b>Tổng chờ xử lý</b> = chờ xử lý + quá hạn chưa xử lý. Bấm vào số để xem danh sách task.</p>
+    </section>
+
+
+    <!-- ===== REPORT THEO NHÓM ===== -->
+    <section id="viewRep" class="view" hidden>
+      <div class="vhead"><div><h2 id="rTitle">Report theo nhóm</h2><p class="sub" id="rSub"></p>
+        <div class="dayp" role="group" aria-label="Ngày report"><button class="btn sec sm" data-rd="-1">Hôm qua</button><button class="btn sec sm" data-rd="0">Hôm nay</button><button class="btn sec sm" data-rd="1">Ngày mai</button><input type="date" id="rPick" aria-label="Chọn ngày report"></div></div>
+        <div class="row"><select id="rZ" aria-label="Zone"><option value="">Tất cả Zone</option><option>Zone 1</option><option>Zone 2</option><option>Zone 3</option></select>
+        <select id="rSrc" class="srcsel" aria-label="Nguồn task"><option value="">Tất cả bộ phận</option><option value="clinic">Chỉ task Clinic</option><option value="nonclinic">Không gồm Clinic</option></select></div></div>
+      <div class="rtabs" role="tablist" id="rTabs"></div>
+      <div class="kpis rk" id="rK"></div>
+      <div class="rsec"><h3 id="rCatT">Phân nhóm theo hạng mục</h3><button class="btn sec sm" id="rCatX" hidden>Bỏ lọc nhóm</button></div>
+      <div class="rcats" id="rCat"></div>
+      <div class="rsec"><h3>Thống kê</h3><p class="sub" id="rStN"></p></div>
+      <div class="rlg" id="rLg"></div>
+      <div class="rstat">
+        <section class="chart"><h3>Chi nhánh</h3><div class="rsl" id="rs1"></div></section>
+        <section class="chart"><h3>Tỉnh thành</h3><div class="rsl" id="rs2"></div></section>
+        <section class="chart"><h3>Người thực hiện</h3><div class="rsl" id="rs3"></div></section>
+      </div>
+      <div class="charts">
+        <section class="chart wide"><h3 id="r1t">Theo hạng mục</h3><p class="sub" id="r1n"></p><div id="r1"></div></section>
+        <section class="chart wide"><h3>Theo nhân viên</h3><p class="sub" id="r2n"></p><div id="r2"></div></section>
+        <section class="chart"><h3>Theo Zone</h3><p class="sub" id="r3n"></p><div id="r3"></div></section>
+        <section class="chart"><h3>Hoàn thành 14 ngày</h3><p class="sub" id="r4n"></p><div id="r4"></div></section>
+        <section class="chart"><h3>Chi nhánh nhiều task treo</h3><p class="sub" id="r5n"></p><div id="r5"></div></section>
+      </div>
+      <section class="panel" id="rDet" hidden></section>
+      <div class="vhead"><div><h2>Danh sách task</h2><p class="sub" id="r6n"></p></div><button class="btn sec sm" id="rCsv">Tải CSV</button></div>
+      <div class="rlf" id="rLf">
+        <div class="seg" id="rSt" role="group" aria-label="Trạng thái"></div>
+        <input type="search" id="rQ" placeholder="Tìm mã task, việc, chi nhánh…" aria-label="Tìm task">
+        <select id="rWho" aria-label="Người làm"><option value="">Tất cả người làm</option></select>
+        <select id="rCat2" aria-label="Hạng mục"><option value="">Tất cả hạng mục</option></select>
+        <select id="rSort" aria-label="Sắp xếp"><option value="dl">Trễ lâu nhất trước</option><option value="dl2">Hạn gần nhất trước</option><option value="store">Theo chi nhánh</option><option value="who">Theo người làm</option></select>
+      </div>
+      <div id="r6"></div>
     </section>
 
     <!-- ===== ĐIỀU PHỐI NGÀY MAI ===== -->
@@ -600,6 +712,7 @@ body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none
         <button class="btn" id="bUpd">Ghi người thực hiện lên Work</button></div>
       <details class="fbox" open><summary>Zone, nghiệp vụ &amp; gợi ý</summary><div class="filters">
         <select id="bZone" aria-label="Zone"><option value="">Tất cả Zone</option><option selected>Zone 1</option><option>Zone 2</option><option>Zone 3</option></select>
+        <select id="bSrc" class="srcsel" aria-label="Nguồn task"><option value="">Tất cả bộ phận</option><option value="clinic">Chỉ task Clinic</option><option value="nonclinic">Không gồm Clinic</option></select>
         <select id="bTr" aria-label="Nghiệp vụ"><option value="KT">Điện / Điện Lạnh</option><option value="IT">IT Helpdesk</option></select>
         <label class="chk" title="Giờ tối đa mỗi người; có lịch ca thì lấy theo giờ ca (trừ 1h nghỉ trưa)">Giờ tối đa <input type="number" id="bCap" value="8" min="1" max="14" step="0.5" style="width:70px"></label>
         <button class="btn sec" id="bAuto">Gợi ý tự động</button>
@@ -622,6 +735,7 @@ body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none
         <input type="search" id="fQ" placeholder="Tìm mã, chi nhánh, hạng mục…" aria-label="Tìm">
         <select id="fZone" aria-label="Zone"><option value="">Tất cả Zone</option><option>Zone 1</option><option>Zone 2</option><option>Zone 3</option></select>
         <select id="fNv" aria-label="Người làm"><option value="">Tất cả người làm</option></select>
+        <select id="fSrc" class="srcsel" aria-label="Nguồn task"><option value="">Tất cả bộ phận</option><option value="clinic">Chỉ task Clinic</option><option value="nonclinic">Không gồm Clinic</option></select>
         <select id="fTr" aria-label="Nghiệp vụ"><option value="">Tất cả nghiệp vụ</option><option value="KT">Điện / Điện Lạnh</option><option value="IT">IT Helpdesk</option></select>
         <select id="fChg" aria-label="Thay đổi"><option value="">Tất cả task</option><option value="1">Chỉ task đổi người</option><option value="out">Task ngoài đội bảo trì</option></select>
       </div></details>
@@ -763,8 +877,8 @@ function build(parents){
       const store=loc?loc.name:(p.name.split('_')[0]||'');
       const city=loc?nm(loc.city_name):'';
       const de=Date.parse((s.date_end||p.date_end||'').replace(' ','T'));
-      const t={tid:s.id,pid:p.id,code:p.code,name:p.name.replace(store,'').replace(/^_?\d{13,19}_/,'').replace(/^_/,''),full:p.name,store,addr:loc?.address||'',ll:loc?.coordinates?`${loc.coordinates.latitude},${loc.coordinates.longitude}`:'',
-        hm:(cfg.hangmuc00||'').split('-')[1]||'',pri:p.piority,od:isNaN(de)?0:Math.round((new Date(new Date().toDateString())-new Date(new Date(de).toDateString()))/864e5),dl:(s.date_end||'').slice(0,10),de0:s.date_end||'',pde0:p.date_end||'',pdl:(p.date_end||'').slice(0,10),cur:ids,doneIds:finIds,curNames:ids.map(i=>BYID[i]?.name||names[i]||('#'+i))};
+      const t={tid:s.id,pid:p.id,code:p.code,name:p.name.replace(store,'').replace(/^_?\d{13,19}_/,'').replace(/^_/,''),full:p.name,store,addr:loc?.address||'',city:loc?.city_name||'',ll:loc?.coordinates?`${loc.coordinates.latitude},${loc.coordinates.longitude}`:'',
+        hm:hmFix(hmN(cfg.hangmuc00),p.name),pri:p.piority,od:isNaN(de)?0:Math.round((new Date(new Date().toDateString())-new Date(new Date(de).toDateString()))/864e5),dl:(s.date_end||'').slice(0,10),de0:s.date_end||'',pde0:p.date_end||'',pdl:(p.date_end||'').slice(0,10),clinic:/clinic/i.test(String(cfg.Department||'')),cur:ids,doneIds:finIds,curNames:ids.map(i=>BYID[i]?.name||names[i]||('#'+i))};
       if(!ids.length||!ids.every(i=>BYID[i])){ids.forEach(i=>{if(!BYID[i]){const k=names[i]||('#'+i);(OUTS[k]??={n:0}).n++}});if(!ids.length)(OUTS['(chưa giao ai)']??={n:0}).n++;return}
       t.tr=ids.some(i=>BYID[i].tr==='IT')?'IT':'KT';
       t.zone=ZONEOF[nm(store)]||BYID[ids[0]].zone;
@@ -809,7 +923,7 @@ function rebalance(){
 /* ---------- hiển thị ---------- */
 const S={zone:'',nv:'',tr:'',chg:'',q:''};
 const changed=t=>[...t.cur].sort().join()!==[...t.new].sort().join();
-function render(){renderMain();if(!$('viewBoard').hidden)bRender();if(!$('viewDue').hidden)dRender()}
+function render(){renderMain();if(!$('viewBoard').hidden)bRender();if(!$('viewDue').hidden)dRender();if(!$('viewRep').hidden)rRender()}
 function renderMain(){
   const L0=loadOf(t=>t.cur),L1=loadOf(t=>t.new);
   const ch=TASKS.filter(changed).length,outN=Object.values(OUTS).reduce((a,b)=>a+b.n,0);
@@ -827,7 +941,7 @@ function renderMain(){
   // bảng
   if(S.chg==='out'){$('cnt').textContent='';$('tbl').innerHTML=`<table><thead><tr><th>Người được giao (ngoài đội bảo trì)</th><th>Số task B2</th></tr></thead><tbody>${Object.entries(OUTS).sort((a,b)=>b[1].n-a[1].n).map(([k,v])=>`<tr><td>${esc(k)}</td><td class="num">${v.n}</td></tr>`).join('')}</tbody></table>`;return}
   const q=nm(S.q);
-  const L=TASKS.filter(t=>(!S.zone||t.zone===S.zone)&&(!S.tr||t.tr===S.tr)&&(!S.nv||t.new.includes(+S.nv)||t.cur.includes(+S.nv))&&(!S.chg||changed(t))&&(!q||nm(t.code+' '+t.store+' '+t.full+' '+t.hm).includes(q)))
+  const L=TASKS.filter(t=>srcOK(t)&&(!S.zone||t.zone===S.zone)&&(!S.tr||t.tr===S.tr)&&(!S.nv||t.new.includes(+S.nv)||t.cur.includes(+S.nv))&&(!S.chg||changed(t))&&(!q||nm(t.code+' '+t.store+' '+t.full+' '+t.hm).includes(q)))
     .sort((a,b)=>a.zone.localeCompare(b.zone)||(BYID[a.new[0]]?.name||'').localeCompare(BYID[b.new[0]]?.name||'')||a.store.localeCompare(b.store));
   $('cnt').textContent=`${L.length} task · ${L.filter(changed).length} task đề xuất đổi người`;
   const opt=(t,sel)=>ROSTER.filter(r=>r.tr===t.tr).sort((a,b)=>(a.zone!==t.zone)-(b.zone!==t.zone)||a.name.localeCompare(b.name)).map(r=>`<option value="${r.id}"${r.id===sel?' selected':''}>${esc(r.name)}${r.zone!==t.zone?' ('+r.zone+')':''}</option>`).join('');
@@ -874,13 +988,13 @@ async function writePlanned(ts,label){if(staleGuard()||!ts.length)return;toast(`
 function planSave(){try{const o={};Object.keys(PLAN).forEach(k=>{const t=TASKS.find(x=>x.tid==k);if(t)o[k]=t.new});localStorage.setItem(TMRK,JSON.stringify(o))}catch(e){}}
 function planRestore(){PLAN={};AUTO={};try{const o=JSON.parse(localStorage.getItem(TMRK)||'{}');Object.entries(o).forEach(([k,ids])=>{const t=TASKS.find(x=>x.tid==k);if(!t)return;const v=(ids||[]).map(Number).filter(i=>BYID[i]);if(v.length)t.new=[...new Set(v)];PLAN[k]=1})}catch(e){}autoPlan()}
 const zOK=z=>!$('bZone').value||z===$('bZone').value;
-const bTasks=()=>TASKS.filter(t=>t.tr===$('bTr').value&&(zOK(t.zone)||(PLAN[t.tid]?t.new:t.cur).some(i=>BYID[i]&&zOK(BYID[i].zone))));
+const bTasks=()=>TASKS.filter(t=>t.tr===$('bTr').value&&srcOK(t)&&(zOK(t.zone)||(PLAN[t.tid]?t.new:t.cur).some(i=>BYID[i]&&zOK(BYID[i].zone))));
 const pScore=t=>(t.pri==3?1000:0)+Math.max(0,t.od);
 const isLanhBlock=(t,id)=>!!BYID[id]&&BYID[id].tr!==t.tr;
 function grpStores(L){const g={};L.forEach(t=>(g[t.store]??=[]).push(t));return Object.entries(g)}
 function chip(t,from){const who=from?t.new.filter(i=>i!=from).map(i=>BYID[i]?.name.split(' ').pop()):t.new.map(i=>BYID[i]?.name.split(' ').pop());
-  return `<div class="card" draggable="true" data-tid="${t.tid}" data-from="${from||''}">${from?`<button class="rm" data-unplan="${t.tid}" data-rmfrom="${from}" aria-label="${t.new.length>1?'Bỏ người này khỏi task':'Bỏ khỏi kế hoạch'}" title="${t.new.length>1?'Bỏ '+esc(BYID[from]?.name||'')+' khỏi task (giữ người còn lại)':'Bỏ khỏi kế hoạch'}">×</button>`:''}
-  <div class="t">${esc(t.name)}</div><div class="m"><a class="mono tlink" draggable="false" href="https://work.hasaki.vn/tasks?task_id=${t.tid}" target="_blank" rel="noopener" title="Mở task trên Work">${esc(t.code)}</a>${t.pri==3?'<span class="pill p-urg">Gấp</span>':''}${t.od>0?`<span class="pill p-late">trễ ${t.od}n</span>`:''}${t.lanh?'<span class="pill p-it">Lạnh</span>':''}${t.remote?'<span class="pill p-rm">Từ xa</span>':''}${$('bZone').value&&t.zone!==$('bZone').value?`<span class="pill p-it" title="Chi nhánh thuộc ${esc(t.zone)}">${esc(t.zone.replace('Zone ','Z'))}</span>`:''}${from?(WS[t.tid]==='run'?'<span class="pill p-rm">đang ghi…</span>':WS[t.tid]==='er'?`<span class="pill p-urg" title="${esc(WS[t.tid+'m']||'')}">lỗi ghi</span>`:pending(t)?'<span class="pill p-late">chưa ghi</span>':(AUTO[t.tid]&&!changed(t)?'<span class="pill p-kt" title="Task đã có hạn đúng ngày này trên Work">theo hạn</span>':'<span class="pill p-kt">✓ đã ghi</span>')):''}<span>${t.est}′</span>${from?'':dlTag(t)}${from?(who.length?`<span>· cùng ${esc(who.join(', '))}</span>`:''):poolWho(t)}</div></div>`}
+  return `<div class="card${t.od>7?' late7':''}" draggable="true" data-tid="${t.tid}" data-from="${from||''}">${from?`<button class="rm" data-unplan="${t.tid}" data-rmfrom="${from}" aria-label="${t.new.length>1?'Bỏ người này khỏi task':'Bỏ khỏi kế hoạch'}" title="${t.new.length>1?'Bỏ '+esc(BYID[from]?.name||'')+' khỏi task (giữ người còn lại)':'Bỏ khỏi kế hoạch'}">×</button>`:''}
+  <div class="t">${esc(t.name)}</div><div class="m"><a class="mono tlink" draggable="false" href="https://work.hasaki.vn/tasks?task_id=${t.tid}" target="_blank" rel="noopener" title="Mở task trên Work">${esc(t.code)}</a>${t.pri==3?'<span class="pill p-urg">Gấp</span>':''}${t.od>7?`<span class="pill p-l7">⚠ trễ ${t.od}n</span>`:t.od>0?`<span class="pill p-late">trễ ${t.od}n</span>`:''}${t.lanh?'<span class="pill p-it">Lạnh</span>':''}${t.clinic?'<span class="pill p-cl">Clinic</span>':''}${t.remote?'<span class="pill p-rm">Từ xa</span>':''}${$('bZone').value&&t.zone!==$('bZone').value?`<span class="pill p-it" title="Chi nhánh thuộc ${esc(t.zone)}">${esc(t.zone.replace('Zone ','Z'))}</span>`:''}${from?(WS[t.tid]==='run'?'<span class="pill p-rm">đang ghi…</span>':WS[t.tid]==='er'?`<span class="pill p-urg" title="${esc(WS[t.tid+'m']||'')}">lỗi ghi</span>`:pending(t)?'<span class="pill p-late">chưa ghi</span>':(AUTO[t.tid]&&!changed(t)?'<span class="pill p-kt" title="Task đã có hạn đúng ngày này trên Work">theo hạn</span>':'<span class="pill p-kt">✓ đã ghi</span>')):''}<span>${t.est}′</span>${from?'':dlTag(t)}${from?(who.length?`<span>· cùng ${esc(who.join(', '))}</span>`:''):poolWho(t)}</div></div>`}
 function grpHtml(store,L,from){const m=L.reduce((a,t)=>a+t.est,0);
   return `<div class="grp"><div class="gh" draggable="true" data-store="${esc(store)}" data-from="${from||''}" title="Kéo cả cụm chi nhánh"><span>${esc(store)}</span><small>${L.length} task · ${(m/60).toFixed(1)}h</small></div>${L.map(t=>chip(t,from)).join('')}</div>`}
 function pLoad(id,L){const mine=L.filter(t=>PLAN[t.tid]&&t.new.includes(id));const st=new Set(mine.filter(t=>!t.remote).map(t=>t.store));return {mine,h:(mine.reduce((a,t)=>a+t.est,0)+TRAVEL*st.size)/60,st:st.size}}
@@ -962,8 +1076,8 @@ function confirmTwice(id,msg){const b=$(id);if(b.dataset.arm){delete b.dataset.a
 try{const z=localStorage.getItem('b2zone');if(z!==null&&[...$('bZone').options].some(o=>o.value===z))$('bZone').value=z}catch(e){}
 ['bZone','bTr','bCap','bSort'].forEach(i=>$(i).onchange=bRender);$('bZone').addEventListener('change',()=>{try{localStorage.setItem('b2zone',$('bZone').value)}catch(e){}});$('bQ').oninput=bRender;
 $('bUpd').onclick=()=>{$('mScope').value='plan';$('mZone').value=$('bZone').value;openModal()};
-function tab(v){[['tabD','viewDue','d'],['tabB','viewBoard','b'],['tabT','viewTbl','t'],['tabC','viewBal','c']].forEach(([a,b,k])=>{$(a).setAttribute('aria-selected',v===k);$(b).hidden=v!==k});try{localStorage.setItem('b2tab',v)}catch(e){}window.scrollTo({top:0});render()}
-$('tabD').onclick=()=>tab('d');$('tabB').onclick=()=>tab('b');$('tabT').onclick=()=>tab('t');$('tabC').onclick=()=>tab('c');
+function tab(v){[['tabD','viewDue','d'],['tabR','viewRep','r'],['tabB','viewBoard','b'],['tabT','viewTbl','t'],['tabC','viewBal','c']].forEach(([a,b,k])=>{$(a).setAttribute('aria-selected',v===k);$(b).hidden=v!==k});try{localStorage.setItem('b2tab',v)}catch(e){}window.scrollTo({top:0});render()}
+$('tabD').onclick=()=>tab('d');$('tabR').onclick=()=>tab('r');$('tabB').onclick=()=>tab('b');$('tabT').onclick=()=>tab('t');$('tabC').onclick=()=>tab('c');
 try{const a=localStorage.getItem('b2autoW');if(a!==null)$('bAutoW').checked=a==='1'}catch(e){}
 $('bAutoW').onchange=()=>{try{localStorage.setItem('b2autoW',$('bAutoW').checked?'1':'0')}catch(e){}toast($('bAutoW').checked?'Kéo thả sẽ ghi ngay lên Work':'Kéo thả chỉ lưu trên máy; bấm "Ghi ngay" để ghi')};
 try{const v=localStorage.getItem('b2tab');if(v&&v!=='d')setTimeout(()=>tab(v),0)}catch(e){}
@@ -983,18 +1097,18 @@ async function loadDone(){DONEINFO={st:'run'};if(!$('viewDue').hidden)dRender();
     DONE=[];u.forEach(p=>{const cfg=(p.data&&!Array.isArray(p.data)&&p.data.configs)||{};const loc=LOCS[cfg.chinhanh00];
       (p.subtasks||[]).forEach(s0=>{if(s0.workflow_step_id!=B2)return;doneRecs(s0).forEach(s=>{const ids=s.ids;if(!ids.length)return;
         const store=loc?loc.name:(p.name.split('_')[0]||'');const tr=ids.some(i=>BYID[i].tr==='IT')?'IT':'KT';
-        DONE.push({tid:s.id,code:p.code,store,addr:loc?.address||'',name:p.name.replace(store,'').replace(/^_?\d{13,19}_/,'').replace(/^_/,''),hm:(cfg.hangmuc00||'').split('-')[1]||'',
-          fin:s.finished_at,day:s.finished_at.slice(0,10),dl:(s.date_end||'').slice(0,10),ids,tr,zone:ZONEOF[nm(store)]||BYID[ids[0]].zone,est:est(p.name),remote:false,pri:p.piority,od:0,lanh:false,done:true})})})});
+        DONE.push({tid:s.id,code:p.code,store,addr:loc?.address||'',city:loc?.city_name||'',name:p.name.replace(store,'').replace(/^_?\d{13,19}_/,'').replace(/^_/,''),hm:hmFix(hmN(cfg.hangmuc00),p.name),
+          clinic:/clinic/i.test(String(cfg.Department||'')),fin:s.finished_at,day:s.finished_at.slice(0,10),dl:(s.date_end||'').slice(0,10),ids,tr,zone:ZONEOF[nm(store)]||BYID[ids[0]].zone,est:est(p.name),remote:false,pri:p.piority,od:0,lanh:false,done:true})})})});
     DONEINFO={st:'ok',n:u.size,at:new Date()}}catch(e){DONEINFO={st:'er',msg:e.message}}
   if(!$('viewDue').hidden)dRender()}
 let DSEL=null;
 function dBuckets(){const A=$('dA').value,B=$('dB').value,who=$('dWho').value,tr=$('dTr').value,dz=$('dZ').value;const P={};
   ROSTER.filter(r=>(!tr||r.tr===tr)&&(!dz||r.zone===dz)).forEach(r=>P[r.id]={doneA:[],done:[],late:[],a:[],hang:[],b:[],plan:[],tom:[]});
-  TASKS.filter(t=>!tr||t.tr===tr).forEach(t=>{(who==='cur'?t.cur:t.new).forEach(i=>{const o=P[i];if(!o)return;
+  TASKS.filter(t=>(!tr||t.tr===tr)&&srcOK(t)).forEach(t=>{(who==='cur'?t.cur:t.new).forEach(i=>{const o=P[i];if(!o)return;
     if(t.dl&&t.dl<A)o.late.push(t);if(t.dl===A)o.a.push(t);if(t.dl===B)o.b.push(t)});
     t.new.forEach(i=>{if(P[i]&&PLAN[t.tid])P[i].plan.push(t)})});
-  DONE.filter(d=>d.day===A&&(!tr||d.tr===tr)).forEach(d=>d.ids.forEach(i=>{if(!P[i])return;P[i].done.push(d);if(d.dl===A)P[i].doneA.push(d)}));
-  if(A<ymd(new Date()))DONE.filter(d=>d.day>A&&d.dl&&d.dl<=A&&(!tr||d.tr===tr)).forEach(d=>d.ids.forEach(i=>{const o=P[i];if(!o)return;const x={...d,od:Math.round((new Date(A+'T00:00')-new Date(d.dl+'T00:00'))/864e5),lateFin:true};(d.dl===A?o.a:o.late).push(x)}));
+  DONE.filter(d=>d.day===A&&(!tr||d.tr===tr)&&srcOK(d)).forEach(d=>d.ids.forEach(i=>{if(!P[i])return;P[i].done.push(d);if(d.dl===A)P[i].doneA.push(d)}));
+  if(A<ymd(new Date()))DONE.filter(d=>d.day>A&&d.dl&&d.dl<=A&&(!tr||d.tr===tr)&&srcOK(d)).forEach(d=>d.ids.forEach(i=>{const o=P[i];if(!o)return;const x={...d,od:Math.round((new Date(A+'T00:00')-new Date(d.dl+'T00:00'))/864e5),lateFin:true};(d.dl===A?o.a:o.late).push(x)}));
   Object.values(P).forEach(o=>{o.hang=[...o.late,...o.a];o.tom=[...new Set([...o.b,...o.plan])]});return P}
 const dH=l=>{const st=new Set(l.filter(t=>!t.remote).map(t=>t.store));return {n:l.length,st:st.size,h:(l.reduce((a,t)=>a+t.est,0)+TRAVEL*st.size)/60}};
 let DLH={doneA:'Hạn hôm nay · xong',a:'Hạn hôm nay · còn treo',done:'Đã làm (mọi hạn)',late:'Quá hạn · còn treo',hang:'Tổng còn treo',tom:'Ngày mai làm'};
@@ -1017,7 +1131,7 @@ function dRender(){const P=dBuckets(),A=$('dA').value,B=$('dB').value;repUI();
   $('dK').innerHTML=[[ok?dA:'…',`task hạn ${fmtD(A)} đã xong`,'k-ok'],[T.a.length,`task hạn ${fmtD(A)} chờ xử lý`,'k-bad'],[ok&&rate!=null?rate+'%':'–',`hoàn thành task hạn ${fmtD(A)}${ok?` (${dA}/${dA+T.a.length})`:''}`,'k-acc'],
     [ok?T.done.length:'…',`task đã làm ${fmtD(A)} (mọi hạn)${ok&&T.done.length?` · ${T.done.length-ontime} xong trễ hạn`:''}`,''],[T.late.length,`task quá hạn chưa xử lý (tính đến hết ${fmtD(A)})`,'k-warn'],
     [T.tom.length,`task ${B===ymd(new Date(Date.now()+864e5))?'ngày mai ':''}${fmtD(B)} (${uniqT(Object.values(P).flatMap(o=>o.b)).length} theo hạn · ${uniqT(Object.values(P).flatMap(o=>o.plan)).length} đã xếp)`,'k-acc']]
-    .map(([b,x,c],i)=>`<div class="kpi ${c||''}"><i class="shine"></i><em class="ki">${KICO[i]||''}</em><b>${b}</b><span>${x}</span></div>`).join('');heroRender(P,T,A,ok,rate);openRender(P,A);lvRender(A);countUp();
+    .map(([b,x,c],i)=>`<div class="kpi ${c||''}"><i class="shine"></i><em class="ki">${KICO[i]||''}</em><b>${b}</b><span>${x}</span></div>`).join('');heroRender(P,T,A,ok,rate);openRender(P,A);lvRender(A);c6Render(P,T,A);c7Render(P,T,A);countUp();
   const TK=['late','hang'];
   const rat=(x,n,k,id,lab)=>{if(!n)return `<td class="n z" data-l="${lab}">–</td>`;const pc=k==='a'?100-Math.round((n-x)/n*100):Math.round(x/n*100);return `<td class="n" data-l="${lab}"><span>${x&&id?`<button data-d="${id}|${k}">${x}</button>`:`<b>${x}</b>`}<small> / ${n}</small> <small class="pc ${k==='doneA'?(pc>=80?'g':pc>=50?'w':'r'):(pc<=20?'g':pc<=50?'w':'r')}">${pc}%</small></span></td>`};
   const cols=(o,id,tot)=>{const n=o.doneA.length+o.a.length;return rat(o.doneA.length,n,'doneA',id,`Đã xong (hạn ${fmtD(A)})`)+rat(o.a.length,n,'a',id,`Chờ xử lý (hạn ${fmtD(A)})`)+TK.map(k=>tot?`<td class="n" data-l="${DLH[k]}">${o[k].length||'–'}</td>`:dCell(o[k],id,k)).join('')};
@@ -1059,26 +1173,28 @@ function hideTip(){TIP.hidden=true;document.querySelectorAll('.tg.on').forEach(e
 document.addEventListener('mousemove',e=>{const g=e.target.closest&&e.target.closest('.chart .tg');if(g)showTip(g,e.clientX,e.clientY);else if(!TIP.hidden)hideTip()});
 document.addEventListener('click',e=>{const g=e.target.closest&&e.target.closest('.chart .tg');if(!g)hideTip()},true);
 document.addEventListener('click',e=>{const g=e.target.closest&&e.target.closest('.chart .tg');if(!g)return;hideTip();drill(g,e.target)});
-function drill(g,t){if(!DC)return;const {P,T,A}=DC;const c=g.closest('.chart>div[id]')?.id,key=g.dataset.key,k=t.dataset&&t.dataset.k!=null?+t.dataset.k:null;
+function drill(g,t){const _c=g.closest('.chart>div[id]')?.id||'';if(/^r\d$/.test(_c))return rDrill(g,t,_c);if(!DC)return;const {P,T,A}=DC;const c=g.closest('.chart>div[id]')?.id,key=g.dataset.key,k=t.dataset&&t.dataset.k!=null?+t.dataset.k:null;
   const KB=['doneA','a','late'],LB={doneA:`Đã xong (hạn ${fmtD(A)})`,a:`Chờ xử lý (hạn ${fmtD(A)})`,late:'Quá hạn chưa xử lý'};
   let title='',groups=[];
   if(c==='c1'||c==='c2'){const ids=c==='c1'?ROSTER.filter(r=>r.zone===key&&P[r.id]).map(r=>r.id):[+key];if(!ids.length||(c==='c2'&&!BYID[+key]))return;const S=dSum(P,ids);
     title=c==='c1'?key:BYID[+key].name;groups=(k==null?KB:[KB[k]]).map(x=>[LB[x],S[x],x==='doneA']);if(k!=null)title+=' · '+LB[KB[k]]}
   else if(c==='c3'){const h=6+(+key);const l=T.done.filter(d=>{const hh=+d.fin.slice(11,13);return h===6?hh<=6:h===23?hh>=23:hh===h});title=`Hoàn thành từ ${h}h đến ${h+1}h ngày ${fmtD(A)}`;groups=[['',l,true]]}
+  else if(c==='c6'||c==='c7'){const G=C6G[key];if(!G)return;const KB=['done','late','today','ok'],LB2={done:`Đã xong ${fmtD(A)}`,late:'Quá hạn',today:`Hạn ${fmtD(A)}`,ok:'Chưa trễ hạn'};title=G.name;groups=(k==null?KB:[KB[k]]).map(x=>[LB2[x],G[x],x==='done']).filter(x=>x[1].length);if(k!=null)title+=' · '+LB2[KB[k]]}
   else if(c==='c5'){const [id,hs]=String(key).split('|').map(Number);if(!BYID[id]||!P[id])return;const all=P[id].done;const l=hs<0?all:all.filter(d=>hBin(d.fin)===hs);if(!l.length)return;
     title=hs<0?`${BYID[id].name} · hoàn thành ngày ${fmtD(A)}`:`${BYID[id].name} · hoàn thành ${hs}h–${hs+1}h ngày ${fmtD(A)}`;groups=[['',l,true]]}
   else if(c==='c4'){const R4=[[0,0],[1,1],[2,3],[4,7],[8,14],[15,30],[31,1e9]][+key],lab=['hạn đến hôm nay','trễ 1 ngày','trễ 2–3 ngày','trễ 4–7 ngày','trễ 8–14 ngày','trễ 15–30 ngày','trễ trên 30 ngày'][+key];
     const l=T.hang.filter(t=>{const o=Math.max(0,t.od);return o>=R4[0]&&o<=R4[1]});title=`Còn treo · ${lab}`;groups=[['',l,false]]}
   else return;
   renderDrill(title,groups)}
-function renderDrill(title,groups){DSEL=null;const d=$('dDet');const n=groups.reduce((a,g)=>a+g[1].length,0);const who=$('dWho').value;
+let DTGT=null;
+function renderDrill(title,groups){DSEL=null;const d=DTGT||$('dDet');DTGT=null;const n=groups.reduce((a,g)=>a+g[1].length,0);const who=$('dWho').value;
   const tbl=(l,isD)=>l.length?`<div class="tbl" style="max-height:none"><table><thead><tr><th>Chi nhánh</th><th>Mã task</th><th>Hạng mục</th><th>Hạn</th>${isD?'<th>Hoàn thành lúc</th>':''}<th>Người làm</th><th>Ước tính</th></tr></thead><tbody>${grpStores(l).map(([st,ts])=>ts.map((t,i)=>`<tr>${i?'':`<td rowspan="${ts.length}" class="cn">${esc(st)}<small>${esc(t.addr||'')}</small></td>`}<td><a class="mono" href="https://work.hasaki.vn/tasks?task_id=${t.tid}" target="_blank" rel="noopener">${esc(t.code)}</a></td><td class="what">${esc(t.name)}<small>${esc(t.hm||'')}${t.pri==3?' · <span class="pill p-urg">Gấp</span>':''}</small></td><td class="mono">${t.dl?fmtD(t.dl):'–'}${!isD&&t.od>0?` <span class="pill p-late">trễ ${t.od}n</span>`:''}</td>${isD?`<td class="mono">${esc(t.fin.slice(11,16))}${t.dl&&t.day>t.dl?' <span class="pill p-late">trễ hạn</span>':''}</td>`:''}<td>${esc((t.done?t.ids:(who==='cur'?t.cur:t.new)).map(x=>BYID[x]?.name||x).join(', '))}</td><td class="num">${t.est}′</td></tr>`).join('')).join('')}</tbody></table></div>`:'<p class="sub">Không có task.</p>';
   d.innerHTML=`<div class="row" style="justify-content:space-between"><h2>${esc(title)} · ${n} task</h2><button class="icon" id="dX">Đóng</button></div>`+groups.map(([lab,l,isD])=>(groups.length>1?`<h3 style="margin-top:6px">${esc(lab)} <span class="sub">(${l.length})</span></h3>`:'')+tbl(l,isD)).join('');
-  d.hidden=false;$('dX').onclick=()=>{d.hidden=true};d.scrollIntoView({behavior:'smooth',block:'start'})}
+  d.hidden=false;d.querySelector('#dX').onclick=()=>{d.hidden=true};d.scrollIntoView({behavior:'smooth',block:'start'})}
 window.addEventListener('scroll',hideTip,{passive:true});
 const shortName=n=>n.split(' ').slice(-2).join(' ');
 const cw=id=>Math.max(300,Math.round($(id).clientWidth||600));
-let _rz;window.addEventListener('resize',()=>{clearTimeout(_rz);_rz=setTimeout(()=>{if(!$('viewDue').hidden&&!$('main').hidden)dRender()},200)});
+let _rz;window.addEventListener('resize',()=>{clearTimeout(_rz);_rz=setTimeout(()=>{if($('main').hidden)return;if(!$('viewDue').hidden)dRender();if(!$('viewRep').hidden)rRender()},200)});
 let DC=null;
 function dCharts(P,T,A){const ok=DONEINFO.st==='ok';DC={P,T,A};
   // 1) theo Zone
@@ -1205,7 +1321,7 @@ function setRep(v){if(staleGuard())return;const td=ymd(new Date()),mn=$('dPick')
   if($('dPick').max&&v>$('dPick').max){toast('Chỉ xem trước được 90 ngày');v=$('dPick').max}if(mn&&v<mn){toast(`Chỉ xem được ${DONE_DAYS} ngày gần nhất`);v=mn}
   $('dA').value=v;$('dB').value=ymd(new Date(new Date(v+'T12:00:00').getTime()+864e5));DSEL=null;$('dDet').hidden=true;
   const need=[v,$('dB').value].some(x=>{const d=new Date(x+'T12:00:00');return !SCHEDM.has(d.getFullYear()+'-'+(d.getMonth()+1))});
-  if(need&&TASKS.length)loadSched();else dRender()}
+  if(need&&TASKS.length)loadSched();else{dRender();if(!$('viewRep').hidden)rRender()}}
 $('dPick').onchange=e=>setRep(e.target.value);
 document.querySelectorAll('#viewDue .dayp [data-od]').forEach(b=>b.onclick=()=>setRep(ymd(new Date(Date.now()+(+b.dataset.od)*864e5))));
 function openPair(d,to,t,base){const nm=i=>BYID[i]?.name||('#'+i),sh=i=>{const sf=shiftOf(i,TMRD());return unavailable(sf)?` (${shiftLabel(sf)})`:''};
@@ -1237,7 +1353,7 @@ async function pageAll2(mk,onProg){const rows=[];let i=0,end=Infinity,pg=0;const
 const KV={_d:null,db(){return this._d||(this._d=new Promise(res=>{try{const r=indexedDB.open('b2cache',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>res(null)}catch(e){res(null)}}))},
   async get(k){const d=await this.db();if(!d)return null;return new Promise(res=>{try{const q=d.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>res(q.result??null);q.onerror=()=>res(null)}catch(e){res(null)}})},
   async set(k,v){const d=await this.db();if(!d)return;try{d.transaction('kv','readwrite').objectStore('kv').put(v,k)}catch(e){}}};
-function cP(p){const c=(p.data&&!Array.isArray(p.data)&&p.data.configs)||{};return {id:p.id,code:p.code,name:p.name||'',piority:p.piority,current_step_id:p.current_step_id,date_end:p.date_end,data:{configs:{chinhanh00:c.chinhanh00,hangmuc00:c.hangmuc00}},
+function cP(p){const c=(p.data&&!Array.isArray(p.data)&&p.data.configs)||{};return {id:p.id,code:p.code,name:p.name||'',piority:p.piority,current_step_id:p.current_step_id,date_end:p.date_end,data:{configs:{chinhanh00:c.chinhanh00,hangmuc00:c.hangmuc00,Department:c.Department}},
   subtasks:(p.subtasks||[]).filter(s=>s.workflow_step_id==B2).map(s=>({id:s.id,workflow_step_id:s.workflow_step_id,status:s.status,staff_ids:s.staff_ids,date_end:s.date_end,finished_at:s.finished_at,staff:(s.staff||[]).map(x=>({staff_id:x.staff_id,status:x.status,finished_at:x.finished_at,info:BYID[x.staff_id]?undefined:{staff_name:x.info?.staff_name}}))}))}}
 const cL=l=>({id:l.id,name:l.name,address:l.address,city_name:l.city_name,coordinates:l.coordinates});
 let DONEROWS=[];
@@ -1245,8 +1361,8 @@ function processDone(rows){DONEROWS=rows;const u=new Map();OPENROWS.forEach(r=>u
   DONE=[];u.forEach(p=>{const cfg=(p.data&&!Array.isArray(p.data)&&p.data.configs)||{};const loc=LOCS[cfg.chinhanh00];
     (p.subtasks||[]).forEach(s0=>{if(s0.workflow_step_id!=B2)return;doneRecs(s0).forEach(s=>{const ids=s.ids;if(!ids.length)return;
       const store=loc?loc.name:(p.name.split('_')[0]||'');const tr=ids.some(i=>BYID[i].tr==='IT')?'IT':'KT';
-      DONE.push({tid:s.id,code:p.code,store,addr:loc?.address||'',name:p.name.replace(store,'').replace(/^_?\d{13,19}_/,'').replace(/^_/,''),hm:(cfg.hangmuc00||'').split('-')[1]||'',
-        fin:s.finished_at,day:s.finished_at.slice(0,10),dl:(s.date_end||'').slice(0,10),ids,tr,zone:ZONEOF[nm(store)]||BYID[ids[0]].zone,est:est(p.name),remote:false,pri:p.piority,od:0,lanh:false,done:true})})})});return u.size}
+      DONE.push({tid:s.id,code:p.code,store,addr:loc?.address||'',city:loc?.city_name||'',name:p.name.replace(store,'').replace(/^_?\d{13,19}_/,'').replace(/^_/,''),hm:hmFix(hmN(cfg.hangmuc00),p.name),
+        clinic:/clinic/i.test(String(cfg.Department||'')),fin:s.finished_at,day:s.finished_at.slice(0,10),dl:(s.date_end||'').slice(0,10),ids,tr,zone:ZONEOF[nm(store)]||BYID[ids[0]].zone,est:est(p.name),remote:false,pri:p.piority,od:0,lanh:false,done:true})})})});return u.size}
 const qOpen=o=>{const to=ymd(new Date(Date.now()+864e5));return `/workflows/detail-workflow-task/${WF}?from_date=2025-01-01&to_date=${to}&search_type=board&wfid=${WF}&workflow_step_id=${B2}&status[]=0&limit=${LIM}&offset=${o}`};
 const qDone=o=>{const to=ymd(new Date(Date.now()+864e5)),fr=ymd(new Date(Date.now()-DONE_DAYS*864e5));return `/workflows/detail-workflow-task/${WF}?from_date=${fr}&to_date=${to}&search_type=board&wfid=${WF}&workflow_step_id=${B2}&limit=${LIM}&offset=${o}`};
 const keepDone=rows=>rows.map(cP).filter(p=>p.subtasks.some(s=>(s.status==2&&s.finished_at)||(s.staff||[]).some(x=>x.status==2&&x.finished_at)));
@@ -1255,14 +1371,14 @@ function applyOpen(rows){build(rows);OPENROWS=rows;rebalance();planRestore();$('
 const hm=t=>new Date(t).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
 async function loadDone(){DONEINFO={st:'run'};if(!$('viewDue').hidden)dRender();
   try{const rows=keepDone(await pageAll2(qDone,(n,pg)=>{DONEINFO.msg=`Đang tải task đã hoàn thành… ${n} đơn (${pg} trang)`;const e=$('dLoad');if(e&&!$('viewDue').hidden)e.textContent=DONEINFO.msg}));
-    const n=processDone(rows);DONEINFO={st:'ok',n,at:new Date()};KV.set('v2',{at:Date.now(),locs:LOCS,open:OPENROWS,done:rows})}catch(e){DONEINFO={st:'er',msg:e.message}}
+    const n=processDone(rows);DONEINFO={st:'ok',n,at:new Date()};KV.set('v3',{at:Date.now(),locs:LOCS,open:OPENROWS,done:rows})}catch(e){DONEINFO={st:'er',msg:e.message}}
   render()}
 $('load').onclick=async()=>{
   if(!tok()){toast('Dán token trước');$('tok').focus();return}
   try{if(!DEFAULT_TOKEN){if($('rem').checked)localStorage.setItem('b2tok',tok());else localStorage.removeItem('b2tok')}}catch(e){}
   const first=$('main').hidden;$('auth').hidden=true;$('load').disabled=$('reload').disabled=true;setProg('prog',0.03);
   let cached=false;
-  if(first){const c=await KV.get('v2');if(c&&c.open&&c.locs&&Date.now()-c.at<7*864e5){try{LOCS=c.locs;applyOpen(c.open);if(c.done){const n=processDone(c.done);DONEINFO={st:'ok',n,at:new Date(c.at)}}loadSched();render();cached=true;setChip('busy',`Dữ liệu lúc ${hm(c.at)} · đang cập nhật…`)}catch(e){cached=false}}
+  if(first){const c=await KV.get('v3');if(c&&c.open&&c.locs&&Date.now()-c.at<7*864e5){try{LOCS=c.locs;applyOpen(c.open);if(c.done){const n=processDone(c.done);DONEINFO={st:'ok',n,at:new Date(c.at)}}loadSched();render();cached=true;setChip('busy',`Dữ liệu lúc ${hm(c.at)} · đang cập nhật…`)}catch(e){cached=false}}
     if(!cached){$('boot').hidden=false;$('bootMsg').textContent='Đang tải dữ liệu…';setChip('busy','Đang tải…')}}
   else setChip('busy','Đang tải…');
   let nO=0,nD=0,pO=0,pD=0;const prog=()=>{const t=`Đang tải ${nO} đơn mở · ${nD} đơn đã xong…`;if(!cached)setChip('busy',t);if($('bootMsg'))$('bootMsg').textContent=t;setProg('prog',Math.min(.95,.05+(pO+pD)/60))};
@@ -1277,7 +1393,7 @@ $('load').onclick=async()=>{
     setChip('busy','Đang tải task đã hoàn thành…');render();
     const d=await pDone;
     if(d&&d.err){DONEINFO={st:'er',msg:d.err.message}}
-    else{const dRows=keepDone(d);const n=processDone(dRows);DONEINFO={st:'ok',n,at:new Date()};KV.set('v2',{at:Date.now(),locs:LOCS,open:oRows,done:dRows})}
+    else{const dRows=keepDone(d);const n=processDone(dRows);DONEINFO={st:'ok',n,at:new Date()};KV.set('v3',{at:Date.now(),locs:LOCS,open:oRows,done:dRows})}
     setProg('prog',1);setTimeout(()=>{$('prog').hidden=true},700);setChip('',`Cập nhật ${hm(Date.now())}`);render();
   }catch(e){$('prog').hidden=true;
     if(cached){setChip('err',`Lỗi cập nhật · đang xem dữ liệu lúc ${$('chip').textContent.match(/\d\d:\d\d/)?.[0]||''}`);toast('Không cập nhật được: '+e.message)}
@@ -1337,7 +1453,7 @@ document.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key.toLower
   // toast thành công → pháo hoa
   const T0=toast;window.toast=toast=function(t,act,fn){T0(t,act,fn);const e=$('toast');const ok=/đã ghi|Đã hoàn tác|Đã xếp|Đã thêm/.test(t)&&!/lỗi/i.test(t);e.classList.toggle('ok',ok);if(ok){const r=e.getBoundingClientRect();sparkle(r.left+r.width/2,r.top)}};
   // biểu đồ mọc lên mỗi lần vẽ lại tổng quan
-  const D0=dRender;window.dRender=dRender=function(){D0.apply(this,arguments);if(RM)return;['c1','c2','c3','c5'].forEach(id=>{const c=$(id)?.closest('.chart');if(!c)return;c.classList.remove('anim');c.classList.toggle('v',id==='c3');c.classList.toggle('hm2',id==='c5');void c.offsetWidth;c.classList.add('anim')});
+  const D0=dRender;window.dRender=dRender=function(){D0.apply(this,arguments);if(RM)return;['c1','c2','c3','c5','c6','c7'].forEach(id=>{const c=$(id)?.closest('.chart');if(!c)return;c.classList.remove('anim');c.classList.toggle('v',id==='c3');c.classList.toggle('hm2',id==='c5');void c.offsetWidth;c.classList.add('anim')});
     document.querySelectorAll('#dK .kpi b').forEach(b=>{if(b.dataset.pv!==b.textContent&&b.dataset.pv!=null){b.classList.remove('bump');void b.offsetWidth;b.classList.add('bump')}b.dataset.pv=b.textContent})};
   // thẻ vừa được xếp: nảy lên
   const LAND={};const DD=doDrop;window.doDrop=doDrop=function(d,to,mode){if(to&&!RM)(d.tids||[]).forEach(k=>LAND[k]={to,t:performance.now()});const r=DD.apply(this,arguments);return r};
@@ -1349,18 +1465,19 @@ function finStaff(s){if(s.status==2)return [];return (s.staff||[]).filter(x=>x.s
 function doneRecs(s){if(s.status==2&&s.finished_at)return [{id:s.id,finished_at:s.finished_at,date_end:s.date_end,ids:[...new Set((s.staff_ids||[]).map(Number))].filter(i=>BYID[i])}];
   return (s.staff||[]).filter(x=>x.status==2&&x.finished_at&&BYID[+x.staff_id]).map(x=>({id:s.id,finished_at:x.finished_at,date_end:s.date_end,ids:[+x.staff_id]}))}
 KICO[6]=ICO('<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>');
-function openAll(P,A){const who=$('dWho').value,tr=$('dTr').value;const L=TASKS.filter(t=>(!tr||t.tr===tr)&&(who==='cur'?t.cur:t.new).some(i=>P[i]));
-  return {n:L.length,late:L.filter(t=>t.dl&&t.dl<A).length,today:L.filter(t=>t.dl===A).length,later:L.filter(t=>t.dl&&t.dl>A).length,none:L.filter(t=>!t.dl).length,L}}
+function openAll(P,A){const who=$('dWho').value,tr=$('dTr').value;const L=TASKS.filter(t=>(!tr||t.tr===tr)&&srcOK(t)&&(who==='cur'?t.cur:t.new).some(i=>P[i]));
+  const d7=ymd(new Date(new Date(A+'T12:00:00').getTime()-7*864e5));const G={late7:L.filter(t=>t.dl&&t.dl<d7),late:L.filter(t=>t.dl&&t.dl>=d7&&t.dl<A),today:L.filter(t=>t.dl===A),ok:L.filter(t=>!t.dl||t.dl>A)};
+  return {n:L.length,late7:G.late7.length,late:G.late.length,today:G.today.length,ok:G.ok.length,later:G.ok.length,none:L.filter(t=>!t.dl).length,G,L}}
 function openRender(P,A){const el=$('dOpen');if(!el)return;const o=openAll(P,A),n=o.n||1;
-  const seg=[['r',o.late,'Quá hạn'],['w',o.today,`Hạn ${fmtD(A)}`],['g',o.later,'Hạn sau'],['n',o.none,'Chưa có hạn']].filter(x=>x[1]);
+  const seg=[['rr',o.late7,'Quá hạn > 7 ngày'],['r',o.late,'Quá hạn ≤ 7 ngày'],['w',o.today,`Hạn hôm nay (${fmtD(A)})`],['g',o.ok,'Chưa trễ hạn']];
   const zs=['Zone 1','Zone 2','Zone 3'].map(z=>[z,o.L.filter(t=>t.zone===z).length]).filter(x=>x[1]);
   el.innerHTML=`<div class="ob"><span class="ol">Tổng task còn treo</span><b data-cu>${o.n}</b><span class="os">task B2 chưa xong${$('dZ').value?' · '+esc($('dZ').value):''}${$('dTr').value?' · '+($('dTr').value==='IT'?'IT Helpdesk':'Điện / Điện Lạnh'):''}</span></div>
-    <div class="om"><div class="obar">${seg.map(([c,v,l])=>`<i class="${c}" style="flex:${v}" title="${esc(l)}: ${v}"></i>`).join('')}</div>
+    <div class="om"><div class="obar">${seg.filter(x=>x[1]).map(([c,v,l])=>`<i class="${c}" style="flex:${v}" title="${esc(l)}: ${v}"></i>`).join('')}</div>
       <div class="olg">${seg.map(([c,v,l])=>`<span class="${c}"><i></i>${esc(l)} <b>${v}</b> <small>${Math.round(v/n*100)}%</small></span>`).join('')}</div>
       ${zs.length>1?`<div class="oz">${zs.map(([z,v])=>`<span>${esc(z)} <b>${v}</b></span>`).join('')}</div>`:''}</div>
     <button class="btn sec" id="oList">Xem danh sách →</button>`;$('oList').onclick=()=>openList()}
 function openList(){const P=dBuckets(),A=$('dA').value,o=openAll(P,A);
-  renderDrill(`Tất cả task còn treo`,[['Quá hạn',o.L.filter(t=>t.dl&&t.dl<A).sort((a,b)=>b.od-a.od),false],[`Hạn ${fmtD(A)}`,o.L.filter(t=>t.dl===A),false],['Hạn sau',o.L.filter(t=>!t.dl||t.dl>A).sort((a,b)=>(a.dl||'9').localeCompare(b.dl||'9')),false]])}
+  const by=(a,b)=>(a.dl||'9').localeCompare(b.dl||'9');renderDrill(`Tất cả task còn treo`,[['Quá hạn > 7 ngày',o.G.late7.slice().sort(by),false],['Quá hạn ≤ 7 ngày',o.G.late.slice().sort(by),false],[`Hạn hôm nay (${fmtD(A)})`,o.G.today,false],['Chưa trễ hạn',o.G.ok.slice().sort(by),false]])}
 let LEAVES={},LVROWS=[],LVINFO={st:'idle'};
 async function loadLeaves(){LVINFO={st:'run'};try{const fr=ymd(new Date(Date.now()-40*864e5)),to=ymd(new Date(Date.now()+60*864e5));
     const mk=o=>`/staff-leave?department_id=135&main_type=1&limit=100&offset=${o}&sort=leave_id&is_manager=true&total=1&major_id%5B%5D=6&major_id%5B%5D=68&from_date=${fr}&to_date=${to}`;
@@ -1383,6 +1500,193 @@ function lvRender(A){const el=$('dLv');if(!el)return;if(LVINFO.st!=='ok'){el.hid
   const today=L.filter(x=>x.from<=A&&x.to>=A);el.hidden=false;
   el.innerHTML=`<summary><span>Đơn nghỉ phép · ${fmtD(A)} → ${fmtD(end)}</span><span class="lvc">${today.length?`<b>${today.length}</b> người nghỉ ${RL(A)} · `:''}${L.length} đơn</span></summary>
    ${L.length?`<div class="lvl">${L.map(x=>`<div class="lvi${x.from<=A&&x.to>=A?' now':''}">${AV(x.staff)}<div><b>${esc(BYID[x.staff].name)}</b><small>${esc(BYID[x.staff].zone)} · ${x.from===x.to?fmtD(x.from):fmtD(x.from)+' → '+fmtD(x.to)} · ${x.half?'buổi '+(x.half==='AM'?'sáng':'chiều'):'cả ngày'}</small></div><span class="pill ${x.ok?'p-kt':'p-late'}">${x.ok?'Đã duyệt':'Chờ duyệt'}</span></div>`).join('')}</div>`:'<p class="sub" style="padding:0 16px 14px">Không có đơn nghỉ phép trong 7 ngày tới.</p>'}`}
+let SRC='';try{SRC=localStorage.getItem('b2src')||''}catch(e){}
+const srcOK=t=>!SRC||(SRC==='clinic'?!!t.clinic:!t.clinic);
+['dSrc','bSrc','fSrc'].forEach(id=>{const el=$(id);if(!el)return;el.value=SRC;el.addEventListener('change',()=>{SRC=el.value;try{localStorage.setItem('b2src',SRC)}catch(e){}['dSrc','bSrc','fSrc'].forEach(x=>$(x)&&($(x).value=SRC));render()})});
+let C6G={};
+// việc có tên khớp -> luôn tính vào hạng mục này, bất kể hạng mục chọn trên Work
+const HM_FIX=[[/lưu điện|\bups\b/i,'Cửa cuốn/cửa ra vào']];
+function hmFix(h,name){const n=String(name||'');for(const [re,v] of HM_FIX)if(re.test(n))return v;return h}
+function hmN(v){let s=String(v||'').split(',')[0].trim();const m=s.match(/^\d+-(.+)-\d+$/);if(m)s=m[1];return s.replace(/hoà/g,'hòa').replace(/\s+/g,' ').trim()}
+const IT_HM=/mạng và âm thanh|an ninh và giám sát|thiết bị tin học|thanh toán điện tử/i;
+const IT_G=['Mạng','Âm thanh','Giám sát','An ninh','Tin học','Thanh toán','Khác IT'];
+const IT_D=[
+ ['Thanh toán','Laptop cashier',/(laptop|máy tính).*(cashier|thu ngân)|(cashier|thu ngân).*(laptop|máy tính)/i],
+ ['Thanh toán','Máy POS',/\bpos\b/i],
+ ['Thanh toán','iPad',/ipad|máy tính bảng|tablet/i],
+ ['Thanh toán','Két tiền cashier',/két tiền|ngăn kéo/i],
+ ['Thanh toán','Scan barcode',/scan|barcode|mã vạch|máy quét|quét mã/i],
+ ['Thanh toán','Máy in bill',/in bill|hóa đơn|hoá đơn|in nhiệt/i,h=>/thanh toán/i.test(h)],
+ ['Tin học','Máy in tem / nhiệt',/in nhiệt|in tem|máy sku|sku in/i],
+ ['Mạng','Router / Internet',/router|modem|nhà mạng|internet|cáp quang|đường truyền|sự cố mạng/i],
+ ['Mạng','Switch / Tủ mạng',/switch|tủ mạng|tủ rack|rack|dây mạng|cáp mạng|patch/i],
+ ['Mạng','Wifi',/wifi|wi-fi|phát sóng|access point/i],
+ ['Âm thanh','Amply',/amply|âm ly|mixer/i],
+ ['Âm thanh','Loa',/\bloa\b/i,(h,n)=>!/laptop|máy tính|cpu/i.test(n)],
+ ['Âm thanh','Thiết bị phát nhạc (Pi 5)',/phát nhạc|pi ?5|raspberry|nhạc|chuông/i],
+ ['Giám sát','Đầu ghi',/đầu ghi|nvr|dvr/i],
+ ['Giám sát','Camera',/camera/i,(h,n)=>!/webcam/i.test(n)],
+ ['An ninh','Cổng RFID',/rfid/i],
+ ['An ninh','Cổng từ',/cổng từ|cổng an ninh|\beas\b|tem từ/i],
+ ['An ninh','Két sắt kho',/két sắt/i],
+ ['Tin học','Laptop',/laptop|máy tính xách tay/i],
+ ['Tin học','Máy in văn phòng',/máy in|hộp mực|\bmực\b|lệnh in/i],
+ ['Tin học','Máy tính (PC)',/máy tính|\bpc\b|cpu|màn hình máy|ổ cứng|webcam|chuột|bàn phím/i],
+ ['Tin học','Phần mềm / VPN / Tài khoản',/vpn|phần mềm|tài khoản|email|windows|office|qr/i],
+ ['Tin học','Điện thoại / Tổng đài',/điện thoại|tổng đài|đầu số|\bsim\b/i],
+ ['Tin học','Tivi quảng cáo',/tivi|\btv\b|web quảng cáo/i]];
+const HM2G=[[/mạng và âm thanh/i,'Mạng'],[/an ninh và giám sát/i,'Giám sát'],[/tin học/i,'Tin học'],[/thanh toán/i,'Thanh toán']];
+const ITC=new Map();
+function itCat(t){if(!IT_HM.test(t.hm||''))return null;const ck=t.hm+'|'+t.name;if(ITC.has(ck))return ITC.get(ck);
+  const n=String(t.name||''),h=t.hm||'';let r=null;for(const [g,d,re,ok] of IT_D){if(re.test(n)&&(!ok||ok(h,n))){r={g,d};break}}
+  if(!r){const g=(HM2G.find(x=>x[0].test(h))||[0,'Khác IT'])[1];r={g,d:'Khác ('+g+')'}}
+  ITC.set(ck,r);return r}
+function catBuild(P,T,A,cat){const o=openAll(P,A);const G={};const add=(t,k)=>{const n=cat(t);(G[n]??={name:n,done:[],late:[],today:[],ok:[]})[k].push(t)};
+  o.L.forEach(t=>add(t,t.dl&&t.dl<A?'late':t.dl===A?'today':'ok'));(T.done||[]).forEach(d=>add(d,'done'));
+  return {o,L:Object.values(G).map(g=>({...g,tot:g.done.length+g.late.length+g.today.length+g.ok.length,open:g.late.length+g.today.length+g.ok.length}))}}
+function c7Render(P,T,A){const el=$('c7');if(!el)return;const {o,L:L0}=catBuild(P,T,A,t=>{const c=itCat(t);return c?c.g+' › '+c.d:'__'});
+  const L=L0.filter(g=>g.name!=='__');const gi=g=>IT_G.indexOf(g.name.split(' › ')[0]);
+  const gt={};L.forEach(g=>{const k=g.name.split(' › ')[0];gt[k]=(gt[k]||0)+g.open});
+  L.sort((a,b)=>(gt[b.name.split(' › ')[0]]-gt[a.name.split(' › ')[0]])||gi(a)-gi(b)||b.open-a.open||b.tot-a.tot);
+  L.forEach((g,i)=>C6G['d'+i]=g);
+  const nOpen=L.reduce((s,g)=>s+g.open,0),nDone=L.reduce((s,g)=>s+g.done.length,0);
+  $('c7n').textContent=`Thiết bị IT: ${nOpen} task còn treo + ${nDone} task đã xong ${fmtD(A)} · `+IT_G.filter(k=>gt[k]).map(k=>`${k} ${gt[k]}`).join(' · ');
+  el.innerHTML=L.length?hStack(L.map((g,i)=>({label:g.name,full:g.name,key:'d'+i,vals:[g.done.length,g.late.length,g.today.length,g.ok.length]})),[['var(--c-done)',`Đã xong ${fmtD(A)}`],['var(--c-late)','Quá hạn'],['var(--c-wait)',`Hạn ${fmtD(A)}`],['var(--g2)','Chưa trễ hạn']],{labelW:cw('c7')<520?150:260,rowH:26,W:cw('c7')}):'<p class="sub">Không có task thiết bị IT.</p>'}
+function c6Render(P,T,A){const el=$('c6');if(!el)return;const o=openAll(P,A);const cat=t=>GRP_N[grpOf(t)];const G={};
+  const add=(t,k)=>{const n=cat(t);(G[n]??={name:n,done:[],late:[],today:[],ok:[]})[k].push(t)};
+  o.L.forEach(t=>add(t,t.dl&&t.dl<A?'late':t.dl===A?'today':'ok'));(T.done||[]).forEach(d=>add(d,'done'));
+  let L=Object.values(G).map(g=>({...g,tot:g.done.length+g.late.length+g.today.length+g.ok.length,open:g.late.length+g.today.length+g.ok.length})).sort((a,b)=>b.open-a.open||b.tot-a.tot);
+  if(L.length>12){const rest=L.slice(11),m={name:`Khác (${rest.length} hạng mục)`,done:[],late:[],today:[],ok:[]};rest.forEach(g=>['done','late','today','ok'].forEach(k=>m[k].push(...g[k])));L=[...L.slice(0,11),{...m,open:m.late.length+m.today.length+m.ok.length}]}
+  C6G={};L.forEach((g,i)=>C6G['h'+i]=g);
+  $('c6n').textContent=`${o.n} task còn treo + ${(T.done||[]).length} task đã xong ${fmtD(A)} · bấm thanh để xem danh sách, bấm "Xem report chi tiết" để xem từng nhóm`;
+  const short=s=>s.length>30?s.slice(0,29)+'…':s;
+  el.innerHTML=L.length?hStack(L.map((g,i)=>({label:short(g.name),full:g.name,key:'h'+i,vals:[g.done.length,g.late.length,g.today.length,g.ok.length]})),[['var(--c-done)',`Đã xong ${fmtD(A)}`],['var(--c-late)','Quá hạn'],['var(--c-wait)',`Hạn ${fmtD(A)}`],['var(--g2)','Chưa trễ hạn']],{labelW:cw('c6')<520?120:230,rowH:28,W:cw('c6')}):'<p class="sub">Không có dữ liệu.</p>'}
+
+const GRP=['ht','dt','it'],GRP_N={ht:'Hạ tầng',dt:'Điện tử',it:'IT Helpdesk'};
+const HM_HT=/xây dựng|ngoại thất|quầy|tủ kệ|nội thất|phòng cháy|pccc/i,HM_DT=/điện và chiếu sáng|điều hòa|thông gió|làm mát|máy móc|gia dụng|vận chuyển|cửa cuốn|cửa ra vào/i;
+function grpOf(t){const h=t.hm||'';if(IT_HM.test(h))return 'it';if(HM_DT.test(h))return 'dt';if(HM_HT.test(h))return 'ht';return t.tr==='IT'?'it':'dt'}
+let RGRP='ht',RG={};try{const v=localStorage.getItem('b2rg');if(GRP.includes(v))RGRP=v}catch(e){}
+const RSER=A=>[['var(--c-done)',`Đã xong ${fmtD(A)}`],['var(--c-late)','Quá hạn'],['var(--c-wait)',`Hạn ${fmtD(A)}`],['var(--g2)','Chưa trễ hạn']];
+function rBase(A){const z=$('rZ').value,who=$('dWho').value;
+  const open=TASKS.filter(t=>srcOK(t)&&(!z||t.zone===z));const done=DONE.filter(d=>srcOK(d)&&(!z||d.zone===z));
+  const by={};GRP.forEach(g=>by[g]={open:[],done:[],doneA:[]});open.forEach(t=>by[grpOf(t)].open.push(t));done.forEach(d=>{const b=by[grpOf(d)];b.done.push(d);if(d.day===A)b.doneA.push(d)});
+  return {by,who}}
+function rCls(t,A){return t.dl&&t.dl<A?'late':t.dl===A?'today':'ok'}
+function rGroups(open,doneA,A,cat,pfx){const G={};const add=(t,k)=>{const n=cat(t);if(n==null)return;(G[n]??={name:n,done:[],late:[],today:[],ok:[]})[k].push(t)};
+  open.forEach(t=>add(t,rCls(t,A)));doneA.forEach(d=>add(d,'done'));
+  const L=Object.values(G).map(g=>({...g,open:g.late.length+g.today.length+g.ok.length,tot:g.done.length+g.late.length+g.today.length+g.ok.length}));
+  return L}
+function rRows(L,pfx){return L.map((g,i)=>{RG[pfx+i]=g;return {label:g.name.length>34?g.name.slice(0,33)+'…':g.name,full:g.name,key:pfx+i,vals:[g.done.length,g.late.length,g.today.length,g.ok.length]}})}
+function rTop(L,n){L.sort((a,b)=>b.open-a.open||b.tot-a.tot);if(L.length<=n)return L;const rest=L.slice(n-1),m={name:`Khác (${rest.length})`,done:[],late:[],today:[],ok:[]};rest.forEach(g=>['done','late','today','ok'].forEach(k=>m[k].push(...g[k])));return [...L.slice(0,n-1),{...m,open:m.late.length+m.today.length+m.ok.length}]}
+const CATC=['#3b82f6','#a855f7','#14b8a6','#f59e0b','#6366f1','#ec4899','#22c55e','#ef4444','#0ea5e9','#eab308','#8b5cf6','#94a3b8'];
+const ITCAT=[['Mạng','Hệ thống mạng','router, switch, wifi'],['Âm thanh','Âm thanh','loa, amply, pi 5'],['Giám sát','Giám sát','camera, đầu ghi'],['An ninh','An ninh','cổng từ, RFID, két sắt'],['Tin học','Thiết bị tin học','máy tính, laptop, máy in VP'],['Thanh toán','Thiết bị thanh toán','POS, máy in bill, iPad, két tiền'],['Khác IT','Khác','chưa phân loại']];
+let RCAT=null;
+function rCats(O,doneA,grp){let C;
+  if(grp==='it'){const k=t=>{const c=itCat(t);return c?c.g:'Khác IT'};C=ITCAT.map(([g,n,h],i)=>({key:g,name:n,hint:h,col:i===6?'#94a3b8':CATC[i],f:t=>k(t)===g}))}
+  else{const cnt={};[...O,...doneA].forEach(t=>{const h=(t.hm||'').trim()||'Chưa phân loại';cnt[h]=(cnt[h]||0)+1});
+    const L=Object.entries(cnt).sort((a,b)=>b[1]-a[1]).map(x=>x[0]);const top=L.length>7?L.slice(0,6):L,rest=new Set(L.slice(top.length));
+    C=top.map((h,i)=>({key:h,name:h,hint:'',col:CATC[i],f:t=>(((t.hm||'').trim()||'Chưa phân loại')===h)}));
+    if(rest.size)C.push({key:'__k',name:'Khác',hint:[...rest].slice(0,3).join(', ').toLowerCase()+(rest.size>3?'…':''),col:'#94a3b8',f:t=>rest.has((t.hm||'').trim()||'Chưa phân loại')})}
+  return C}
+function rCatOf(C,t){for(let i=0;i<C.length;i++)if(C[i].f(t))return i;return C.length-1}
+function rStatRender(O,C,A,who){const n=O.length||1;
+  const bars=(id,keyOf,lim)=>{const M={};O.forEach(t=>{const ks=keyOf(t);(Array.isArray(ks)?ks:[ks]).forEach(k=>{if(!k)return;const m=(M[k]??={name:k,v:C.map(()=>0),L:[],n:0});m.v[rCatOf(C,t)]++;m.L.push(t);m.n++})});
+    const L=Object.values(M).sort((a,b)=>b.n-a.n);const mx=Math.max(1,...L.map(x=>x.n));
+    $(id).innerHTML=L.length?L.map((m,i)=>{RG[id+'_'+i]={name:m.name,L:m.L};return `<button class="rrow" data-rk="${id}_${i}" title="${esc(m.name)}: ${m.n} task treo\n${C.map((c,j)=>m.v[j]?`${c.name}: ${m.v[j]}`:'').filter(Boolean).join('\n')}"><span class="rn">${esc(m.name)}</span><span class="rb"><span style="width:${(m.n/mx*100).toFixed(1)}%">${m.v.map((v,j)=>v?`<i style="flex:${v};background:${C[j].col}"></i>`:'').join('')}</span></span><b>${m.n}</b></button>`}).join(''):'<p class="sub">Không có task.</p>';
+    $(id).querySelectorAll('[data-rk]').forEach(b=>b.onclick=()=>{const g=RG[b.dataset.rk];if(!g)return;const KB=[['Quá hạn','late'],[`Hạn ${fmtD(A)}`,'today'],['Chưa trễ hạn','ok']];DTGT=$('rDet');renderDrill(`${GRP_N[RGRP]} · ${g.name}`,KB.map(([l,k])=>[l,g.L.filter(t=>rCls(t,A)===k),false]).filter(x=>x[1].length))})};
+  bars('rs1',t=>t.store);bars('rs2',t=>(t.city||'').replace(/^(Tỉnh|Thành phố|TP\.?)\s+/i,'')||'Chưa rõ');bars('rs3',t=>{const ids=(who==='cur'?t.cur:t.new);const nm=ids.map(i=>BYID[i]?.name).filter(Boolean);return nm.length?nm:(t.curNames&&t.curNames.length?t.curNames:['Chưa giao'])});
+  const ns=new Set(O.map(t=>t.store)).size,nc=new Set(O.map(t=>t.city||'?')).size;
+  $('rStN').textContent=`${O.length} task còn treo · ${ns} chi nhánh · ${nc} tỉnh/thành${RCAT?' · đang lọc: '+RCAT:''} · bấm 1 dòng để xem danh sách task`}
+let RLD=null,RLF={st:'all',q:'',who:'',cat:'',sort:'dl',n:50};
+function rListRows(){if(!RLD)return [];const {O,done,A,who,C}=RLD;const st=RLF.st;
+  let L=st==='done'?done.map(t=>({t,k:'done'})):O.map(t=>({t,k:rCls(t,A)})).filter(x=>st==='all'||(st==='late7'?x.k==='late'&&dd7(x.t,A)>7:x.k===st));
+  const nm=x=>(x.k==='done'?x.t.ids:(who==='cur'?x.t.cur:x.t.new)).map(i=>BYID[i]?.name||(x.t.curNames||[])[0]||('#'+i));
+  L.forEach(x=>{x.nm=nm(x);x.cat=C[rCatOf(C,x.t)]});
+  if(RLF.who)L=L.filter(x=>x.nm.includes(RLF.who));if(RLF.cat)L=L.filter(x=>x.cat.key===RLF.cat);
+  if(RLF.q){const q=RLF.q.toLowerCase().normalize('NFC');L=L.filter(x=>[x.t.code,x.t.name,x.t.store,x.t.addr,x.t.hm,x.nm.join(' ')].join(' ').toLowerCase().includes(q))}
+  const s=RLF.sort;L.sort((a,b)=>s==='store'?a.t.store.localeCompare(b.t.store,'vi'):s==='who'?(a.nm[0]||'').localeCompare(b.nm[0]||'','vi'):s==='dl2'?(b.t.dl||'').localeCompare(a.t.dl||''):(a.t.dl||'9').localeCompare(b.t.dl||'9'));return L}
+function dd7(t,A){return t.dl?Math.round((new Date(A+'T00:00')-new Date(t.dl+'T00:00'))/864e5):0}
+function rList(){if(!RLD)return;const {O,done,A,C}=RLD;
+  const cnt={all:O.length,late7:O.filter(t=>rCls(t,A)==='late'&&dd7(t,A)>7).length,late:O.filter(t=>rCls(t,A)==='late').length,today:O.filter(t=>rCls(t,A)==='today').length,ok:O.filter(t=>rCls(t,A)==='ok').length,done:done.length};
+  const SB=[['all','Tất cả còn treo'],['late7','Trễ > 7 ngày'],['late','Quá hạn'],['today',`Hạn ${fmtD(A)}`],['ok','Chưa trễ hạn'],['done',`Đã xong ${fmtD(A)}`]];
+  $('rSt').innerHTML=SB.map(([k,l])=>`<button class="${RLF.st===k?'on':''} s-${k}" data-st="${k}">${esc(l)} <b>${cnt[k]}</b></button>`).join('');
+  $('rSt').querySelectorAll('[data-st]').forEach(b=>b.onclick=()=>{RLF.st=b.dataset.st;RLF.n=50;rList()});
+  const ppl=[...new Set([...O.flatMap(t=>(RLD.who==='cur'?t.cur:t.new)),...done.flatMap(d=>d.ids)].map(i=>BYID[i]?.name).filter(Boolean))].sort((a,b)=>a.localeCompare(b,'vi'));
+  if(RLF.who&&!ppl.includes(RLF.who))RLF.who='';$('rWho').innerHTML='<option value="">Tất cả người làm</option>'+ppl.map(n=>`<option${n===RLF.who?' selected':''}>${esc(n)}</option>`).join('');
+  if(RLF.cat&&!C.some(c=>c.key===RLF.cat))RLF.cat='';$('rCat2').innerHTML=`<option value="">${RGRP==='it'?'Tất cả nhóm thiết bị':'Tất cả hạng mục'}</option>`+C.map(c=>`<option value="${esc(c.key)}"${c.key===RLF.cat?' selected':''}>${esc(c.name)}</option>`).join('');
+  $('rCat2').hidden=!!RCAT;$('rSort').value=RLF.sort;if(document.activeElement!==$('rQ'))$('rQ').value=RLF.q;
+  const L=rListRows(),sh=L.slice(0,RLF.n);
+  $('r6n').textContent=`${L.length} task${RLF.st==='done'?' đã xong':''} · ${GRP_N[RGRP]}${RCAT?' · '+RCAT:''}${$('rZ').value?' · '+$('rZ').value:''}${L.length>sh.length?` · đang hiện ${sh.length}`:''}`;
+  const pill=x=>x.k==='done'?`<span class="pill p-ok">xong ${esc(String(x.t.fin||'').slice(11,16))}</span>`:x.k==='late'?`<span class="pill ${dd7(x.t,A)>7?'p-l7':'p-late'}">trễ ${dd7(x.t,A)}n</span>`:x.k==='today'?'<span class="pill p-w">hạn hôm nay</span>':'';
+  const dev=x=>{if(RGRP!=='it')return esc(x.t.hm||'');const c=itCat(x.t);return c?esc(c.g+' › '+c.d):esc(x.t.hm||'')};
+  $('r6').innerHTML=L.length?`<div class="tbl rlt" style="max-height:none"><table><thead><tr><th>Chi nhánh</th><th>Mã task</th><th>Việc</th><th>Hạn</th><th>Người làm</th></tr></thead><tbody>${sh.map(x=>`<tr class="${x.k==='late'&&dd7(x.t,A)>7?'l7':''}"><td class="cn">${esc(x.t.store)}<small>${esc([x.t.zone,(x.t.city||'').replace(/^(Tỉnh|Thành phố)\s+/i,'')].filter(Boolean).join(' · '))}</small></td><td><a class="mono" href="https://work.hasaki.vn/tasks?task_id=${x.t.tid}" target="_blank" rel="noopener">${esc(x.t.code)}</a></td><td class="what">${esc(x.t.name)}<small><i class="cdot" style="background:${x.cat.col}"></i>${dev(x)}${x.t.clinic?' · Clinic':''}</small></td><td class="mono">${x.t.dl?fmtD(x.t.dl):'–'} ${pill(x)}</td><td>${esc(x.nm.join(', ')||'Chưa giao')}</td></tr>`).join('')}</tbody></table></div>${L.length>sh.length?`<div class="row" style="justify-content:center;margin-top:10px"><button class="btn sec" id="rMore">Xem thêm ${Math.min(50,L.length-sh.length)} task (còn ${L.length-sh.length})</button></div>`:''}`:'<p class="sub" style="padding:12px 0">Không có task khớp bộ lọc.</p>';
+  if($('rMore'))$('rMore').onclick=()=>{RLF.n+=50;rList()}}
+function rRender(){if(!TASKS.length)return;const A=$('dA').value,td=ymd(new Date());RG={};
+  $('rPick').min=$('dPick').min||'';$('rPick').max=$('dPick').max||'';$('rPick').value=A;$('rSrc').value=SRC;
+  document.querySelectorAll('#viewRep [data-rd]').forEach(b=>b.classList.toggle('on',A===ymd(new Date(Date.now()+(+b.dataset.rd)*864e5))));
+  const {by,who}=rBase(A),d7=ymd(new Date(new Date(A+'T12:00:00').getTime()-7*864e5));
+  $('rTabs').innerHTML=GRP.map(g=>{const o=by[g].open,l=o.filter(t=>t.dl&&t.dl<A).length;return `<button role="tab" data-g="${g}" aria-selected="${g===RGRP}"><b>${GRP_N[g]}</b><span>${o.length} treo${l?` · <em>${l} quá hạn</em>`:''}</span></button>`}).join('');
+  $('rTabs').querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{RGRP=b.dataset.g;RCAT=null;RLF.cat='';RLF.who='';RLF.n=50;try{localStorage.setItem('b2rg',RGRP)}catch(e){}$('rDet').hidden=true;rRender()});
+  const B0=by[RGRP],ok=DONEINFO.st==='ok';
+  const CC=rCats(B0.open,B0.doneA,RGRP);if(RCAT&&!CC.some(c=>c.key===RCAT))RCAT=null;const cf=RCAT?CC.find(c=>c.key===RCAT).f:null;
+  const B=cf?{open:B0.open.filter(cf),done:B0.done.filter(cf),doneA:B0.doneA.filter(cf)}:B0,O=B.open;
+  {const n0=B0.open.length||1;$('rCatT').textContent=RGRP==='it'?'Phân nhóm theo hạng mục thiết bị':'Phân nhóm theo hạng mục';$('rCatX').hidden=!RCAT;
+   $('rCat').innerHTML=CC.map(c=>{const o=B0.open.filter(c.f),l=o.filter(t=>t.dl&&t.dl<A).length,d=B0.doneA.filter(c.f).length,p=Math.round(o.length/n0*100);
+     return `<button class="rcat${RCAT===c.key?' on':''}${RCAT&&RCAT!==c.key?' dim':''}" data-ck="${esc(c.key)}" style="--cc:${c.col}"><span class="ct">${esc(c.name)}</span><span class="cv"><b>${o.length}</b><small>${p}%</small></span><span class="cbar"><i style="width:${p}%"></i></span><span class="ch">${c.hint?esc(c.hint):''}${c.hint?'<br>':''}${l?`<em>${l} quá hạn</em> · `:''}${ok?`${d} xong ${fmtD(A)}`:''}</span></button>`}).join('');
+   $('rCat').querySelectorAll('[data-ck]').forEach(b=>b.onclick=()=>{RCAT=RCAT===b.dataset.ck?null:b.dataset.ck;$('rDet').hidden=true;rRender()});
+   $('rLg').innerHTML=CC.map(c=>`<span><i style="background:${c.col}"></i>${esc(c.name)}</span>`).join('')}
+  rStatRender(O,CC,A,$('dWho').value);
+  $('rTitle').textContent=`Report ${GRP_N[RGRP]} · ${RL(A)}`;
+  $('rSub').textContent=`${GRP_N[RGRP]}: ${RGRP==='ht'?'xây dựng, ngoại thất, quầy tủ kệ, nội thất, PCCC':RGRP==='dt'?'điện & chiếu sáng, điều hòa / làm mát, cửa cuốn / cửa ra vào, máy móc vận hành & phòng khám, gia dụng, vận chuyển':'mạng & âm thanh, an ninh & giám sát, tin học, thanh toán điện tử'} · chia theo hạng mục trên Work${$('rZ').value?' · '+$('rZ').value:''}${SRC==='clinic'?' · chỉ Clinic':SRC==='nonclinic'?' · không gồm Clinic':''}`;
+  const late7=O.filter(t=>t.dl&&t.dl<d7).length,late=O.filter(t=>t.dl&&t.dl>=d7&&t.dl<A).length,today=O.filter(t=>t.dl===A).length,fut=O.length-late7-late-today;
+  const w7=ymd(new Date(new Date(A+'T12:00:00').getTime()-6*864e5)),done7=B.done.filter(d=>d.day>=w7&&d.day<=A),onT=done7.filter(d=>!d.dl||d.day<=d.dl).length;
+  $('rK').innerHTML=[[O.length,'Tổng task còn treo','k-acc'],[late7,'Quá hạn > 7 ngày','k-bad k-l7'],[late,'Quá hạn ≤ 7 ngày','k-bad'],[today,`Hạn ${fmtD(A)}`,'k-warn'],[fut,'Chưa trễ hạn',''],[ok?B.doneA.length:'…',`Đã xong ${fmtD(A)}`,'k-ok'],[ok?(done7.length?Math.round(onT/done7.length*100)+'%':'–'):'…',`Đúng hạn 7 ngày (${onT}/${done7.length})`,'k-ok']].map(([b,s,c])=>`<div class="kpi ${c}"><b>${b}</b><span>${esc(s)}</span></div>`).join('');
+  // 1) hạng mục (IT: nhóm › thiết bị)
+  let L1;if(RGRP==='it'){$('r1t').textContent='Theo nhóm thiết bị IT';L1=rGroups(O,B.doneA,A,t=>{const c=itCat(t);return c?c.g+' › '+c.d:'Khác IT › Chưa phân loại'});const gt={};L1.forEach(g=>{const k=g.name.split(' › ')[0];gt[k]=(gt[k]||0)+g.open});
+    L1.sort((a,b)=>(gt[b.name.split(' › ')[0]]||0)-(gt[a.name.split(' › ')[0]]||0)||IT_G.indexOf(a.name.split(' › ')[0])-IT_G.indexOf(b.name.split(' › ')[0])||b.open-a.open||b.tot-a.tot);
+    $('r1n').textContent=IT_G.filter(k=>gt[k]).map(k=>`${k} ${gt[k]}`).join(' · ')+' task treo · bấm thanh để xem danh sách'}
+  else{$('r1t').textContent='Theo hạng mục';L1=rTop(rGroups(O,B.doneA,A,t=>(t.hm||'').trim()||'Chưa phân loại'),12);$('r1n').textContent=`${L1.length} hạng mục · bấm thanh để xem danh sách`}
+  $('r1').innerHTML=L1.length?hStack(rRows(L1,'a'),RSER(A),{labelW:cw('r1')<520?150:260,rowH:26,W:cw('r1')}):'<p class="sub">Không có task.</p>';
+  // 2) nhân viên
+  const SG={};const sadd=(i,t,k)=>{const r=BYID[i];const n=r?r.name:'Người ngoài đội';(SG[n]??={name:n,done:[],late:[],today:[],ok:[]})[k].push(t)};
+  O.forEach(t=>{const ids=(who==='cur'?t.cur:t.new).filter(i=>BYID[i]);(ids.length?ids:[0]).forEach(i=>sadd(i,t,rCls(t,A)))});B.doneA.forEach(d=>d.ids.forEach(i=>sadd(i,d,'done')));
+  const L2b=rTop(Object.values(SG).map(g=>({...g,open:g.late.length+g.today.length+g.ok.length,tot:g.done.length+g.late.length+g.today.length+g.ok.length})),14);
+  $('r2n').textContent=`${Object.keys(SG).length} người có task ${GRP_N[RGRP]} · ${who==='cur'?'theo người đang giao trên Work':'theo kế hoạch điều phối'}`;
+  $('r2').innerHTML=L2b.length?hStack(rRows(L2b,'b'),RSER(A),{labelW:cw('r2')<520?140:220,rowH:24,W:cw('r2')}):'<p class="sub">Không có task.</p>';
+  // 3) zone
+  const L3=['Zone 1','Zone 2','Zone 3'].map(z=>{const g={name:z,done:B.doneA.filter(d=>d.zone===z),late:[],today:[],ok:[]};O.filter(t=>t.zone===z).forEach(t=>g[rCls(t,A)].push(t));return {...g,open:g.late.length+g.today.length+g.ok.length,tot:0}}).filter(g=>g.open||g.done.length);
+  $('r3n').textContent=L3.map(g=>`${g.name}: ${g.open} treo`).join(' · ');
+  $('r3').innerHTML=L3.length?hStack(rRows(L3,'c'),RSER(A),{labelW:70,rowH:30,W:cw('r3')}):'<p class="sub">Không có task.</p>';
+  // 4) 14 ngày
+  const days=Array.from({length:14},(_,i)=>ymd(new Date(new Date(A+'T12:00:00').getTime()-(13-i)*864e5)));const dv=days.map(x=>B.done.filter(d=>d.day===x).length);
+  $('r4n').textContent=ok?`${dv.reduce((a,b)=>a+b,0)} task xong trong 14 ngày đến ${fmtD(A)} · TB ${(dv.reduce((a,b)=>a+b,0)/14).toFixed(1)}/ngày`:'Đang tải số đã xong…';
+  days.forEach((x,i)=>RG['d'+i]={name:`Hoàn thành ${fmtD(x)}`,done:B.done.filter(d=>d.day===x),late:[],today:[],ok:[]});
+  $('r4').innerHTML=ok?vBars(days.map(x=>cw('r4')<560?x.slice(8):fmtD(x)),dv,'var(--c-done)',{W:cw('r4'),name:'Task hoàn thành',tips:days.map(x=>`${DOW(x)} ${fmtD(x)}`)}):'';
+  $('r4').querySelectorAll('g.tg').forEach(g=>g.dataset.key='d'+g.dataset.key);
+  // 5) chi nhánh
+  const SS={};O.forEach(t=>{(SS[t.store]??={name:t.store,done:[],late:[],today:[],ok:[]})[rCls(t,A)].push(t)});
+  const L5=Object.values(SS).map(g=>({...g,open:g.late.length+g.today.length+g.ok.length,tot:0})).sort((a,b)=>b.late.length-a.late.length||b.open-a.open).slice(0,10);
+  $('r5n').textContent=`${Object.keys(SS).length} chi nhánh có task treo · top 10 theo số quá hạn`;
+  $('r5').innerHTML=L5.length?'':'<p class="sub">Không có task.</p>';
+  if(L5.length)$('r5').innerHTML=hStack(L5.map((g,i)=>{RG['e'+i]=g;return {label:g.name.length>26?g.name.slice(0,25)+'…':g.name,full:g.name,key:'e'+i,vals:[0,g.late.length,g.today.length,g.ok.length]}}),RSER(A),{labelW:150,rowH:24,W:cw('r5')});
+  // 6) danh sách task (lọc được)
+  RLD={O,done:B.doneA,A,who,C:CC};rList();
+  if(!matchMedia('(prefers-reduced-motion:reduce)').matches)['r1','r2','r3','r4','r5'].forEach(id=>{const c=$(id)?.closest('.chart');if(!c)return;c.classList.remove('anim');void c.offsetWidth;c.classList.add('anim')})}
+function rDrill(g,t,c){const key=g.dataset.key,k=t.dataset&&t.dataset.k!=null?+t.dataset.k:null,A=$('dA').value;const G=RG[key];if(!G)return;
+  const KB=['done','late','today','ok'],LB={done:`Đã xong ${fmtD(A)}`,late:'Quá hạn',today:`Hạn ${fmtD(A)}`,ok:'Chưa trễ hạn'};
+  let title=`${GRP_N[RGRP]} · ${G.name}`;const groups=(k==null?KB:[KB[k]]).map(x=>[x==='done'&&c==='r4'?'Hoàn thành':LB[x],G[x],x==='done']).filter(x=>x[1].length);if(k!=null&&c!=='r4')title+=' · '+LB[KB[k]];
+  if(!groups.length)return;DTGT=$('rDet');renderDrill(title,groups)}
+document.querySelectorAll('#viewRep [data-rd]').forEach(b=>b.onclick=()=>setRep(ymd(new Date(Date.now()+(+b.dataset.rd)*864e5))));
+$('rPick').onchange=e=>setRep(e.target.value);
+$('rZ').onchange=()=>{$('rDet').hidden=true;rRender()};
+$('rSrc').onchange=()=>{SRC=$('rSrc').value;try{localStorage.setItem('b2src',SRC)}catch(e){}['dSrc','bSrc','fSrc'].forEach(x=>$(x)&&($(x).value=SRC));render()};
+$('goRep').onclick=()=>{tab('r')};
+$('rCatX').onclick=()=>{RCAT=null;rRender()};
+let _rq;$('rQ').oninput=e=>{clearTimeout(_rq);_rq=setTimeout(()=>{RLF.q=e.target.value.trim();RLF.n=50;rList()},180)};
+$('rWho').onchange=e=>{RLF.who=e.target.value;RLF.n=50;rList()};$('rCat2').onchange=e=>{RLF.cat=e.target.value;RLF.n=50;rList()};$('rSort').onchange=e=>{RLF.sort=e.target.value;rList()};
+$('rCsv').onclick=()=>{const L=rListRows();if(!L.length)return toast('Không có task để tải');const A=RLD.A;
+  const rows=[['Nhóm','Chi nhánh','Zone','Tỉnh/thành','Mã task','Việc','Hạng mục','Nhóm thiết bị','Hạn','Trạng thái','Số ngày trễ','Người làm','Link']].concat(L.map(x=>{const c=itCat(x.t);return [GRP_N[RGRP],x.t.store,x.t.zone||'',x.t.city||'',x.t.code,x.t.name,x.t.hm||'',c?c.g+' › '+c.d:'',x.t.dl||'',x.k==='done'?'Đã xong':x.k==='late'?'Quá hạn':x.k==='today'?'Hạn hôm nay':'Chưa trễ hạn',x.k==='late'?dd7(x.t,A):'',x.nm.join(', '),'https://work.hasaki.vn/tasks?task_id='+x.t.tid]}));
+  const csv='﻿'+rows.map(r=>r.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(',')).join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`task_${RGRP}_${A}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)};
 if(innerWidth<760)document.querySelectorAll('details.fbox').forEach(d=>d.open=false);
 if(tok())setTimeout(()=>$('load').click(),50);else{$('boot').hidden=true;$('auth').hidden=false;setChip('err','Chưa kết nối')}
 </script>
