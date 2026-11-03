@@ -1959,19 +1959,21 @@ const mSid=u=>(String(u).match(/\/d\/([a-zA-Z0-9_-]{20,})/)||[])[1]||(/^[a-zA-Z0
 const unacc=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D');
 // khoá chi nhánh: "SPA - 555 3 THANG 2" ~ "555 3 Tháng 2 - Hồ Chí Minh" -> "555 3 THANG 2"
 const mKey=s=>unacc(String(s||'').replace(/^\s*(spa|clinic|hasaki)\s*[-–:]\s*/i,'').split(/\s+[-–]\s+/)[0]).toUpperCase().replace(/[^A-Z0-9]+/g,' ').trim();
-function gviz(id,sheet){return new Promise((res,rej)=>{const cb='__gv'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);const s=document.createElement('script');
+function gvizH0(id,sheet){return gviz(id,sheet,'&headers=0')}
+function gviz(id,sheet,extra=''){return new Promise((res,rej)=>{const cb='__gv'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);const s=document.createElement('script');
   const clean=()=>{clearTimeout(to);try{delete window[cb]}catch(e){window[cb]=undefined}s.remove()};
   const to=setTimeout(()=>{clean();rej(new Error('Google Sheet không phản hồi'))},25000);
   window[cb]=r=>{clean();if(!r||r.status==='error')rej(new Error((r&&r.errors&&r.errors[0]&&(r.errors[0].detailed_message||r.errors[0].message))||'Google Sheet báo lỗi (sheet có được chia sẻ công khai không?)'));else res(r.table)};
   s.onerror=()=>{clean();rej(new Error('Không tải được Google Sheet. Kiểm tra mạng và quyền chia sẻ "Bất kỳ ai có đường liên kết".'))};
-  s.src=`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json;responseHandler:${cb}&sheet=${encodeURIComponent(sheet)}`;document.head.appendChild(s)})}
+  s.src=`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json;responseHandler:${cb}&sheet=${encodeURIComponent(sheet)}${extra}`;document.head.appendChild(s)})}
 const gCell=c=>{if(!c)return '';if(typeof c.v==='number')return c.f&&/[a-zA-ZÀ-ỹ]/.test(c.f)?String(c.f):String(c.v);if(typeof c.v==='string'&&/^Date\(/.test(c.v)){const [y,m,d]=c.v.slice(5,-1).split(',').map(Number);return `${String(d).padStart(2,'0')}/${String(m+1).padStart(2,'0')}/${y}`}return c.f!=null?String(c.f):c.v==null?'':String(c.v)};
 const gTable=t=>[t.cols.map(c=>c.label||''),...t.rows.map(r=>(r.c||[]).map(gCell))];
 function csvParse(t){const R=[];let r=[],f='',q=false;for(let i=0;i<t.length;i++){const c=t[i];if(q){if(c=='"'){if(t[i+1]=='"'){f+='"';i++}else q=false}else f+=c}else if(c=='"')q=true;else if(c==','){r.push(f);f=''}else if(c=='\n'){r.push(f);R.push(r);r=[];f=''}else if(c!='\r')f+=c}if(f||r.length){r.push(f);R.push(r)}return R}
 // tìm dòng tiêu đề (gviz có thể gộp các dòng đầu vào nhãn cột) rồi lấy chỉ số cột theo tên
 function hdrIdx(A,names){for(let i=0;i<Math.min(A.length,15);i++){const row=A[i].map(x=>unacc(x).toLowerCase().replace(/\s+/g,' ').trim());const ix={};let ok=0;
     for(const [k,pats] of Object.entries(names)){const j=row.findIndex(c=>pats.some(p=>c===p||c.endsWith(' '+p)||c.endsWith('. '+p)));if(j>=0){ix[k]=j;ok++}}
-    if(ok>=Object.keys(names).length-1)return {i,ix}}return null}
+    if(ok>=Object.keys(names).length-1)return {i,ix};
+    if(ix.br!=null&&ix.name!=null&&ix.sn!=null&&names.last){if(ix.last==null)ix.last=ix.sn+1;if(ix.next==null)ix.next=ix.sn+2;return {i,ix}}}return null}
 const pDate=s=>{const m=String(s||'').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m)return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;const m2=String(s||'').match(/(\d{4})-(\d{2})-(\d{2})/);return m2?m2[0]:''};
 const addMon=(d,n)=>{const x=new Date(d+'T12:00:00');x.setMonth(x.getMonth()+n);return ymd(x)};
 function mParse(A1,A2){const H=hdrIdx(A1,{br:['chi nhanh'],name:['may'],sku:['sku'],sn:['sn'],last:['ngay bao tri gan nhat'],next:['ngay bao tri tiep theo'],note:['ghi chu']});
@@ -1986,9 +1988,17 @@ function mParse(A1,A2){const H=hdrIdx(A1,{br:['chi nhanh'],name:['may'],sku:['sk
   return {rows,freq}}
 async function mLoad(manual){const id=mSid(mUrl());if(!id){MACH.st='er';MACH.msg='Link Google Sheet không hợp lệ';mRender();return}
   MACH={...MACH,st:'run',msg:''};mRender();
-  try{const [t1,t2]=await Promise.all([gviz(id,MS1),gviz(id,MS2).catch(()=>null)]);const p=mParse(gTable(t1),t2?gTable(t2):null);
+  try{const gid=(mUrl().match(/[#&?]gid=(\d+)/)||[])[1]||(id==='1A5r6S1Ocz_g3qt0EDe7a3Q4Rq4bZw98a0GnYqstOSqI'?'542666239':'0');
+    const csv1=fetch(`https://docs.google.com/spreadsheets/d/${id}/export?format=csv&gid=${gid}`).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text()}).then(t=>{if(/^\s*</.test(t))throw new Error('Không phải CSV');return csvParse(t)});
+    const [A1x,t2]=await Promise.all([csv1.catch(()=>null),gviz(id,MS2).catch(()=>null)]);
+    let p=null,src='Google Sheet',warn='';
+    if(A1x){try{p=mParse(A1x,t2?gTable(t2):null)}catch(e){p=null}}
+    if(!p){const t1=await gviz(id,MS1);let A1=gTable(t1);try{p=mParse(A1,t2?gTable(t2):null)}catch(e){const t1b=await gvizH0(id,MS1);p=mParse(gTable(t1b),t2?gTable(t2):null)}
+      const tot=+((t1.rows.concat([]).map(r=>(r.c||[]).map(gCell).join(' ')).join(' ')+' '+t1.cols.map(c=>c.label).join(' ')).match(/\((\d+)\s*máy\)/)||[])[1]||0;
+      if(tot&&p.rows.length<tot)warn=`Sheet đang bật bộ lọc: chỉ đọc được ${p.rows.length}/${tot} máy — hãy tắt bộ lọc trên Google Sheet.`;}
     if(!p.rows.length)throw new Error('Sheet không có dòng máy nào');
-    MXSEL.clear();MACH={st:'ok',rows:p.rows,freq:p.freq,at:new Date(),msg:'',src:'Google Sheet'};lsS('b2mach',JSON.stringify({rows:p.rows,at:MACH.at.toISOString()}));
+    if(warn){const c=lsG('b2mach');let cj=null;try{cj=c&&JSON.parse(c)}catch(_){}if(cj&&cj.rows&&cj.rows.length>p.rows.length){MACH={st:'cache',rows:cj.rows,at:new Date(cj.at),msg:warn};mRender();if(!$('viewBoard').hidden)bRender();return}}
+    MXSEL.clear();MACH={st:'ok',rows:p.rows,freq:p.freq,at:new Date(),msg:warn,src:'Google Sheet'};lsS('b2mach',JSON.stringify({rows:p.rows,at:MACH.at.toISOString()}));
     if(manual)toast(`Đã tải ${p.rows.length} máy từ Google Sheet`)}
   catch(e){const c=lsG('b2mach');if(c&&!MACH.rows.length){try{const j=JSON.parse(c);MACH={st:'cache',rows:j.rows,at:new Date(j.at),msg:e.message}}catch(_){MACH={st:'er',rows:[],msg:e.message}}}else MACH={...MACH,st:MACH.rows.length?'cache':'er',msg:e.message}}
   mRender();if(!$('viewBoard').hidden)bRender()}
@@ -2035,7 +2045,7 @@ function mRender(){if($('viewMach').hidden)return;const A=mRefD(),h=mH(),td=ymd(
   $('mOpen').href=mUrl();if(document.activeElement!==$('mUrl'))$('mUrl').value=mUrl();
   $('mLoad').disabled=MACH.st==='run';$('mLoad').textContent=MACH.st==='run'?'Đang tải…':'Tải lại từ Google Sheet';
   const at=MACH.at?`${MACH.at.toLocaleDateString('vi-VN')} ${MACH.at.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})}`:'';
-  $('mSub').innerHTML=MACH.st==='run'?'Đang tải danh sách máy từ Google Sheet…':MACH.st==='er'?`<span class="er">${esc(MACH.msg)}</span>`:MACH.rows.length?`${MACH.rows.length} máy ở ${new Set(MACH.rows.map(r=>r.key)).size} chi nhánh Clinic · ${MACH.st==='cache'?'bản lưu trên máy':'Google Sheet'} lúc ${at}${MACH.msg?` · <span class="er">không tải lại được: ${esc(MACH.msg)}</span>`:''}`:'Chưa tải danh sách máy.';
+  $('mSub').innerHTML=MACH.st==='run'?'Đang tải danh sách máy từ Google Sheet…':MACH.st==='er'?`<span class="er">${esc(MACH.msg)}</span>`:MACH.rows.length?`${MACH.rows.length} máy ở ${new Set(MACH.rows.map(r=>r.key)).size} chi nhánh Clinic · ${MACH.st==='cache'?'bản lưu trên máy':'Google Sheet'} lúc ${at}${MACH.msg?` · <span class="er">${MACH.st==='ok'||/bộ lọc/.test(MACH.msg)?'':'không tải lại được: '}${esc(MACH.msg)}</span>`:''}`:'Chưa tải danh sách máy.';
   const R=MACH.rows;if(!R.length){['mK','mBr','mList','mSt'].forEach(i=>$(i).innerHTML='');$('mBrN').textContent='';$('mListN').textContent='';return}
   const S=R.map(r=>mStat(r,A,h)),cnt=k=>S.filter(s=>s===k).length;
   const M=mByKey();const LOCK={};Object.values(LOCS||{}).forEach(l=>{const k=mKey(l.name);if(k&&!LOCK[k])LOCK[k]=l});
