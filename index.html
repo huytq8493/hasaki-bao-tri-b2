@@ -786,6 +786,15 @@ body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none
 #viewBoard .mplan>summary em.g{color:var(--c-done)}
 @media (max-width:900px){#viewBoard .pc{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
 @media (max-width:760px){#viewBoard .pc{grid-template-columns:minmax(0,1fr)}}
+/* tab nhỏ trong Máy móc */
+.msub{display:inline-flex;gap:4px;padding:4px;border:1px solid var(--line);border-radius:12px;background:var(--panel);box-shadow:var(--shadow);margin-bottom:6px}
+.msub button{all:unset;cursor:pointer;padding:8px 16px;border-radius:9px;font-weight:600;font-size:14px;color:var(--muted);display:inline-flex;gap:8px;align-items:center}
+.msub button b{font-size:12px;font-weight:700;padding:0 7px;border-radius:999px;background:color-mix(in srgb,var(--ink) 8%,transparent);color:var(--muted)}
+.msub button b:empty{display:none}
+.msub button[aria-selected="true"]{background:var(--accent);color:#fff;box-shadow:0 2px 8px color-mix(in srgb,var(--accent) 35%,transparent)}
+.msub button[aria-selected="true"] b{background:rgba(255,255,255,.25);color:#fff}
+.msub button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.msub{justify-self:start;width:max-content;max-width:100%}
 </style>
 </head>
 <body>
@@ -808,7 +817,7 @@ body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none
     <button role="tab" id="tabR" aria-selected="false"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 17v-5M12 17V7M16 17v-8"/></svg>Report</button>
     <button role="tab" id="tabB" aria-selected="false"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Điều phối</button>
     <button role="tab" id="tabT" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Task</button>
-    <button role="tab" id="tabM" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg>Máy Clinic</button>
+    <button role="tab" id="tabM" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg>Máy móc</button>
     <button role="tab" id="tabC" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M12 3v18M5 8l-3 6h6zM19 8l-3 6h6zM5 8h14"/></svg>Cân tải</button>
   </nav>
 </div>
@@ -898,7 +907,8 @@ body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none
 
     <!-- ===== LỊCH BẢO TRÌ MÁY CLINIC ===== -->
     <section id="viewMach" class="view" hidden>
-      <div class="vhead"><div><h2>Lịch bảo trì máy Clinic</h2><p class="sub" id="mSub">Chưa tải danh sách máy.</p>
+      <div class="msub" role="tablist" aria-label="Loại máy"><button role="tab" data-msub="clinic" aria-selected="true">Máy Clinic <b id="msCntC"></b></button><button role="tab" data-msub="lanh" aria-selected="false">Máy lạnh <b id="msCntL"></b></button></div>
+      <div class="vhead"><div><h2 id="mTitle">Lịch bảo trì máy Clinic</h2><p class="sub" id="mSub">Chưa tải danh sách máy.</p>
         <div class="dayp" role="group" aria-label="Ngày tham chiếu"><button class="btn sec sm" data-md="0">Hôm nay</button><button class="btn sec sm" data-md="1">Ngày mai</button><input type="date" id="mPick" aria-label="Ngày tham chiếu">
           <select id="mH" aria-label="Sắp đến hạn trong"><option value="7">Sắp đến hạn: 7 ngày</option><option value="14">Sắp đến hạn: 14 ngày</option><option value="30" selected>Sắp đến hạn: 30 ngày</option><option value="60">Sắp đến hạn: 60 ngày</option></select></div></div>
         <div class="row"><button class="btn" id="mLoad">Tải lại từ Google Sheet</button><a class="btn sec" id="mOpen" target="_blank" rel="noopener">Mở Google Sheet</a></div></div>
@@ -1006,7 +1016,7 @@ body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none
     <p class="sub" id="mdSub"></p>
     <div id="mdBody"></div>
     <div class="mxbar"><label>Ngày làm <input type="date" id="mdDate"></label><label>Người làm <select id="mdWho1"></select></label><label>+ người 2 <select id="mdWho2"></select></label></div>
-    <div class="row" style="justify-content:flex-end;gap:8px;flex-wrap:wrap"><button class="btn sec" id="mdGo">Xem ở tab Máy Clinic</button><button class="btn sec" id="mdCopy">Sao chép nội dung</button><button class="btn" id="mdXlsx">Xuất Excel tạo task</button></div>
+    <div class="row" style="justify-content:flex-end;gap:8px;flex-wrap:wrap"><button class="btn sec" id="mdGo">Xem ở tab Máy móc</button><button class="btn sec" id="mdCopy">Sao chép nội dung</button><button class="btn" id="mdXlsx">Xuất Excel tạo task</button></div>
   </div>
 </div>
 <div class="modal" id="pair" hidden role="dialog" aria-modal="true" aria-labelledby="prT">
@@ -1162,7 +1172,7 @@ function rebalance(){
 /* ---------- hiển thị ---------- */
 const S={zone:'',nv:'',tr:'',chg:'',q:''};
 const changed=t=>[...t.cur].sort().join()!==[...t.new].sort().join();
-function render(){renderMain();if(!$('viewBoard').hidden)bRender();if(!$('viewDue').hidden)dRender();if(!$('viewRep').hidden)rRender();if(!$('viewMach').hidden)mRender()}
+function render(){renderMain();if(!$('viewBoard').hidden)bRender();if(!$('viewDue').hidden)dRender();if(!$('viewRep').hidden)rRender();if(!$('viewMach').hidden)mcRender()}
 function renderMain(){
   const L0=loadOf(t=>t.cur),L1=loadOf(t=>t.new);
   const ch=TASKS.filter(changed).length,outN=Object.values(OUTS).reduce((a,b)=>a+b.n,0);
@@ -1951,10 +1961,16 @@ function c1bRender(T,A,ok){const el=$('c1b');if(!el)return;
 
 /* ---------- LỊCH BẢO TRÌ MÁY CLINIC ---------- */
 const MSHEET_DEF='https://docs.google.com/spreadsheets/d/1A5r6S1Ocz_g3qt0EDe7a3Q4Rq4bZw98a0GnYqstOSqI/edit';
-const MS1='Máy và số SN',MS2='Máy và tần suất bảo trì';
+const MS1='Máy và số SN',MS2='Máy và tần suất bảo trì',MS3='Chi Nhánh';
+// sheet Chi Nhánh: STT | Tên chi nhánh | location_id
+function mParseLocs(A){const M={};let ni=-1,ii=-1;
+  for(const r of A){const c=r.map(x=>unacc(x).toLowerCase().trim());const j=c.findIndex(x=>/ten chi nhanh|^chi nhanh$/.test(x));if(j>=0){ni=j;const k=c.findIndex((x,q)=>q!==j&&/location|loc id|ma chi nhanh|^id$/.test(x));if(k>=0)ii=k;continue}
+    if(ni<0)continue;const nm=String(r[ni]||'').trim();let id=ii>=0?String(r[ii]||'').trim():'';if(!id){const q=r.findIndex((x,q2)=>q2>ni&&/^\d+(\.0)?$/.test(String(x).trim()));if(q>=0)id=String(r[q]).trim()}
+    id=id.replace(/\.0$/,'');if(nm&&/^\d+$/.test(id))M[mKey(nm)]=+id}
+  return M}
 let MACH={st:'idle',rows:[],freq:{},at:null,msg:''},MREF=null,MST='due',MBRF='';
 const lsG=k=>{try{return localStorage.getItem(k)}catch(e){return null}},lsS=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
-const mUrl=()=>lsG('b2mUrl')||MSHEET_DEF;
+const mUrl=()=>MLANH?(lsG('b2lUrl')||''):(lsG('b2mUrl')||MSHEET_DEF);
 const mSid=u=>(String(u).match(/\/d\/([a-zA-Z0-9_-]{20,})/)||[])[1]||(/^[a-zA-Z0-9_-]{20,}$/.test(u)?u:'');
 const unacc=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D');
 // khoá chi nhánh: "SPA - 555 3 THANG 2" ~ "555 3 Tháng 2 - Hồ Chí Minh" -> "555 3 THANG 2"
@@ -1986,23 +2002,41 @@ function mParse(A1,A2){const H=hdrIdx(A1,{br:['chi nhanh'],name:['may'],sku:['sk
     if(!next&&last&&fq&&fq.mo)next=addMon(last,fq.mo);
     rows.push({br,key:mKey(br),name,sku,sn:g(r,'sn'),last,next,note:g(r,'note'),freq:fq?fq.txt:''})});
   return {rows,freq}}
-async function mLoad(manual){const id=mSid(mUrl());if(!id){MACH.st='er';MACH.msg='Link Google Sheet không hợp lệ';mRender();return}
-  MACH={...MACH,st:'run',msg:''};mRender();
+async function mLoad(manual){const id=mSid(mUrl());if(!id){MACH.st='er';MACH.msg='Link Google Sheet không hợp lệ';mcRender();return}
+  MACH={...MACH,st:'run',msg:''};mcRender();
   try{const gid=(mUrl().match(/[#&?]gid=(\d+)/)||[])[1]||(id==='1A5r6S1Ocz_g3qt0EDe7a3Q4Rq4bZw98a0GnYqstOSqI'?'542666239':'0');
     const csv1=fetch(`https://docs.google.com/spreadsheets/d/${id}/export?format=csv&gid=${gid}`).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text()}).then(t=>{if(/^\s*</.test(t))throw new Error('Không phải CSV');return csvParse(t)});
-    const [A1x,t2]=await Promise.all([csv1.catch(()=>null),gviz(id,MS2).catch(()=>null)]);
+    const [A1x,t2,t3]=await Promise.all([csv1.catch(()=>null),gviz(id,MS2).catch(()=>null),gvizH0(id,MS3).catch(()=>null)]);
+    const locs=t3?mParseLocs(gTable(t3)):{};
     let p=null,src='Google Sheet',warn='';
     if(A1x){try{p=mParse(A1x,t2?gTable(t2):null)}catch(e){p=null}}
     if(!p){const t1=await gviz(id,MS1);let A1=gTable(t1);try{p=mParse(A1,t2?gTable(t2):null)}catch(e){const t1b=await gvizH0(id,MS1);p=mParse(gTable(t1b),t2?gTable(t2):null)}
       const tot=+((t1.rows.concat([]).map(r=>(r.c||[]).map(gCell).join(' ')).join(' ')+' '+t1.cols.map(c=>c.label).join(' ')).match(/\((\d+)\s*máy\)/)||[])[1]||0;
       if(tot&&p.rows.length<tot)warn=`Sheet đang bật bộ lọc: chỉ đọc được ${p.rows.length}/${tot} máy — hãy tắt bộ lọc trên Google Sheet.`;}
     if(!p.rows.length)throw new Error('Sheet không có dòng máy nào');
-    if(warn){const c=lsG('b2mach');let cj=null;try{cj=c&&JSON.parse(c)}catch(_){}if(cj&&cj.rows&&cj.rows.length>p.rows.length){MACH={st:'cache',rows:cj.rows,at:new Date(cj.at),msg:warn};mRender();if(!$('viewBoard').hidden)bRender();return}}
-    MXSEL.clear();MACH={st:'ok',rows:p.rows,freq:p.freq,at:new Date(),msg:warn,src:'Google Sheet'};lsS('b2mach',JSON.stringify({rows:p.rows,at:MACH.at.toISOString()}));
+    if(warn){const c=lsG('b2mach');let cj=null;try{cj=c&&JSON.parse(c)}catch(_){}if(cj&&cj.rows&&cj.rows.length>p.rows.length){MACH={st:'cache',rows:cj.rows,locs:Object.keys(locs).length?locs:(cj.locs||{}),at:new Date(cj.at),msg:warn};mcRender();if(!$('viewBoard').hidden)bRender();return}}
+    MXSEL.clear();MACH={st:'ok',rows:p.rows,freq:p.freq,locs,at:new Date(),msg:warn,src:'Google Sheet'};lsS('b2mach',JSON.stringify({rows:p.rows,locs,at:MACH.at.toISOString()}));
     if(manual)toast(`Đã tải ${p.rows.length} máy từ Google Sheet`)}
-  catch(e){const c=lsG('b2mach');if(c&&!MACH.rows.length){try{const j=JSON.parse(c);MACH={st:'cache',rows:j.rows,at:new Date(j.at),msg:e.message}}catch(_){MACH={st:'er',rows:[],msg:e.message}}}else MACH={...MACH,st:MACH.rows.length?'cache':'er',msg:e.message}}
-  mRender();if(!$('viewBoard').hidden)bRender()}
-(()=>{const c=lsG('b2mach');if(c){try{const j=JSON.parse(c);MACH={st:'cache',rows:j.rows||[],at:new Date(j.at),msg:''}}catch(e){}}})();
+  catch(e){const c=lsG('b2mach');if(c&&!MACH.rows.length){try{const j=JSON.parse(c);MACH={st:'cache',rows:j.rows,locs:j.locs||{},at:new Date(j.at),msg:e.message}}catch(_){MACH={st:'er',rows:[],msg:e.message}}}else MACH={...MACH,st:MACH.rows.length?'cache':'er',msg:e.message}}
+  mcRender();if(!$('viewBoard').hidden)bRender()}
+async function lLoad(manual){if(!(lsG('b2lUrl')||'')){LANH={...LANH,st:'none'};mcRender();return}const __u=lsG('b2lUrl');const id=mSid(__u);if(!id){LANH.st='er';LANH.msg='Link Google Sheet không hợp lệ';mcRender();return}
+  LANH={...LANH,st:'run',msg:''};mcRender();
+  try{const gid=(__u.match(/[#&?]gid=(\d+)/)||[])[1]||(id==='1A5r6S1Ocz_g3qt0EDe7a3Q4Rq4bZw98a0GnYqstOSqI'?'542666239':'0');
+    const csv1=fetch(`https://docs.google.com/spreadsheets/d/${id}/export?format=csv&gid=${gid}`).then(r=>{if(!r.ok)throw new Error('HTTP '+r.status);return r.text()}).then(t=>{if(/^\s*</.test(t))throw new Error('Không phải CSV');return csvParse(t)});
+    const [A1x,t2,t3]=await Promise.all([csv1.catch(()=>null),Promise.reject(0).catch(()=>null),gvizH0(id,MS3).catch(()=>null)]);
+    const locs=t3?mParseLocs(gTable(t3)):{};
+    let p=null,src='Google Sheet',warn='';
+    if(A1x){try{p=mParse(A1x,t2?gTable(t2):null)}catch(e){p=null}}
+    if(!p){const t1=await gviz(id,'');let A1=gTable(t1);try{p=mParse(A1,t2?gTable(t2):null)}catch(e){const t1b=await gvizH0(id,'');p=mParse(gTable(t1b),t2?gTable(t2):null)}
+      const tot=+((t1.rows.concat([]).map(r=>(r.c||[]).map(gCell).join(' ')).join(' ')+' '+t1.cols.map(c=>c.label).join(' ')).match(/\((\d+)\s*máy\)/)||[])[1]||0;
+      if(tot&&p.rows.length<tot)warn=`Sheet đang bật bộ lọc: chỉ đọc được ${p.rows.length}/${tot} máy — hãy tắt bộ lọc trên Google Sheet.`;}
+    if(!p.rows.length)throw new Error('Sheet không có dòng máy nào');
+    if(warn){const c=lsG('b2lach');let cj=null;try{cj=c&&JSON.parse(c)}catch(_){}if(cj&&cj.rows&&cj.rows.length>p.rows.length){LANH={st:'cache',rows:cj.rows,locs:Object.keys(locs).length?locs:(cj.locs||{}),at:new Date(cj.at),msg:warn};mcRender();if(!$('viewBoard').hidden)bRender();return}}
+    if(MSUB==='lanh')MXSEL.clear();LANH={st:'ok',rows:p.rows,freq:p.freq,locs,at:new Date(),msg:warn,src:'Google Sheet'};lsS('b2lach',JSON.stringify({rows:p.rows,locs,at:LANH.at.toISOString()}));
+    if(manual)toast(`Đã tải ${p.rows.length} máy từ Google Sheet`)}
+  catch(e){const c=lsG('b2lach');if(c&&!LANH.rows.length){try{const j=JSON.parse(c);LANH={st:'cache',rows:j.rows,locs:j.locs||{},at:new Date(j.at),msg:e.message}}catch(_){LANH={st:'er',rows:[],msg:e.message}}}else LANH={...LANH,st:LANH.rows.length?'cache':'er',msg:e.message}}
+  mcRender();if(!$('viewBoard').hidden)bRender()}
+(()=>{const c=lsG('b2mach');if(c){try{const j=JSON.parse(c);MACH={st:'cache',rows:j.rows||[],locs:j.locs||{},at:new Date(j.at),msg:''}}catch(e){}}})();
 setTimeout(()=>mLoad(false),1500);
 const mH=()=>+($('mH')?.value||30);
 const mRefD=()=>MREF||ymd(new Date());
@@ -2020,12 +2054,12 @@ function mColHint(mine){const st=[...new Set(mine.map(t=>t.store))].map(s=>[s,mD
   if(!st.length)return '';return `<div class="mhint">Ghé ${st.length} chi nhánh có máy đến hạn BT: ${st.map(([s,d])=>`<button class="mlink" data-mstore="${esc(s)}">${esc(s.split(' - ')[0])} (${d.over.length+d.soon.length})</button>`).join(', ')}</div>`}
 document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-mstore]');if(!b)return;e.preventDefault();e.stopPropagation();mOpenDlg(b.dataset.mstore,!$('viewBoard').hidden?TMRD():mRefD())},true);
 function mTaskText(br,L,A){const lines=L.map((r,i)=>`${i+1}. ${r.name}${r.sku?' · SKU '+r.sku:''}${r.sn?' · SN '+r.sn:''} — BT gần nhất ${r.last?fmtD(r.last)+'/'+r.last.slice(0,4):'chưa có'}, đến hạn ${r.next?fmtD(r.next)+'/'+r.next.slice(0,4):'chưa có lịch'}${r.next&&r.next<A?` (quá hạn ${-mDays(r,A)} ngày)`:''}`);
-  return `Bảo trì định kỳ máy Clinic — ${br}\nNgày dự kiến: ${fmtD(A)}/${A.slice(0,4)} · ${L.length} máy\n${lines.join('\n')}`}
+  return `Bảo trì định kỳ ${MLANH?'máy lạnh':'máy Clinic'} — ${br}\nNgày dự kiến: ${fmtD(A)}/${A.slice(0,4)} · ${L.length} máy\n${lines.join('\n')}`}
 let MDLG=null;
 function mNice(k,fb){const l=Object.values(LOCS||{}).find(l=>mKey(l.name)===k);return l?l.name:String(fb||'').replace(/^SPA\s*-\s*/i,'Clinic ')}
 function mOpenDlg(store,A){const k=mStoreKey(store),L=MACH.rows.filter(r=>r.key===k);if(!L.length){toast('Chưa có danh sách máy cho chi nhánh này');return}
   const h=mH(),due=L.filter(r=>['over','soon'].includes(mStat(r,A,h))).sort((a,b)=>(a.next||'9').localeCompare(b.next||'9')),rest=L.filter(r=>!due.includes(r));
-  const ot=TASKS.filter(t=>mStoreKey(t.store)===k&&(t.tr==='MM'||grpOf(t)==='pk'));
+  const ot=TASKS.filter(t=>mStoreKey(t.store)===k&&mTaskTech(t));
   const nice=mNice(k,L[0].br);MDLG={br:nice,due,A,store};
   $('mdT').textContent=`Máy cần bảo trì · ${nice}`;
   $('mdSub').innerHTML=`Tính đến ${fmtD(A)} (sắp đến hạn = trong ${h} ngày) · ${due.length}/${L.length} máy cần bảo trì${ot.length?` · đang có ${ot.length} task máy móc mở ở chi nhánh này`:''}. Chọn máy rồi bấm <b>Sao chép nội dung task</b> để tạo task trên Work.`;
@@ -2040,29 +2074,29 @@ $('mdCopy').onclick=()=>{if(!MDLG)return;const sel=[...document.querySelectorAll
 $('mdGo').onclick=()=>{if(!MDLG)return;MBRF=mStoreKey(MDLG.store);$('mDlg').hidden=true;tab('m')};
 function mCopy(txt,msg){const ok=()=>toast(msg||'Đã sao chép');if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(txt).then(ok,()=>fb());else fb();
   function fb(){const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok()}catch(e){toast('Không sao chép được')}ta.remove()}}
-function mRender(){if($('viewMach').hidden)return;const A=mRefD(),h=mH(),td=ymd(new Date());
+function mcRender(){if($('viewMach').hidden)return;const A=mRefD(),h=mH(),td=ymd(new Date());
   $('mPick').value=A;document.querySelectorAll('#viewMach [data-md]').forEach(b=>b.classList.toggle('on',A===ymd(new Date(Date.now()+(+b.dataset.md)*864e5))));
   $('mOpen').href=mUrl();if(document.activeElement!==$('mUrl'))$('mUrl').value=mUrl();
   $('mLoad').disabled=MACH.st==='run';$('mLoad').textContent=MACH.st==='run'?'Đang tải…':'Tải lại từ Google Sheet';
   const at=MACH.at?`${MACH.at.toLocaleDateString('vi-VN')} ${MACH.at.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})}`:'';
-  $('mSub').innerHTML=MACH.st==='run'?'Đang tải danh sách máy từ Google Sheet…':MACH.st==='er'?`<span class="er">${esc(MACH.msg)}</span>`:MACH.rows.length?`${MACH.rows.length} máy ở ${new Set(MACH.rows.map(r=>r.key)).size} chi nhánh Clinic · ${MACH.st==='cache'?'bản lưu trên máy':'Google Sheet'} lúc ${at}${MACH.msg?` · <span class="er">${MACH.st==='ok'||/bộ lọc/.test(MACH.msg)?'':'không tải lại được: '}${esc(MACH.msg)}</span>`:''}`:'Chưa tải danh sách máy.';
+  $('mSub').innerHTML=MACH.st==='run'?'Đang tải danh sách máy từ Google Sheet…':MACH.st==='er'?`<span class="er">${esc(MACH.msg)}</span>`:MACH.rows.length?`${MACH.rows.length} máy ở ${new Set(MACH.rows.map(r=>r.key)).size} ${MLANH?'chi nhánh':'chi nhánh Clinic'} · ${MACH.st==='cache'?'bản lưu trên máy':'Google Sheet'} lúc ${at}${MACH.msg?` · <span class="er">${MACH.st==='ok'||/bộ lọc/.test(MACH.msg)?'':'không tải lại được: '}${esc(MACH.msg)}</span>`:''}`:'Chưa tải danh sách máy.';
   const R=MACH.rows;if(!R.length){['mK','mBr','mList','mSt'].forEach(i=>$(i).innerHTML='');$('mBrN').textContent='';$('mListN').textContent='';return}
   const S=R.map(r=>mStat(r,A,h)),cnt=k=>S.filter(s=>s===k).length;
   const M=mByKey();const LOCK={};Object.values(LOCS||{}).forEach(l=>{const k=mKey(l.name);if(k&&!LOCK[k])LOCK[k]=l});
   const brs=Object.entries(M).map(([k,g])=>{const st=g.rows.map(r=>mStat(r,A,h));const loc=LOCK[k];const store=loc?loc.name:g.br;
-    const ot=TASKS.filter(t=>mStoreKey(t.store)===k&&(t.tr==='MM'||grpOf(t)==='pk'));
-    const plan=TASKS.filter(t=>mStoreKey(t.store)===k&&t.tr==='MM'&&((PLAN[t.tid]&&TMRD()===A)||t.dl===A)).flatMap(t=>(PLAN[t.tid]&&TMRD()===A?t.new:t.cur)).filter(i=>BYID[i]);
+    const ot=TASKS.filter(t=>mStoreKey(t.store)===k&&mTaskTech(t));
+    const plan=TASKS.filter(t=>mStoreKey(t.store)===k&&mTaskTechV(t)&&((PLAN[t.tid]&&TMRD()===A)||t.dl===A)).flatMap(t=>(PLAN[t.tid]&&TMRD()===A?t.new:t.cur)).filter(i=>BYID[i]);
     return {k,br:g.br,store,zone:loc?(ZONEOF[nm(loc.name)]||''):'',n:g.rows.length,over:st.filter(s=>s==='over').length,soon:st.filter(s=>s==='soon').length,none:st.filter(s=>s==='none').length,ot,who:[...new Set(plan)],nx:g.rows.map(r=>r.next).filter(Boolean).sort()[0]||''}}).sort((a,b)=>(b.over+b.soon>0)-(a.over+a.soon>0)||b.over-a.over||b.soon-a.soon||a.br.localeCompare(b.br));
   const need=brs.filter(b=>b.over+b.soon);
   $('mK').innerHTML=[[R.length,'Tổng máy','k-acc'],[cnt('over'),'Quá hạn bảo trì','k-bad'],[cnt('soon'),`Đến hạn trong ${h} ngày`,'k-warn'],[cnt('ok'),'Còn hạn','k-ok'],[cnt('none'),'Chưa có lịch bảo trì',''],[need.length+'/'+brs.length,'Chi nhánh cần ghé','']].map(([b,s,c])=>`<div class="kpi ${c}"><b>${b}</b><span>${esc(s)}</span></div>`).join('');
   $('mBrN').textContent=`${need.length} chi nhánh có máy quá hạn hoặc đến hạn trong ${h} ngày tính từ ${fmtD(A)} · bấm thẻ để xem máy và soạn task`;
   $('mBr').innerHTML=brs.map(b=>`<button class="mbr${b.over?' ov':b.soon?' so':''}" data-mstore="${esc(b.store)}"><span class="mt" title="${esc(b.br)}">${esc(b.store!==b.br?b.store.split(' - ')[0]:b.br.replace(/^SPA\s*-\s*/i,''))}</span><span class="ms">${esc(b.zone||'')}${b.zone?' · ':''}${b.n} máy</span>
     <span class="mc">${b.over?`<em class="o">${b.over} quá hạn</em>`:''}${b.soon?`<em class="s">${b.soon} sắp đến</em>`:''}${!b.over&&!b.soon?`<em class="g">Chưa cần bảo trì</em>`:''}${b.none?`<em class="n">${b.none} chưa có lịch</em>`:''}</span>
-    <span class="mw">${b.who.length?'Thợ máy ghé '+fmtD(A)+': '+esc(b.who.map(i=>BYID[i].name.split(' ').slice(-2).join(' ')).join(', ')):b.ot.length?`${b.ot.length} task máy móc đang mở`:(b.nx?'Máy đến hạn sớm nhất: '+fmtD(b.nx):'')}</span></button>`).join('');
+    <span class="mw">${b.who.length?''+(MLANH?'Thợ lạnh':'Thợ máy')+' ghé '+fmtD(A)+': '+esc(b.who.map(i=>BYID[i].name.split(' ').slice(-2).join(' ')).join(', ')):b.ot.length?`${b.ot.length} task ${MLANH?'máy lạnh':'máy móc'} đang mở`:(b.nx?'Máy đến hạn sớm nhất: '+fmtD(b.nx):'')}</span></button>`).join('');
   // danh sách
   const SB=[['due','Cần bảo trì'],['over','Quá hạn'],['soon','Sắp đến hạn'],['ok','Còn hạn'],['none','Chưa có lịch'],['all','Tất cả']];const c2={due:cnt('over')+cnt('soon'),over:cnt('over'),soon:cnt('soon'),ok:cnt('ok'),none:cnt('none'),all:R.length};
   $('mSt').innerHTML=SB.map(([k,l])=>`<button class="${MST===k?'on':''} s-${k==='over'?'late':k==='soon'?'today':k==='ok'?'done':k}" data-ms="${k}">${l} <b>${c2[k]}</b></button>`).join('');
-  $('mSt').querySelectorAll('[data-ms]').forEach(b=>b.onclick=()=>{MST=b.dataset.ms;mRender()});
+  $('mSt').querySelectorAll('[data-ms]').forEach(b=>b.onclick=()=>{MST=b.dataset.ms;mcRender()});
   const bo=Object.entries(M).sort((a,b)=>a[1].br.localeCompare(b[1].br));$('mBrSel').innerHTML='<option value="">Tất cả chi nhánh</option>'+bo.map(([k,g])=>`<option value="${esc(k)}"${k===MBRF?' selected':''}>${esc(g.br.replace(/^SPA\s*-\s*/i,''))} (${g.rows.length})</option>`).join('');
   const q=unacc($('mQ').value).toLowerCase().trim();
   const L=mRows();
@@ -2076,13 +2110,13 @@ function mRows(){const A=mRefD(),h=mH(),q=unacc($('mQ').value).toLowerCase().tri
   return MACH.rows.map(r=>({r,s:mStat(r,A,h)})).filter(x=>(MST==='all'||(MST==='due'?['over','soon'].includes(x.s):x.s===MST))&&(!MBRF||x.r.key===MBRF)&&(!q||unacc([x.r.br,x.r.name,x.r.sku,x.r.sn,x.r.note].join(' ')).toLowerCase().includes(q)))
     .sort((a,b)=>(a.r.next||'9999').localeCompare(b.r.next||'9999')||a.r.br.localeCompare(b.r.br))}
 $('mLoad').onclick=()=>mLoad(true);
-$('mH').onchange=()=>{mRender();if(!$('viewBoard').hidden)bRender()};
-$('mPick').onchange=e=>{MREF=e.target.value||null;mRender()};
-document.querySelectorAll('#viewMach [data-md]').forEach(b=>b.onclick=()=>{MREF=ymd(new Date(Date.now()+(+b.dataset.md)*864e5));mRender()});
-let _mq;$('mQ').oninput=()=>{clearTimeout(_mq);_mq=setTimeout(mRender,180)};
-$('mBrSel').onchange=e=>{MBRF=e.target.value;mRender()};
+$('mH').onchange=()=>{mcRender();if(!$('viewBoard').hidden)bRender()};
+$('mPick').onchange=e=>{MREF=e.target.value||null;mcRender()};
+document.querySelectorAll('#viewMach [data-md]').forEach(b=>b.onclick=()=>{MREF=ymd(new Date(Date.now()+(+b.dataset.md)*864e5));mcRender()});
+let _mq;$('mQ').oninput=()=>{clearTimeout(_mq);_mq=setTimeout(mcRender,180)};
+$('mBrSel').onchange=e=>{MBRF=e.target.value;mcRender()};
 $('mUrlSave').onclick=()=>{const v=$('mUrl').value.trim();if(!mSid(v)){toast('Link Google Sheet không hợp lệ');return}lsS('b2mUrl',v);mLoad(true)};
-$('mFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const A=csvParse(await f.text());const p=mParse(A,null);MXSEL.clear();MACH={st:'ok',rows:p.rows,freq:{},at:new Date(),msg:'',src:'CSV'};lsS('b2mach',JSON.stringify({rows:p.rows,at:MACH.at.toISOString()}));toast(`Đã nhập ${p.rows.length} máy từ file CSV`)}catch(err){toast(err.message)}e.target.value='';mRender()};
+$('mFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const A=csvParse(await f.text());const p=mParse(A,null);MXSEL.clear();MACH={st:'ok',rows:p.rows,freq:{},at:new Date(),msg:'',src:'CSV'};lsS('b2mach',JSON.stringify({rows:p.rows,at:MACH.at.toISOString()}));toast(`Đã nhập ${p.rows.length} máy từ file CSV`)}catch(err){toast(err.message)}e.target.value='';mcRender()};
 $('mCsv').onclick=()=>{const L=mRows();if(!L.length)return toast('Không có máy để tải');const A=mRefD();
   const rows=[['Chi nhánh','Máy','SKU','SN','BT gần nhất','BT tiếp theo','Trạng thái','Số ngày','Tần suất','Ghi chú']].concat(L.map(({r,s})=>[r.br,r.name,r.sku,r.sn,r.last,r.next,MSL[s],r.next?mDays(r,A):'',r.freq,r.note]));
   const csv='﻿'+rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`may_clinic_${A}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)};
@@ -2100,7 +2134,7 @@ function mPlanRenderOld(){const el=$('mPlan');if(!el)return;if(!MACH.rows.length
       if(!over.length&&!soon.length)return null;
       const oldest=over.length?Math.max(...over.map(r=>-mDays(r,D))):0;const store=LOCK[k]?.name||g.br;
       const here=Object.keys(vis[k]||{}).map(Number);
-      const open=TASKS.filter(t=>mStoreKey(t.store)===k&&(t.tr==='MM'||grpOf(t)==='pk'));const openUn=open.filter(t=>!PLAN[t.tid]);
+      const open=TASKS.filter(t=>mStoreKey(t.store)===k&&mTaskTech(t));const openUn=open.filter(t=>!PLAN[t.tid]);
       // gợi ý người: thợ máy đã có việc cùng tỉnh ngày D (đi kèm được), còn làm ca, ít giờ nhất
       const c=city(k);const sameCity=mm.filter(r=>!here.includes(r.id)&&!unavailable(shiftOf(r.id,D))&&Object.keys(vis).some(k2=>k2!==k&&city(k2)===c&&vis[k2][r.id]));
       const free=mm.filter(r=>!unavailable(shiftOf(r.id,D))).sort((a,b)=>load(a.id)-load(b.id));
@@ -2140,7 +2174,7 @@ function mPlanRenderV2(){const el=$('mPlan');if(!el)return;el.hidden=false;
       const un=cl.filter(t=>!goes(t).length);
       if(!mOver.length&&!mSoon.length&&!late.length&&!urg.length&&!due.length)return null;
       const store=LOCK[k]?.name||cl[0]?.store||M[k]?.br||k;const nameS=LOCK[k]||cl[0]?store.split(' - ')[0]:String(M[k]?.br||k).replace(/^SPA\s*-\s*/i,'');
-      const visAll=Object.keys(vis[k]||{}).map(Number),visMM=visAll.filter(i=>BYID[i]?.tr==='MM');
+      const visAll=Object.keys(vis[k]||{}).map(Number),visMM=visAll.filter(i=>mTech(BYID[i]));
       const lateUn=late.filter(t=>!goes(t).length),urgUn=urg.filter(t=>!goes(t).length);
       const tier=(lateUn.length||urgUn.length||oldest>30)?'now':(late.length||mOver.length||due.length||mSoon.some(r=>r.next<=d7))?'week':'watch';
       const c=city(k);const sameCity=mm.filter(r=>!visMM.includes(r.id)&&!unavailable(shiftOf(r.id,D))&&Object.keys(vis).some(k2=>k2!==k&&city(k2)===c&&vis[k2][r.id]));
@@ -2191,27 +2225,27 @@ function xlsx(rows,sheet='Sheet1'){const x=s=>String(s).replace(/&/g,'&amp;').re
 function dlBlob(b,name){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),3000)}
 // --- dòng theo mẫu Orders_Template ---
 const XH=['#','order_desc','location_id','service_sku','service_name','qty','machine_code','note','type','staff_code','date_start','date_end','type00','stock_id','sub_type'];
-function mLocId(r){const l=Object.values(LOCS||{}).find(l=>mKey(l.name)===r.key);return l?l.id:''}
+function mLocId(r){let v=(MACH.locs||{})[r.key];if(v==null&&MLANH&&MCLIN)v=(MCLIN.locs||{})[r.key];return v==null?'':v}
 function mXlsxRows(L,date,ids){const codes=ids.map(i=>BYID[i]?.code).filter(Boolean).join(', ');const miss={loc:0,svc:0};
-  const out=L.map((r,i)=>{const loc=mLocId(r);if(!loc)miss.loc++;const svc=MSVC[r.sku]||'';if(!svc)miss.svc++;const fd=v=>v?`${v.slice(8,10)}/${v.slice(5,7)}/${v.slice(0,4)}`:'chưa có';
+  const out=L.map((r,i)=>{const loc=mLocId(r);if(loc==='')miss.loc++;const svc=MSVC[r.sku]||'';if(!svc)miss.svc++;const fd=v=>v?`${v.slice(8,10)}/${v.slice(5,7)}/${v.slice(0,4)}`:'chưa có';
     return [i+1,'Bảo trì',loc===''?'':+loc,svc&&/^\d+$/.test(svc)?+svc:svc,`Bảo trì định kỳ - ${r.name}`,1,r.sn||'',`Bảo trì định kỳ: S/N:${r.sn||'(chưa có SN)'} - ${r.name}${r.sku?' (SKU '+r.sku+')':''} · BT gần nhất ${fd(r.last)}, đến hạn ${fd(r.next)}`,7,codes,date,date,'Bảo trì định kỳ','','']});
   return {rows:[XH,...out],miss}}
 function mXport(L,date,ids,tag){if(!L.length){toast('Chưa có máy nào để xuất');return}if(!date){toast('Chọn ngày làm');return}
   if(!ids.length&&!confirm('Chưa chọn người làm — vẫn xuất file (cột staff_code để trống)?'))return;
-  const {rows,miss}=mXlsxRows(L,date,ids);dlBlob(xlsx(rows),`Orders_BaoTri_${tag?tag+'_':''}${date}.xlsx`);
-  toast(`Đã xuất ${L.length} máy${miss.svc?` · ${miss.svc} máy chưa có service_sku`:''}${miss.loc?` · ${miss.loc} máy chưa khớp location`:''}`)}
-function mWhoOpts(sel,def){const D=sel.dataset.d||'';const mm=ROSTER.filter(r=>r.tr==='MM');const oth=ROSTER.filter(r=>r.tr!=='MM');
-  sel.innerHTML='<option value="">—</option>'+`<optgroup label="Bảo trì máy móc">${mm.map(r=>`<option value="${r.id}">${esc(r.name)}${r.code?' · '+r.code:''}</option>`).join('')}</optgroup><optgroup label="Khác">${oth.map(r=>`<option value="${r.id}">${esc(r.name)}${r.code?' · '+r.code:''}</option>`).join('')}</optgroup>`;sel.value=def?String(def):''}
+  const {rows,miss}=mXlsxRows(L,date,ids);dlBlob(xlsx(rows),`${MLANH?'Orders_BaoTriMayLanh_':'Orders_BaoTri_'}${tag?tag+'_':''}${date}.xlsx`);
+  toast(`Đã xuất ${L.length} máy${miss.svc?` · ${miss.svc} máy chưa có service_sku`:''}${miss.loc?` · ${miss.loc} máy chưa có location_id (thêm chi nhánh vào sheet "Chi Nhánh")`:''}`)}
+function mWhoOpts(sel,def){const D=sel.dataset.d||'';const mm=ROSTER.filter(r=>mTech(r));const oth=ROSTER.filter(r=>!mTech(r));
+  sel.innerHTML='<option value="">—</option>'+`<optgroup label="${MLANH?'Điện Lạnh':'Bảo trì máy móc'}">${mm.map(r=>`<option value="${r.id}">${esc(r.name)}${r.code?' · '+r.code:''}</option>`).join('')}</optgroup><optgroup label="Khác">${oth.map(r=>`<option value="${r.id}">${esc(r.name)}${r.code?' · '+r.code:''}</option>`).join('')}</optgroup>`;sel.value=def?String(def):''}
 const mPickIds=(a,b)=>[...new Set([+$(a).value,+$(b).value].filter(Boolean))];
 // popup chi nhánh: mặc định ngày điều phối + thợ máy đang ghé / gợi ý
 {const _o=mOpenDlg;mOpenDlg=function(store,A){_o(store,A);if($('mDlg').hidden)return;const k=mStoreKey(store);
-  const vis=[...new Set(TASKS.filter(t=>mStoreKey(t.store)===k).flatMap(t=>PLAN[t.tid]?t.new:(t.dl===A?t.cur:[])))].filter(i=>BYID[i]?.tr==='MM');
-  const free=ROSTER.filter(r=>r.tr==='MM'&&!unavailable(shiftOf(r.id,A)));
+  const vis=[...new Set(TASKS.filter(t=>mStoreKey(t.store)===k).flatMap(t=>PLAN[t.tid]?t.new:(t.dl===A?t.cur:[])))].filter(i=>mTech(BYID[i]));
+  const free=ROSTER.filter(r=>mTech(r)&&!unavailable(shiftOf(r.id,A)));
   $('mdDate').value=A;mWhoOpts($('mdWho1'),vis[0]||free[0]?.id||'');mWhoOpts($('mdWho2'),vis[1]||'')}}
 $('mdXlsx').onclick=()=>{if(!MDLG)return;const sel=[...document.querySelectorAll('#mdBody .mck:checked')].map(x=>MACH.rows[+x.dataset.i]).filter(Boolean);if(!sel.length){toast('Tick ít nhất 1 máy');return}
   mXport(sel,$('mdDate').value,mPickIds('mdWho1','mdWho2'),mKey(MDLG.store).replace(/\s+/g,''))};
 $('mxGo').onclick=()=>{const L=MXSEL.size?[...MXSEL].map(i=>MACH.rows[i]).filter(Boolean):mRows().map(x=>x.r);mXport(L,$('mxDate').value,mPickIds('mxWho1','mxWho2'),MBRF?MBRF.replace(/\s+/g,''):'')};
-{const _r=mRender;mRender=function(){_r();if($('viewMach').hidden||!MACH.rows.length)return;if(!$('mxDate').value)$('mxDate').value=TMRD();if(!$('mxWho1').options.length){mWhoOpts($('mxWho1'),'');mWhoOpts($('mxWho2'),'')}mXBind()}}
+{const _r=mcRender;mcRender=function(){_r();if($('viewMach').hidden||!MACH.rows.length)return;if(!$('mxDate').value)$('mxDate').value=TMRD();if(!$('mxWho1').options.length){mWhoOpts($('mxWho1'),'');mWhoOpts($('mxWho2'),'')}mXBind()}}
 function bStatsRender(){const el=$('bStats');if(!el)return;const L=bTasks(),D=TMRD();const ppl=ROSTER.filter(r=>zOKr(r)&&r.tr===$('bTr').value);
   const pl=L.filter(t=>PLAN[t.tid]),un=L.filter(t=>!PLAN[t.tid]);const work=ppl.filter(r=>!unavailable(shiftOf(r.id,D)));
   const over=ppl.filter(r=>pLoad(r.id,L).h>capOf(r.id)+1e-9).length,hrs=work.reduce((a,r)=>a+pLoad(r.id,L).h,0),cap=work.reduce((a,r)=>a+capOf(r.id),0);
@@ -2255,6 +2289,31 @@ function mPlanRender(){const el=$('mPlan');if(!el)return;if(!MACH.rows.length){e
   $('mPlanB').innerHTML=L.length?sec('now','Máy quá hạn — xử lý ngay',true)+sec('week','Đến hạn trong 7 ngày',true)+sec('watch','Theo dõi',false):'<p class="sub">Không có máy nào quá hạn hoặc sắp đến hạn.</p>'}
 if(innerWidth<760)document.querySelectorAll('details.fbox').forEach(d=>d.open=false);
 if(tok())setTimeout(()=>$('load').click(),50);else{$('boot').hidden=true;$('auth').hidden=false;setChip('err','Chưa kết nối')}
+
+let MSUB='clinic',MLANH=false,MCLIN=null,LANH={st:'idle',rows:[],locs:{},at:null,msg:''};
+try{if(localStorage.getItem('b2msub')==='lanh')MSUB='lanh'}catch(e){}
+(()=>{const c=lsG('b2lach');if(c){try{const j=JSON.parse(c);LANH={st:'cache',rows:j.rows||[],locs:j.locs||{},at:new Date(j.at),msg:''}}catch(e){}}})();
+if(lsG('b2lUrl'))setTimeout(()=>lLoad(false),2600);
+function mTech(r){return MLANH?!!r&&r.skill==='Điện Lạnh':!!r&&r.tr==='MM'}
+function mTaskTech(t){return MLANH?/điều hòa|làm mát|điều hoà/i.test(t.hm||''):(t.tr==='MM'||grpOf(t)==='pk')}
+function mTaskTechV(t){return MLANH?t.tr==='KT':t.tr==='MM'}
+const tabL=()=>MSUB==='lanh'&&!$('viewMach').hidden;
+function inL(on,fn){if(!on||MLANH)return fn();const sv=MACH;MCLIN=sv;MACH=LANH;MLANH=true;try{return fn()}finally{LANH=MACH;MACH=sv;MLANH=false}}
+{const _r=mcRender;mcRender=function(){if($('viewMach').hidden)return;
+  document.querySelectorAll('#viewMach [data-msub]').forEach(b=>b.setAttribute('aria-selected',b.dataset.msub===MSUB));
+  $('msCntC').textContent=MACH.rows.length||'';$('msCntL').textContent=LANH.rows.length||'';
+  $('mTitle').textContent=MSUB==='lanh'?'Lịch bảo trì máy lạnh':'Lịch bảo trì máy Clinic';
+  inL(MSUB==='lanh',_r);
+  if(MSUB==='lanh'&&!LANH.rows.length){$('mSub').innerHTML=LANH.st==='run'?'Đang tải danh sách máy lạnh…':LANH.st==='er'?`<span class="er">${esc(LANH.msg)}</span>`:'Chưa có dữ liệu máy lạnh. Mở <b>Nguồn dữ liệu</b> bên dưới, dán link Google Sheet danh sách máy lạnh (cùng dạng cột với sheet máy Clinic: Chi nhánh | Máy | SKU | SN | Ngày bảo trì gần nhất | Ngày bảo trì tiếp theo | Ghi chú) rồi bấm <b>Lưu link &amp; tải</b>.';$('mCfg').open=true;$('mOpen').hidden=!lsG('b2lUrl')}else $('mOpen').hidden=false}}
+{const _o=mOpenDlg;mOpenDlg=function(st,A){const on=tabL();inL(on,()=>_o(st,A));if(MDLG)MDLG.ds=on?'lanh':'clinic'}}
+{const _x=mXInfo;mXInfo=function(){inL(tabL(),_x)}}
+for(const id of ['mdCopy','mdXlsx']){const _f=$(id).onclick;$(id).onclick=()=>inL(!!MDLG&&MDLG.ds==='lanh',_f)}
+{const _g=$('mdGo').onclick;$('mdGo').onclick=()=>{if(MDLG){MSUB=MDLG.ds||'clinic';MXSEL.clear()}_g()}}
+for(const id of ['mxGo','mCsv']){const _f=$(id).onclick;$(id).onclick=()=>inL(tabL(),_f)}
+$('mLoad').onclick=()=>MSUB==='lanh'?lLoad(true):mLoad(true);
+$('mUrlSave').onclick=()=>{const v=$('mUrl').value.trim();if(!mSid(v)){toast('Link Google Sheet không hợp lệ');return}if(MSUB==='lanh'){lsS('b2lUrl',v);lLoad(true)}else{lsS('b2mUrl',v);mLoad(true)}};
+{const _f=$('mFile').onchange;$('mFile').onchange=async e=>{if(MSUB!=='lanh')return _f(e);const f=e.target.files[0];if(!f)return;try{const p=mParse(csvParse(await f.text()),null);LANH={st:'ok',rows:p.rows,locs:LANH.locs||{},at:new Date(),msg:'',src:'CSV'};lsS('b2lach',JSON.stringify({rows:p.rows,locs:LANH.locs,at:LANH.at.toISOString()}));MXSEL.clear();toast(`Đã nhập ${p.rows.length} máy lạnh từ file CSV`)}catch(err){toast(err.message)}e.target.value='';mcRender()}}
+document.querySelectorAll('#viewMach [data-msub]').forEach(b=>b.onclick=()=>{if(MSUB===b.dataset.msub)return;MSUB=b.dataset.msub;try{localStorage.setItem('b2msub',MSUB)}catch(e){}MXSEL.clear();MBRF='';MST='due';$('mQ').value='';$('mxWho1').innerHTML='';$('mxWho2').innerHTML='';$('mDlg').hidden=true;mcRender()});
 </script>
 </body>
 </html>
