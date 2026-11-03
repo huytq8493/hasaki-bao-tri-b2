@@ -780,6 +780,12 @@ body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none
 @media (max-width:760px){#viewBoard .pc{grid-template-columns:minmax(0,1fr)}#viewBoard .pc .ph b{font-size:14px}
   .dp-stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.dp-stats .st{padding:8px 10px}.dp-stats .st b{font-size:17px}.dp-stats .st span{font-size:11px;line-height:1.25}
   #viewBoard .pend{border-radius:12px;width:100%}#viewBoard .pend #bPendT{flex:1}}
+#viewBoard .pc .pchips{flex-wrap:wrap;mask-image:none;align-items:center}#viewBoard .pc .pnm{flex-basis:100%;color:var(--muted);font-size:11.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#viewBoard .pc{grid-template-columns:minmax(210px,1fr) minmax(230px,1.3fr) minmax(260px,1.8fr) auto}
+#viewBoard .ptier>summary small{font-weight:500;color:var(--muted);font-size:12px}
+#viewBoard .mplan>summary em.g{color:var(--c-done)}
+@media (max-width:900px){#viewBoard .pc{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
+@media (max-width:760px){#viewBoard .pc{grid-template-columns:minmax(0,1fr)}}
 </style>
 </head>
 <body>
@@ -1063,7 +1069,10 @@ if(DEFAULT_TOKEN){try{localStorage.removeItem('b2tok')}catch(e){}}else{try{const
 function setChip(st,txt){$('chip').className='chip'+(st?' '+st:'');$('status').textContent=txt}
 $('reload').onclick=()=>{if(staleGuard())return;if(!tok()){$('auth').hidden=false;$('tok').focus();return}$('load').click()};
 const tok=()=>($('tok').value.trim()||DEFAULT_TOKEN).replace(/^Bearer\s+/i,'');
-async function api(path){const r=await fetch(API+path,{headers:{Authorization:'Bearer '+tok(),'x-locale':'vi'}});if(r.status===401||r.status===403)throw new Error('Token sai hoặc hết hạn ('+r.status+')');const j=await r.json();if(j&&j.error&&!j.data)throw new Error(j.message||'Lỗi API');return j}
+let OPEN_FROM=(()=>{try{return localStorage.getItem('b2from')||'2025-06-01'}catch(e){return '2025-06-01'}})();
+async function api(path,_rt){const r=await fetch(API+path,{headers:{Authorization:'Bearer '+tok(),'x-locale':'vi'}});if(r.status===401||r.status===403)throw new Error('Token sai hoặc hết hạn ('+r.status+')');const j=await r.json();
+  {const m=String(j&&j.message||'').match(/from_date must be from (\d{4}-\d{2}-\d{2})/);if(m&&!_rt&&/from_date=/.test(path)){const cur=(path.match(/from_date=([\d-]+)/)||[])[1];if(cur&&cur<m[1]){if(cur===OPEN_FROM){OPEN_FROM=m[1];try{localStorage.setItem('b2from',m[1])}catch(e){}}return api(path.replace(/from_date=[\d-]+/,'from_date='+m[1]),1)}}}
+  if(j&&j.error&&!j.data)throw new Error(j.message||'Lỗi API');return j}
 async function apiRetry(path,n=3){let e;for(let i=0;i<n;i++){try{return await api(path)}catch(x){e=x;if(/Token/.test(x.message))throw x;await new Promise(r=>setTimeout(r,800*(i+1)))}}throw e}
 // tải tất cả trang (6 luồng), thử lại trang lỗi, chỉ dừng khi gặp trang thật sự ít hơn 100 dòng
 async function pageAll(q,onProg){const rows=[];let off=0,end=Infinity,pg=0;
@@ -1080,7 +1089,7 @@ $('load').onclick=async()=>{
   try{
     const bd=await api('/staff/base-data');LOCS={};(bd.data?.locations||[]).forEach(l=>LOCS[l.id]=l);
     const today=new Date(),to=new Date(today.getTime()+864e5).toISOString().slice(0,10);
-    const q=o=>`/workflows/detail-workflow-task/${WF}?from_date=2025-01-01&to_date=${to}&search_type=board&wfid=${WF}&workflow_step_id=${B2}&status[]=0&limit=100&offset=${o}`;
+    const q=o=>`/workflows/detail-workflow-task/${WF}?from_date=${OPEN_FROM}&to_date=${to}&search_type=board&wfid=${WF}&workflow_step_id=${B2}&status[]=0&limit=100&offset=${o}`;
     const rows=await pageAll(q,(n,pg)=>{setChip('busy',`Đang tải ${n} đơn…`);$('bootMsg').textContent=`Đã tải ${n} đơn (${pg} trang)…`;setProg('prog',Math.min(.95,.05+pg/45))});
     const uniq=new Map();rows.forEach(r=>uniq.set(r.id,r));
     build([...uniq.values()]);
@@ -1598,7 +1607,7 @@ function processDone(rows){DONEROWS=rows;const u=new Map();OPENROWS.forEach(r=>u
       const store=loc?loc.name:(p.name.split('_')[0]||'');const tr=ids.some(i=>BYID[i].tr==='IT')?'IT':ids.some(i=>BYID[i].tr==='MM')?'MM':'KT';
       DONE.push({tid:s.id,code:p.code,store,addr:loc?.address||'',city:loc?.city_name||'',name:p.name.replace(store,'').replace(/^_?\d{13,19}_/,'').replace(/^_/,''),hm:hmFix(hmN(cfg.hangmuc00),p.name),
         clinic:/clinic/i.test(String(cfg.Department||'')),fin:s.finished_at,day:s.finished_at.slice(0,10),dl:(s.date_end||'').slice(0,10),ids,tr,zone:ZONEOF[nm(store)]||BYID[ids[0]].zone,est:est(p.name),remote:false,pri:p.piority,od:0,lanh:false,done:true})})})});return u.size}
-const qOpen=o=>{const to=ymd(new Date(Date.now()+864e5));return `/workflows/detail-workflow-task/${WF}?from_date=2025-01-01&to_date=${to}&search_type=board&wfid=${WF}&workflow_step_id=${B2}&status[]=0&limit=${LIM}&offset=${o}`};
+const qOpen=o=>{const to=ymd(new Date(Date.now()+864e5));return `/workflows/detail-workflow-task/${WF}?from_date=${OPEN_FROM}&to_date=${to}&search_type=board&wfid=${WF}&workflow_step_id=${B2}&status[]=0&limit=${LIM}&offset=${o}`};
 const qDone=o=>{const to=ymd(new Date(Date.now()+864e5)),fr=ymd(new Date(Date.now()-DONE_DAYS*864e5));return `/workflows/detail-workflow-task/${WF}?from_date=${fr}&to_date=${to}&search_type=board&wfid=${WF}&workflow_step_id=${B2}&limit=${LIM}&offset=${o}`};
 const keepDone=rows=>rows.map(cP).filter(p=>p.subtasks.some(s=>(s.status==2&&s.finished_at)||(s.staff||[]).some(x=>x.status==2&&x.finished_at)));
 function applyOpen(rows){build(rows);OPENROWS=rows;rebalance();planRestore();$('boot').hidden=true;$('main').hidden=false;$('navwrap').hidden=false;
@@ -2104,7 +2113,7 @@ function mPlanRenderOld(){const el=$('mPlan');if(!el)return;if(!MACH.rows.length
     <div class="mp4"><button class="btn sm" data-mstore="${esc(x.store)}">Xem máy · soạn task</button>${x.openUn.length?`<button class="btn sec sm" data-mpq="${esc(x.store)}">Lọc task CN này</button>`:''}</div></div>`).join('')}</div>`:'<p class="sub">Không có chi nhánh nào trong nhóm này.</p>';
   $('mPlanB').querySelectorAll('[data-mpq]').forEach(b=>b.onclick=()=>{$('bQ').value=b.dataset.mpq.split(' - ')[0];bRender();$('poolB').scrollIntoView({behavior:'smooth',block:'start'})})}
 $('mPlan').addEventListener('toggle',()=>{MPOPEN=$('mPlan').open});
-function mPlanRender(){const el=$('mPlan');if(!el)return;el.hidden=false;
+function mPlanRenderV2(){const el=$('mPlan');if(!el)return;el.hidden=false;
   if(MPOPEN===null){MPOPEN=true;el.open=true}
   const D=TMRD(),h=mH(),M=MACH.rows.length?mByKey():{};const d2=ymd(new Date(new Date(D+'T12:00:00').getTime()+2*864e5)),d7=ymd(new Date(new Date(D+'T12:00:00').getTime()+7*864e5));
   const LOCK={};Object.values(LOCS||{}).forEach(l=>{const k=mKey(l.name);if(k&&!LOCK[k])LOCK[k]=l});
@@ -2202,6 +2211,38 @@ function bStatsRender(){const el=$('bStats');if(!el)return;const L=bTasks(),D=TM
     it(un.length,'chưa xếp',un.length?'':'ok')+it(lateU,'trễ hạn chưa xếp',lateU?'bad':'ok')+it(urgU,'gấp chưa xếp',urgU?'bad':'ok')+
     it(`${work.length}<small>/${ppl.length}</small>`,'người đi làm','',ppl.filter(r=>unavailable(shiftOf(r.id,D))).map(r=>r.name+': '+shiftLabel(shiftOf(r.id,D))).join('\n')||'Tất cả đều có ca')+
     it(`${hrs.toFixed(0)}<small>/${cap.toFixed(0)}h</small>`,'giờ đã giao / sức chứa',cap&&hrs>cap?'bad':'')+it(over,'người quá giờ',over?'warn':'ok')+(pend?it(pend,'chưa ghi lên Work','warn'):'')}
+function mPlanRender(){const el=$('mPlan');if(!el)return;if(!MACH.rows.length){el.hidden=true;return}el.hidden=false;
+  if(MPOPEN===null){MPOPEN=true;el.open=true}
+  const D=TMRD(),h=mH(),M=mByKey(),d7=ymd(new Date(new Date(D+'T12:00:00').getTime()+7*864e5));
+  const LOCK={};Object.values(LOCS||{}).forEach(l=>{const k=mKey(l.name);if(k&&!LOCK[k])LOCK[k]=l});
+  const city=k=>unacc(LOCK[k]?.city_name||'').toLowerCase().replace(/^(tinh|thanh pho|tp\.?)\s+/,'').trim();
+  const goes=t=>PLAN[t.tid]?t.new:(t.dl===D?t.cur:[]);
+  const vis={};TASKS.forEach(t=>goes(t).forEach(i=>{if(BYID[i]?.tr!=='MM')return;const k=mStoreKey(t.store);((vis[k]??={})[i]??=[]).push(t)}));
+  const mm=ROSTER.filter(r=>r.tr==='MM');const load=id=>TASKS.filter(t=>PLAN[t.tid]&&t.new.includes(id)).reduce((a,t)=>a+t.est,0)/60;
+  const nmS=i=>BYID[i]?.name.split(' ').slice(-2).join(' ');
+  const L=Object.entries(M).map(([k,g])=>{const st=g.rows.map(r=>[r,mStat(r,D,h)]);const over=st.filter(x=>x[1]==='over').map(x=>x[0]),soon=st.filter(x=>x[1]==='soon').map(x=>x[0]);
+      if(!over.length&&!soon.length)return null;
+      const oldest=over.length?Math.max(...over.map(r=>-mDays(r,D))):0,soon7=soon.filter(r=>r.next<=d7);
+      const store=LOCK[k]?.name||g.br,nameS=LOCK[k]?store.split(' - ')[0]:g.br.replace(/^SPA\s*-\s*/i,'');
+      const here=Object.keys(vis[k]||{}).map(Number);const c=city(k);
+      const sameCity=mm.filter(r=>!here.includes(r.id)&&!unavailable(shiftOf(r.id,D))&&Object.keys(vis).some(k2=>k2!==k&&city(k2)===c&&vis[k2][r.id]));
+      const free=mm.filter(r=>!unavailable(shiftOf(r.id,D))).sort((a,b)=>load(a.id)-load(b.id));const sug=sameCity[0]||free[0]||null;
+      const tier=over.length?'now':soon7.length?'week':'watch';const n=over.length+soon.length;
+      const act=here.length?`<b>${esc(here.map(nmS).join(', '))}</b> ghé ${fmtD(D)} → bảo trì kèm <b>${n} máy</b>`
+        :`Chưa thợ máy nào ghé · tạo task bảo trì <b>${n} máy</b>${sug?` cho <b>${esc(nmS(sug.id))}</b>${sameCity.includes(sug)?' (có việc cùng tỉnh)':` (${load(sug.id).toFixed(1)}h đã xếp)`}`:' · không còn thợ máy đi làm ngày này'}`;
+      const names=[...over.sort((a,b)=>mDays(a,D)-mDays(b,D)),...soon].slice(0,3).map(r=>r.name.split('/')[0].trim());
+      return {k,store,nameS,zone:ZONEOF[nm(store)]||'',cityN:LOCK[k]?.city_name||'',over,soon,oldest,here,tier,act,names,n,score:over.length*3+Math.min(oldest,365)/30+soon.length}}).filter(Boolean)
+    .sort((a,b)=>({now:0,week:1,watch:2}[a.tier]-{now:0,week:1,watch:2}[b.tier])||b.score-a.score);
+  const T={now:L.filter(x=>x.tier==='now'),week:L.filter(x=>x.tier==='week'),watch:L.filter(x=>x.tier==='watch')};
+  const nm2=a=>a.reduce((s,x)=>s+x.n,0),kem=L.filter(x=>x.here.length).length;
+  $('mPlanT').innerHTML=`Bảo trì máy Clinic ${fmtD(D)}: ${T.now.length?`<em class="r">${T.now.length} chi nhánh có máy quá hạn</em>`:'<em class="g">không có máy quá hạn</em>'} · <em class="w">${T.week.length} đến hạn trong 7 ngày</em> · ${T.watch.length} theo dõi${kem?` · <em class="g">${kem} làm kèm được</em>`:''}`;
+  el.querySelector('summary').title=`Xử lý ngay: chi nhánh có máy quá hạn bảo trì. Trong tuần: máy đến hạn trong 7 ngày. Theo dõi: máy đến hạn trong ${h} ngày. "Thợ máy ghé" = thợ bảo trì máy móc đã được xếp đi chi nhánh ngày ${fmtD(D)}.`;
+  $('mPlanSeg').innerHTML='';$('mPlanN').innerHTML='';
+  const card=x=>`<div class="pc t-${x.tier}${x.here.length?' vis':''}"><div class="ph"><b>${esc(x.nameS)}</b>${x.here.length?`<span class="vtag">Thợ máy ghé ${fmtD(D)}</span>`:''}<small>${esc([x.zone,x.cityN].filter(Boolean).join(' · '))}</small></div>
+    <div class="pchips">${x.over.length?`<em class="r">${x.over.length} máy quá hạn · lâu nhất ${x.oldest}n</em>`:''}${x.soon.length?`<em class="w">${x.soon.length} máy sắp đến hạn</em>`:''}<small class="pnm">${esc(x.names.join(', '))}${x.n>3?'…':''}</small></div>
+    <div class="pact">${x.act}</div><div class="pbtn"><button class="btn sm" data-mstore="${esc(x.store)}">Xem máy · tạo task</button></div></div>`;
+  const sec=(k,lab,open)=>T[k].length?`<details class="ptier p-${k}"${open?' open':''}><summary><span class="dot"></span>${lab} <b>${T[k].length}</b><small>${nm2(T[k])} máy</small></summary><div class="pgrid">${T[k].map(card).join('')}</div></details>`:'';
+  $('mPlanB').innerHTML=L.length?sec('now','Máy quá hạn — xử lý ngay',true)+sec('week','Đến hạn trong 7 ngày',true)+sec('watch','Theo dõi',false):'<p class="sub">Không có máy nào quá hạn hoặc sắp đến hạn.</p>'}
 if(innerWidth<760)document.querySelectorAll('details.fbox').forEach(d=>d.open=false);
 if(tok())setTimeout(()=>$('load').click(),50);else{$('boot').hidden=true;$('auth').hidden=false;setChip('err','Chưa kết nối')}
 </script>
