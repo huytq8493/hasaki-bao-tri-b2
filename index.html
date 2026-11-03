@@ -1998,13 +1998,13 @@ const pDate=s=>{const m=String(s||'').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(
 const addMon=(d,n)=>{const x=new Date(d+'T12:00:00');x.setMonth(x.getMonth()+n);return ymd(x)};
 function mParse(A1,A2){const H=hdrIdx(A1,{br:['chi nhanh'],name:['may'],sku:['sku'],sn:['sn'],last:['ngay bao tri gan nhat'],next:['ngay bao tri tiep theo'],note:['ghi chu']});
   if(!H)throw new Error('Không thấy dòng tiêu đề "Chi nhánh | Máy | SKU | SN | Ngày bảo trì…" trong sheet '+MS1);
-  const freq={};const H2=A2&&hdrIdx(A2,{name:['may'],sku:['sku'],f:['tan suat bao tri'],grp:['nhom may']});
-  if(H2)A2.slice(H2.i+1).forEach(r=>{const f=r[H2.ix.f]||'',mo=+(String(f).match(/(\d+)/)||[])[1]||0;const v={txt:f,mo,grp:H2.ix.grp!=null?String(r[H2.ix.grp]||'').trim():''};if(r[H2.ix.sku])freq['S'+String(r[H2.ix.sku]).trim()]=v;if(r[H2.ix.name])freq['N'+unacc(r[H2.ix.name]).toUpperCase().trim()]=v});
+  const freq={};const H2=A2&&hdrIdx(A2,{name:['may'],sku:['sku'],f:['tan suat bao tri'],grp:['nhom may'],svc:['sku dich vu','ma dich vu','service sku','service_sku']});
+  if(H2)A2.slice(H2.i+1).forEach(r=>{const f=r[H2.ix.f]||'',mo=+(String(f).match(/(\d+)/)||[])[1]||0;const v={txt:f,mo,grp:H2.ix.grp!=null?String(r[H2.ix.grp]||'').trim():'',svc:H2.ix.svc!=null?String(r[H2.ix.svc]||'').trim().replace(/\.0$/,''):''};if(r[H2.ix.sku])freq['S'+String(r[H2.ix.sku]).trim()]=v;if(r[H2.ix.name])freq['N'+unacc(r[H2.ix.name]).toUpperCase().trim()]=v});
   const g=(r,k)=>H.ix[k]!=null?String(r[H.ix[k]]||'').trim():'';const rows=[];
   A1.slice(H.i+1).forEach(r=>{const br=g(r,'br'),name=g(r,'name');if(!br||!name||/^chi nhanh$/i.test(unacc(br)))return;
     const sku=g(r,'sku').replace(/\.0$/,''),fq=freq['S'+sku]||freq['N'+unacc(name).toUpperCase()]||null;let last=pDate(g(r,'last')),next=pDate(g(r,'next'));
     if(!next&&last&&fq&&fq.mo)next=addMon(last,fq.mo);
-    rows.push({br,key:mKey(br),name,sku,sn:g(r,'sn'),last,next,note:g(r,'note'),freq:fq?fq.txt:'',grp:fq&&fq.grp||''})});
+    rows.push({br,key:mKey(br),name,sku,sn:g(r,'sn'),last,next,note:g(r,'note'),freq:fq?fq.txt:'',grp:fq&&fq.grp||'',svc:fq&&fq.svc||''})});
   return {rows,freq}}
 async function mLoad(manual){const id=mSid(mUrl());if(!id){MACH.st='er';MACH.msg='Link Google Sheet không hợp lệ';mcRender();return}
   MACH={...MACH,st:'run',msg:''};mcRender();
@@ -2231,13 +2231,13 @@ function dlBlob(b,name){const a=document.createElement('a');a.href=URL.createObj
 const XH=['#','order_desc','location_id','service_sku','service_name','qty','machine_code','note','type','staff_code','date_start','date_end','type00','stock_id','sub_type'];
 function mLocId(r){let v=(MACH.locs||{})[r.key];if(v==null&&MLANH&&MCLIN)v=(MCLIN.locs||{})[r.key];return v==null?'':v}
 function mXlsxRows(L,date,ids){const codes=ids.map(i=>BYID[i]?.code).filter(Boolean).join(', ');const miss={loc:0,svc:0};
-  const out=L.map((r,i)=>{const loc=mLocId(r);if(loc==='')miss.loc++;const svc=MSVC[r.sku]||'';if(!svc)miss.svc++;const fd=v=>v?`${v.slice(8,10)}/${v.slice(5,7)}/${v.slice(0,4)}`:'chưa có';
+  const out=L.map((r,i)=>{const loc=mLocId(r);if(loc==='')miss.loc++;const svc=String(r.svc||'').replace(/\s+/g,'');if(!svc)miss.svc++;const fd=v=>v?`${v.slice(8,10)}/${v.slice(5,7)}/${v.slice(0,4)}`:'chưa có';
     return [i+1,'Bảo trì',loc===''?'':+loc,svc&&/^\d+$/.test(svc)?+svc:svc,`Bảo trì định kỳ - ${r.name}`,1,r.sn||'',`Bảo trì định kỳ: S/N:${r.sn||'(chưa có SN)'} - ${r.name}${r.sku?' (SKU '+r.sku+')':''} · BT gần nhất ${fd(r.last)}, đến hạn ${fd(r.next)}`,7,codes,date,date,'Bảo trì định kỳ','','']});
   return {rows:[XH,...out],miss}}
 function mXport(L,date,ids,tag){if(!L.length){toast('Chưa có máy nào để xuất');return}if(!date){toast('Chọn ngày làm');return}
   if(!ids.length&&!confirm('Chưa chọn người làm — vẫn xuất file (cột staff_code để trống)?'))return;
   const {rows,miss}=mXlsxRows(L,date,ids);dlBlob(xlsx(rows),`${MLANH?'Orders_BaoTriMayLanh_':'Orders_BaoTri_'}${tag?tag+'_':''}${date}.xlsx`);
-  toast(`Đã xuất ${L.length} máy${miss.svc?` · ${miss.svc} máy chưa có service_sku`:''}${miss.loc?` · ${miss.loc} máy chưa có location_id (thêm chi nhánh vào sheet "Chi Nhánh")`:''}`)}
+  toast(`Đã xuất ${L.length} máy${miss.svc?` · ${miss.svc} máy chưa có SKU dịch vụ (điền cột "SKU dịch vụ" ở sheet tần suất)`:''}${miss.loc?` · ${miss.loc} máy chưa có location_id (thêm chi nhánh vào sheet "Chi Nhánh")`:''}`)}
 function mWhoOpts(sel,def){const D=sel.dataset.d||'';const mm=ROSTER.filter(r=>mTech(r));const oth=ROSTER.filter(r=>!mTech(r));
   sel.innerHTML='<option value="">—</option>'+`<optgroup label="${MLANH?'Điện Lạnh':'Bảo trì máy móc'}">${mm.map(r=>`<option value="${r.id}">${esc(r.name)}${r.code?' · '+r.code:''}</option>`).join('')}</optgroup><optgroup label="Khác">${oth.map(r=>`<option value="${r.id}">${esc(r.name)}${r.code?' · '+r.code:''}</option>`).join('')}</optgroup>`;sel.value=def?String(def):''}
 const mPickIds=(a,b)=>[...new Set([+$(a).value,+$(b).value].filter(Boolean))];
