@@ -795,6 +795,9 @@ body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none
 .msub button[aria-selected="true"] b{background:rgba(255,255,255,.25);color:#fff}
 .msub button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .msub{justify-self:start;width:max-content;max-width:100%}
+#mGrp{height:32px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);font:inherit;font-size:13px;padding:0 8px;max-width:260px}
+#mGrp.on{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 18%,transparent);font-weight:600}
+.mlt .mgrp{color:var(--accent);font-weight:600}
 </style>
 </head>
 <body>
@@ -910,7 +913,8 @@ body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none
       <div class="msub" role="tablist" aria-label="Loại máy"><button role="tab" data-msub="clinic" aria-selected="true">Máy Clinic <b id="msCntC"></b></button><button role="tab" data-msub="lanh" aria-selected="false">Máy lạnh <b id="msCntL"></b></button></div>
       <div class="vhead"><div><h2 id="mTitle">Lịch bảo trì máy Clinic</h2><p class="sub" id="mSub">Chưa tải danh sách máy.</p>
         <div class="dayp" role="group" aria-label="Ngày tham chiếu"><button class="btn sec sm" data-md="0">Hôm nay</button><button class="btn sec sm" data-md="1">Ngày mai</button><input type="date" id="mPick" aria-label="Ngày tham chiếu">
-          <select id="mH" aria-label="Sắp đến hạn trong"><option value="7">Sắp đến hạn: 7 ngày</option><option value="14">Sắp đến hạn: 14 ngày</option><option value="30" selected>Sắp đến hạn: 30 ngày</option><option value="60">Sắp đến hạn: 60 ngày</option></select></div></div>
+          <select id="mH" aria-label="Sắp đến hạn trong"><option value="7">Sắp đến hạn: 7 ngày</option><option value="14">Sắp đến hạn: 14 ngày</option><option value="30" selected>Sắp đến hạn: 30 ngày</option><option value="60">Sắp đến hạn: 60 ngày</option></select>
+          <select id="mGrp" aria-label="Nhóm máy"><option value="">Tất cả nhóm máy</option></select></div></div>
         <div class="row"><button class="btn" id="mLoad">Tải lại từ Google Sheet</button><a class="btn sec" id="mOpen" target="_blank" rel="noopener">Mở Google Sheet</a></div></div>
       <details class="fbox" id="mCfg"><summary>Nguồn dữ liệu</summary><div class="filters">
         <input id="mUrl" aria-label="Link Google Sheet" placeholder="Dán link Google Sheet danh sách máy" style="flex:1 1 420px">
@@ -1968,7 +1972,7 @@ function mParseLocs(A){const M={};let ni=-1,ii=-1;
     if(ni<0)continue;const nm=String(r[ni]||'').trim();let id=ii>=0?String(r[ii]||'').trim():'';if(!id){const q=r.findIndex((x,q2)=>q2>ni&&/^\d+(\.0)?$/.test(String(x).trim()));if(q>=0)id=String(r[q]).trim()}
     id=id.replace(/\.0$/,'');if(nm&&/^\d+$/.test(id))M[mKey(nm)]=+id}
   return M}
-let MACH={st:'idle',rows:[],freq:{},at:null,msg:''},MREF=null,MST='due',MBRF='';
+let MACH={st:'idle',rows:[],freq:{},at:null,msg:''},MREF=null,MST='all',MBRF='';
 const lsG=k=>{try{return localStorage.getItem(k)}catch(e){return null}},lsS=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
 const mUrl=()=>MLANH?(lsG('b2lUrl')||''):(lsG('b2mUrl')||MSHEET_DEF);
 const mSid=u=>(String(u).match(/\/d\/([a-zA-Z0-9_-]{20,})/)||[])[1]||(/^[a-zA-Z0-9_-]{20,}$/.test(u)?u:'');
@@ -1994,13 +1998,13 @@ const pDate=s=>{const m=String(s||'').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(
 const addMon=(d,n)=>{const x=new Date(d+'T12:00:00');x.setMonth(x.getMonth()+n);return ymd(x)};
 function mParse(A1,A2){const H=hdrIdx(A1,{br:['chi nhanh'],name:['may'],sku:['sku'],sn:['sn'],last:['ngay bao tri gan nhat'],next:['ngay bao tri tiep theo'],note:['ghi chu']});
   if(!H)throw new Error('Không thấy dòng tiêu đề "Chi nhánh | Máy | SKU | SN | Ngày bảo trì…" trong sheet '+MS1);
-  const freq={};const H2=A2&&hdrIdx(A2,{name:['may'],sku:['sku'],f:['tan suat bao tri']});
-  if(H2)A2.slice(H2.i+1).forEach(r=>{const f=r[H2.ix.f]||'',mo=+(String(f).match(/(\d+)/)||[])[1]||0;const v={txt:f,mo};if(r[H2.ix.sku])freq['S'+String(r[H2.ix.sku]).trim()]=v;if(r[H2.ix.name])freq['N'+unacc(r[H2.ix.name]).toUpperCase().trim()]=v});
+  const freq={};const H2=A2&&hdrIdx(A2,{name:['may'],sku:['sku'],f:['tan suat bao tri'],grp:['nhom may']});
+  if(H2)A2.slice(H2.i+1).forEach(r=>{const f=r[H2.ix.f]||'',mo=+(String(f).match(/(\d+)/)||[])[1]||0;const v={txt:f,mo,grp:H2.ix.grp!=null?String(r[H2.ix.grp]||'').trim():''};if(r[H2.ix.sku])freq['S'+String(r[H2.ix.sku]).trim()]=v;if(r[H2.ix.name])freq['N'+unacc(r[H2.ix.name]).toUpperCase().trim()]=v});
   const g=(r,k)=>H.ix[k]!=null?String(r[H.ix[k]]||'').trim():'';const rows=[];
   A1.slice(H.i+1).forEach(r=>{const br=g(r,'br'),name=g(r,'name');if(!br||!name||/^chi nhanh$/i.test(unacc(br)))return;
     const sku=g(r,'sku').replace(/\.0$/,''),fq=freq['S'+sku]||freq['N'+unacc(name).toUpperCase()]||null;let last=pDate(g(r,'last')),next=pDate(g(r,'next'));
     if(!next&&last&&fq&&fq.mo)next=addMon(last,fq.mo);
-    rows.push({br,key:mKey(br),name,sku,sn:g(r,'sn'),last,next,note:g(r,'note'),freq:fq?fq.txt:''})});
+    rows.push({br,key:mKey(br),name,sku,sn:g(r,'sn'),last,next,note:g(r,'note'),freq:fq?fq.txt:'',grp:fq&&fq.grp||''})});
   return {rows,freq}}
 async function mLoad(manual){const id=mSid(mUrl());if(!id){MACH.st='er';MACH.msg='Link Google Sheet không hợp lệ';mcRender();return}
   MACH={...MACH,st:'run',msg:''};mcRender();
@@ -2043,7 +2047,7 @@ const mRefD=()=>MREF||ymd(new Date());
 function mStat(r,A,h){if(!r.next)return 'none';if(r.next<A)return 'over';const lim=ymd(new Date(new Date(A+'T12:00:00').getTime()+h*864e5));return r.next<=lim?'soon':'ok'}
 const MSL={over:'Quá hạn',soon:'Sắp đến hạn',ok:'Còn hạn',none:'Chưa có lịch'};
 const mDays=(r,A)=>r.next?Math.round((new Date(r.next+'T00:00')-new Date(A+'T00:00'))/864e5):null;
-function mByKey(){const M={};MACH.rows.forEach(r=>(M[r.key]??={br:r.br,rows:[]}).rows.push(r));return M}
+function mByKey(){const M={};MACH.rows.filter(r=>$('viewMach').hidden||mGrpOK(r)).forEach(r=>(M[r.key]??={br:r.br,rows:[]}).rows.push(r));return M}
 // chi nhánh Work -> khoá máy
 const mStoreKey=s=>mKey(s);
 function mDue(store,A,h){if(!MACH.rows.length)return null;const k=mStoreKey(store);const L=MACH.rows.filter(r=>r.key===k);if(!L.length)return null;
@@ -2064,7 +2068,7 @@ function mOpenDlg(store,A){const k=mStoreKey(store),L=MACH.rows.filter(r=>r.key=
   $('mdT').textContent=`Máy cần bảo trì · ${nice}`;
   $('mdSub').innerHTML=`Tính đến ${fmtD(A)} (sắp đến hạn = trong ${h} ngày) · ${due.length}/${L.length} máy cần bảo trì${ot.length?` · đang có ${ot.length} task máy móc mở ở chi nhánh này`:''}. Chọn máy rồi bấm <b>Sao chép nội dung task</b> để tạo task trên Work.`;
   const row=(r,ck)=>{const s=mStat(r,A,h),dd=mDays(r,A);return `<tr><td><input type="checkbox" class="mck" data-i="${MACH.rows.indexOf(r)}"${ck?' checked':''} aria-label="Chọn máy"></td><td class="what">${esc(r.name)}<small>${esc([r.sku&&'SKU '+r.sku,r.sn&&'SN '+r.sn].filter(Boolean).join(' · '))}</small></td><td class="mono">${r.last?fmtD(r.last):'–'}</td><td class="mono">${r.next?fmtD(r.next):'–'} <span class="pill ms-${s}">${s==='over'?`quá ${-dd}n`:s==='soon'?(dd?`còn ${dd}n`:'hôm nay'):MSL[s]}</span></td></tr>`};
-  $('mdBody').innerHTML=`<div class="tbl" style="max-height:52vh"><table><thead><tr><th></th><th>Máy</th><th>BT gần nhất</th><th>BT tiếp theo</th></tr></thead><tbody>${due.map(r=>row(r,true)).join('')}${rest.length?`<tr class="zh"><td colspan="4">Máy khác ở chi nhánh (${rest.length})</td></tr>`+rest.sort((a,b)=>(a.next||'9').localeCompare(b.next||'9')).map(r=>row(r,false)).join(''):''}</tbody></table></div>`+
+  $('mdBody').innerHTML=`<div class="tbl" style="max-height:52vh"><table><thead><tr><th class="ck"><input type="checkbox" id="mdAll" aria-label="Chọn tất cả máy" title="Chọn / bỏ chọn tất cả"></th><th>Máy</th><th>BT gần nhất</th><th>BT tiếp theo</th></tr></thead><tbody>${due.map(r=>row(r,true)).join('')}${rest.length?`<tr class="zh"><td colspan="4">Máy khác ở chi nhánh (${rest.length})</td></tr>`+rest.sort((a,b)=>(a.next||'9').localeCompare(b.next||'9')).map(r=>row(r,false)).join(''):''}</tbody></table></div>`+
     (ot.length?`<p class="sub" style="margin-top:8px">Task máy móc đang mở: ${ot.slice(0,6).map(t=>`<a class="mono tlink" href="https://work.hasaki.vn/tasks?task_id=${t.tid}" target="_blank" rel="noopener">${esc(t.code)}</a> ${esc(t.name.slice(0,40))} (${esc((t.cur||[]).map(i=>BYID[i]?.name.split(' ').pop()).join(', ')||'chưa giao')}${t.dl?', hạn '+fmtD(t.dl):''})`).join(' · ')}</p>`:'');
   $('mDlg').hidden=false;$('mdCopy').focus()}
 $('mdX').onclick=()=>{$('mDlg').hidden=true};$('mDlg').onclick=e=>{if(e.target.id==='mDlg')$('mDlg').hidden=true};
@@ -2080,7 +2084,7 @@ function mcRender(){if($('viewMach').hidden)return;const A=mRefD(),h=mH(),td=ymd
   $('mLoad').disabled=MACH.st==='run';$('mLoad').textContent=MACH.st==='run'?'Đang tải…':'Tải lại từ Google Sheet';
   const at=MACH.at?`${MACH.at.toLocaleDateString('vi-VN')} ${MACH.at.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})}`:'';
   $('mSub').innerHTML=MACH.st==='run'?'Đang tải danh sách máy từ Google Sheet…':MACH.st==='er'?`<span class="er">${esc(MACH.msg)}</span>`:MACH.rows.length?`${MACH.rows.length} máy ở ${new Set(MACH.rows.map(r=>r.key)).size} ${MLANH?'chi nhánh':'chi nhánh Clinic'} · ${MACH.st==='cache'?'bản lưu trên máy':'Google Sheet'} lúc ${at}${MACH.msg?` · <span class="er">${MACH.st==='ok'||/bộ lọc/.test(MACH.msg)?'':'không tải lại được: '}${esc(MACH.msg)}</span>`:''}`:'Chưa tải danh sách máy.';
-  const R=MACH.rows;if(!R.length){['mK','mBr','mList','mSt'].forEach(i=>$(i).innerHTML='');$('mBrN').textContent='';$('mListN').textContent='';return}
+  const R=MACH.rows.filter(mGrpOK);if(!R.length){['mK','mBr','mList','mSt'].forEach(i=>$(i).innerHTML='');$('mBrN').textContent='';$('mListN').textContent='';return}
   const S=R.map(r=>mStat(r,A,h)),cnt=k=>S.filter(s=>s===k).length;
   const M=mByKey();const LOCK={};Object.values(LOCS||{}).forEach(l=>{const k=mKey(l.name);if(k&&!LOCK[k])LOCK[k]=l});
   const brs=Object.entries(M).map(([k,g])=>{const st=g.rows.map(r=>mStat(r,A,h));const loc=LOCK[k];const store=loc?loc.name:g.br;
@@ -2101,13 +2105,13 @@ function mcRender(){if($('viewMach').hidden)return;const A=mRefD(),h=mH(),td=ymd
   const q=unacc($('mQ').value).toLowerCase().trim();
   const L=mRows();
   $('mListN').textContent=`${L.length} máy${MBRF?' · '+(M[MBRF]?.br||''):''}`;
-  $('mList').innerHTML=L.length?`<div class="tbl mlt" style="max-height:none"><table><thead><tr><th class="ck"><input type="checkbox" id="mCkAll" aria-label="Chọn tất cả"></th><th>Chi nhánh</th><th>Máy</th><th>BT gần nhất</th><th>BT tiếp theo</th><th>Tần suất</th></tr></thead><tbody>${L.map(({r,s})=>{const dd=mDays(r,A);return `<tr class="${s==='over'?'l7':''}"><td class="ck"><input type="checkbox" class="mxck" data-i="${MACH.rows.indexOf(r)}"${MXSEL.has(MACH.rows.indexOf(r))?' checked':''} aria-label="Chọn máy"></td><td class="cn"><button class="mlink" data-mstore="${esc(r.br)}">${esc(r.br.replace(/^SPA\s*-\s*/i,''))}</button></td><td class="what">${esc(r.name)}<small>${esc([r.sku&&'SKU '+r.sku,r.sn&&'SN '+r.sn].filter(Boolean).join(' · '))}${r.note?` · <i>${esc(r.note)}</i>`:''}</small></td><td class="mono">${r.last?fmtD(r.last)+'/'+r.last.slice(2,4):'–'}</td><td class="mono">${r.next?fmtD(r.next)+'/'+r.next.slice(2,4):'–'} <span class="pill ms-${s}">${s==='over'?`quá ${-dd}n`:s==='soon'?(dd?`còn ${dd}n`:'hôm nay'):MSL[s]}</span></td><td>${esc(r.freq||'')}</td></tr>`}).join('')}</tbody></table></div>`:'<p class="sub" style="padding:12px 0">Không có máy khớp bộ lọc.</p>'}
+  $('mList').innerHTML=L.length?`<div class="tbl mlt" style="max-height:none"><table><thead><tr><th class="ck"><input type="checkbox" id="mCkAll" aria-label="Chọn tất cả"></th><th>Chi nhánh</th><th>Máy</th><th>BT gần nhất</th><th>BT tiếp theo</th><th>Tần suất</th></tr></thead><tbody>${L.map(({r,s})=>{const dd=mDays(r,A);return `<tr class="${s==='over'?'l7':''}"><td class="ck"><input type="checkbox" class="mxck" data-i="${MACH.rows.indexOf(r)}"${MXSEL.has(MACH.rows.indexOf(r))?' checked':''} aria-label="Chọn máy"></td><td class="cn"><button class="mlink" data-mstore="${esc(r.br)}">${esc(r.br.replace(/^SPA\s*-\s*/i,''))}</button></td><td class="what">${esc(r.name)}<small>${esc([r.sku&&'SKU '+r.sku,r.sn&&'SN '+r.sn].filter(Boolean).join(' · '))}${r.grp?` · <b class="mgrp">${esc(r.grp)}</b>`:''}${r.note?` · <i>${esc(r.note)}</i>`:''}</small></td><td class="mono">${r.last?fmtD(r.last)+'/'+r.last.slice(2,4):'–'}</td><td class="mono">${r.next?fmtD(r.next)+'/'+r.next.slice(2,4):'–'} <span class="pill ms-${s}">${s==='over'?`quá ${-dd}n`:s==='soon'?(dd?`còn ${dd}n`:'hôm nay'):MSL[s]}</span></td><td>${esc(r.freq||'')}</td></tr>`}).join('')}</tbody></table></div>`:'<p class="sub" style="padding:12px 0">Không có máy khớp bộ lọc.</p>'}
 function mXBind(){const all=$('mCkAll');if(all){const cks=[...document.querySelectorAll('#mList .mxck')];all.checked=cks.length&&cks.every(c=>c.checked);
     all.onchange=()=>{cks.forEach(c=>{c.checked=all.checked;const i=+c.dataset.i;all.checked?MXSEL.add(i):MXSEL.delete(i)});mXInfo()}}
   document.querySelectorAll('#mList .mxck').forEach(c=>c.onchange=()=>{const i=+c.dataset.i;c.checked?MXSEL.add(i):MXSEL.delete(i);mXInfo()});mXInfo()}
 function mXInfo(){const n=MXSEL.size,L=mRows().length;$('mxGo').textContent=n?`Xuất Excel ${n} máy đã tick`:`Xuất Excel ${L} máy đang lọc`}
 function mRows(){const A=mRefD(),h=mH(),q=unacc($('mQ').value).toLowerCase().trim();
-  return MACH.rows.map(r=>({r,s:mStat(r,A,h)})).filter(x=>(MST==='all'||(MST==='due'?['over','soon'].includes(x.s):x.s===MST))&&(!MBRF||x.r.key===MBRF)&&(!q||unacc([x.r.br,x.r.name,x.r.sku,x.r.sn,x.r.note].join(' ')).toLowerCase().includes(q)))
+  return MACH.rows.map(r=>({r,s:mStat(r,A,h)})).filter(x=>mGrpOK(x.r)&&(MST==='all'||(MST==='due'?['over','soon'].includes(x.s):x.s===MST))&&(!MBRF||x.r.key===MBRF)&&(!q||unacc([x.r.br,x.r.name,x.r.sku,x.r.sn,x.r.note].join(' ')).toLowerCase().includes(q)))
     .sort((a,b)=>(a.r.next||'9999').localeCompare(b.r.next||'9999')||a.r.br.localeCompare(b.r.br))}
 $('mLoad').onclick=()=>mLoad(true);
 $('mH').onchange=()=>{mcRender();if(!$('viewBoard').hidden)bRender()};
@@ -2313,7 +2317,22 @@ for(const id of ['mxGo','mCsv']){const _f=$(id).onclick;$(id).onclick=()=>inL(ta
 $('mLoad').onclick=()=>MSUB==='lanh'?lLoad(true):mLoad(true);
 $('mUrlSave').onclick=()=>{const v=$('mUrl').value.trim();if(!mSid(v)){toast('Link Google Sheet không hợp lệ');return}if(MSUB==='lanh'){lsS('b2lUrl',v);lLoad(true)}else{lsS('b2mUrl',v);mLoad(true)}};
 {const _f=$('mFile').onchange;$('mFile').onchange=async e=>{if(MSUB!=='lanh')return _f(e);const f=e.target.files[0];if(!f)return;try{const p=mParse(csvParse(await f.text()),null);LANH={st:'ok',rows:p.rows,locs:LANH.locs||{},at:new Date(),msg:'',src:'CSV'};lsS('b2lach',JSON.stringify({rows:p.rows,locs:LANH.locs,at:LANH.at.toISOString()}));MXSEL.clear();toast(`Đã nhập ${p.rows.length} máy lạnh từ file CSV`)}catch(err){toast(err.message)}e.target.value='';mcRender()}}
-document.querySelectorAll('#viewMach [data-msub]').forEach(b=>b.onclick=()=>{if(MSUB===b.dataset.msub)return;MSUB=b.dataset.msub;try{localStorage.setItem('b2msub',MSUB)}catch(e){}MXSEL.clear();MBRF='';MST='due';$('mQ').value='';$('mxWho1').innerHTML='';$('mxWho2').innerHTML='';$('mDlg').hidden=true;mcRender()});
+document.querySelectorAll('#viewMach [data-msub]').forEach(b=>b.onclick=()=>{if(MSUB===b.dataset.msub)return;MSUB=b.dataset.msub;try{localStorage.setItem('b2msub',MSUB)}catch(e){}MXSEL.clear();MBRF='';MST='all';$('mQ').value='';$('mxWho1').innerHTML='';$('mxWho2').innerHTML='';$('mDlg').hidden=true;mcRender()});
+
+let MGRP={clinic:'',lanh:''};try{const v=JSON.parse(localStorage.getItem('b2mgrp')||'{}');MGRP={...MGRP,...v}}catch(e){}
+const mGrpOf=r=>r.grp||'Chưa phân nhóm';
+function mGrpOK(r){const g=MGRP[MLANH?'lanh':'clinic'];return !g||mGrpOf(r)===g}
+{const _r=mcRender;mcRender=function(){if(!$('viewMach').hidden){const ds=MSUB==='lanh'?LANH:MACH,k=MSUB==='lanh'?'lanh':'clinic';const C={};ds.rows.forEach(r=>{const g=mGrpOf(r);C[g]=(C[g]||0)+1});
+    if(MGRP[k]&&!C[MGRP[k]])MGRP[k]='';const L=Object.entries(C).sort((a,b)=>a[0]==='Chưa phân nhóm'?1:b[0]==='Chưa phân nhóm'?-1:a[0].localeCompare(b[0],'vi'));
+    $('mGrp').innerHTML=`<option value="">Tất cả nhóm máy (${ds.rows.length})</option>`+L.map(([g,n])=>`<option value="${esc(g)}"${g===MGRP[k]?' selected':''}>${esc(g)} (${n})</option>`).join('');$('mGrp').hidden=!L.length||(L.length===1&&L[0][0]==='Chưa phân nhóm');
+    $('mGrp').classList.toggle('on',!!MGRP[k])}
+  _r()}}
+$('mGrp').onchange=e=>{MGRP[MSUB==='lanh'?'lanh':'clinic']=e.target.value;try{localStorage.setItem('b2mgrp',JSON.stringify(MGRP))}catch(_){}MXSEL.clear();mcRender()};
+
+function mdAllSync(){const a=$('mdAll');if(!a)return;const c=[...document.querySelectorAll('#mdBody .mck')],n=c.filter(x=>x.checked).length;a.checked=n>0&&n===c.length;a.indeterminate=n>0&&n<c.length;
+  const b=$('mdXlsx');if(b)b.textContent=n?`Xuất Excel tạo task (${n} máy)`:'Xuất Excel tạo task'}
+$('mdBody').addEventListener('change',e=>{if(e.target.id==='mdAll'){document.querySelectorAll('#mdBody .mck').forEach(x=>x.checked=e.target.checked)}mdAllSync()});
+{const _o=mOpenDlg;mOpenDlg=function(st,A){_o(st,A);mdAllSync()}}
 </script>
 </body>
 </html>
