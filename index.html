@@ -601,6 +601,185 @@ body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none
 .pill.p-mm{background:color-mix(in srgb,#ec4899 15%,transparent);color:#be185d}
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .pill.p-mm{color:#f9a8d4}}:root[data-theme="dark"] .pill.p-mm{color:#f9a8d4}
 .chart .c1x{margin-top:14px;padding-top:14px;border-top:1px dashed var(--line);display:grid;gap:6px}.chart .c1x h3{font-size:15px;margin:0}
+
+/* ---------- Máy Clinic: lịch bảo trì ---------- */
+.mbrs{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:10px}
+.mbr{all:unset;box-sizing:border-box;cursor:pointer;display:grid;gap:4px;align-content:start;padding:12px 14px 12px 16px;border-radius:var(--r);background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--c-done);box-shadow:var(--shadow);transition:transform .15s,box-shadow .15s;min-width:0}
+.mbr.so{border-left-color:var(--c-wait)}.mbr.ov{border-left-color:var(--c-late)}
+.mbr:hover{transform:translateY(-1px);box-shadow:0 0 0 2px color-mix(in srgb,var(--accent) 30%,transparent),var(--shadow)}.mbr:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.mbr .mt{font-weight:600;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mbr .ms,.mbr .mw{font-size:12px;color:var(--muted)}
+.mbr .mc{display:flex;flex-wrap:wrap;gap:6px}.mbr .mc em{font-style:normal;font-size:12.5px;font-weight:600;padding:2px 8px;border-radius:999px}
+.mbr .mc .o{background:color-mix(in srgb,var(--c-late) 14%,transparent);color:var(--c-late)}.mbr .mc .s{background:color-mix(in srgb,var(--c-wait) 16%,transparent);color:var(--c-wait)}
+.mbr .mc .g{background:color-mix(in srgb,var(--c-done) 14%,transparent);color:var(--c-done)}.mbr .mc .n{background:color-mix(in srgb,var(--ink) 8%,transparent);color:var(--muted)}
+.pill.ms-over{background:color-mix(in srgb,var(--c-late) 15%,transparent);color:var(--c-late)}.pill.ms-soon{background:color-mix(in srgb,var(--c-wait) 16%,transparent);color:var(--c-wait)}
+.pill.ms-ok{background:color-mix(in srgb,var(--c-done) 14%,transparent);color:var(--c-done)}.pill.ms-none{background:color-mix(in srgb,var(--ink) 8%,transparent);color:var(--muted)}
+.mbadge{all:unset;cursor:pointer;display:inline-block;margin-top:4px;font-size:11.5px;font-weight:600;padding:2px 8px;border-radius:999px;background:color-mix(in srgb,var(--c-wait) 18%,transparent);color:var(--c-wait);white-space:nowrap}
+.mbadge.ov{background:color-mix(in srgb,var(--c-late) 15%,transparent);color:var(--c-late)}.mbadge:hover{filter:brightness(1.1);text-decoration:underline}.mbadge:focus-visible{outline:2px solid var(--accent)}
+.grp .gh{flex-wrap:wrap}
+.mhint{font-size:12px;margin-top:4px;padding:6px 8px;border-radius:8px;background:color-mix(in srgb,var(--c-wait) 12%,transparent);color:var(--ink);line-height:1.45}
+.mlink{all:unset;cursor:pointer;color:var(--accent);font-weight:600}.mlink:hover{text-decoration:underline}.mlink:focus-visible{outline:2px solid var(--accent)}
+.mdlg{max-width:760px;width:min(760px,calc(100vw - 24px))}.mdlg .tbl td input{width:16px;height:16px}
+#mCfg .filters input{height:34px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:inherit;padding:0 10px;font:inherit;font-size:13px}
+#viewMach .dayp select{height:32px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:inherit;font:inherit;font-size:13px;padding:0 8px}
+#viewMach{min-width:0;max-width:100%}#viewMach>*{min-width:0;max-width:100%}
+@media (max-width:600px){.mbrs{grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}.mbr{padding:10px}.mbr .mt{font-size:13px}}
+.mlt tr.l7 td{background:color-mix(in srgb,var(--c-late) 7%,transparent)}
+@media (max-width:600px){
+  .mlt{overflow:visible}.mlt table,.mlt tbody,.mlt tr,.mlt td{display:block;width:auto}.mlt thead{display:none}
+  .mlt tr{display:grid;grid-template-columns:1fr auto;gap:2px 10px;padding:10px 12px;border-bottom:1px solid var(--line)}
+  .mlt td{padding:0!important;border:0!important;background:none!important;text-align:left}
+  .mlt td.what{grid-column:1/-1;grid-row:1}.mlt td.cn{grid-column:1;grid-row:2;font-size:12.5px}
+  .mlt td:nth-child(4){grid-column:2;grid-row:2;text-align:right;font-size:12px;color:var(--muted)}.mlt td:nth-child(4)::before{content:"BT gần nhất "}
+  .mlt td:nth-child(5){grid-column:1;grid-row:3}.mlt td:nth-child(6){grid-column:2;grid-row:3;text-align:right;font-size:12px;color:var(--muted)}
+  .mlt tr{grid-template-columns:24px 1fr auto}.mlt td.ck{grid-column:1;grid-row:1 / span 3}.mlt td.what,.mlt td.cn,.mlt td:nth-child(5){grid-column-start:2}.mlt td.what{grid-column:2 / -1}.mlt td.cn{grid-column:2}.mlt td:nth-child(4),.mlt td:nth-child(6){grid-column:3}.mlt td:nth-child(5){grid-column:2}
+  .mlt tr.l7{background:color-mix(in srgb,var(--c-late) 7%,transparent)}
+}
+
+/* ---------- Điều phối: bảo trì máy Clinic cần sắp ---------- */
+.mplan>summary em{font-style:normal;font-weight:600}.mplan>summary em.g{color:var(--c-done)}
+.mplan .mpbar{display:grid;gap:6px;margin:10px 0 8px}.mplan .mpbar .sub{margin:0;font-size:12.5px}
+.mpl{display:grid;gap:6px;max-height:420px;overflow:auto;padding-right:4px}
+.mpr{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr) minmax(0,1.6fr) 310px;gap:10px;align-items:center;padding:9px 12px;border:1px solid var(--line);border-left:4px solid var(--c-late);border-radius:10px;background:var(--panel)}
+.mpr.k-kem{border-left-color:var(--c-done)}.mpr.k-pool{border-left-color:var(--c-wait)}
+.mpr small{display:block;color:var(--muted);font-size:12px;margin-top:2px}
+.mpr .mp2 em{font-style:normal;font-size:12px;font-weight:600;padding:1px 7px;border-radius:999px;margin-right:4px}
+.mpr .mp2 .o{background:color-mix(in srgb,var(--c-late) 14%,transparent);color:var(--c-late)}.mpr .mp2 .s{background:color-mix(in srgb,var(--c-wait) 16%,transparent);color:var(--c-wait)}
+.mpr .mp3{font-size:13px}.mpr .tag{font-size:11.5px;font-weight:700;padding:1px 7px;border-radius:6px;margin-right:4px}
+.mpr .tag.g{background:color-mix(in srgb,var(--c-done) 16%,transparent);color:var(--c-done)}.mpr .tag.w{background:color-mix(in srgb,var(--c-wait) 18%,transparent);color:var(--c-wait)}.mpr .tag.r{background:color-mix(in srgb,var(--c-late) 14%,transparent);color:var(--c-late)}
+.mpr .mp4{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+@media (max-width:900px){.mpr{grid-template-columns:1fr 1fr}.mpr .mp3{grid-column:1/-1}.mpr .mp4{grid-column:1/-1;justify-content:flex-start}}
+
+.mplan>div{padding:0 16px 14px}.mplan .mpbar{padding-top:4px}
+.mpr .mp4 .btn{white-space:nowrap}.mplan{min-width:0;max-width:100%;overflow:hidden}.mplan .seg{min-width:0}
+@media (max-width:600px){.mpr{grid-template-columns:1fr}.mpr .mp2,.mpr .mp3,.mpr .mp4{grid-column:1}}
+
+/* ---------- Ưu tiên Clinic: thẻ 3 mức ---------- */
+.mplan>summary em{font-style:normal;font-weight:700}.mplan>summary em.r{color:var(--c-late)}.mplan>summary em.w{color:var(--c-wait)}
+.mplan .mpbar b.r{color:var(--c-late)}.mplan .mpbar b.w{color:var(--c-wait)}
+.ptier{margin-top:8px}.ptier>summary{cursor:pointer;list-style:none;display:flex;align-items:center;gap:8px;font-weight:700;font-size:14.5px;padding:6px 0}
+.ptier>summary::-webkit-details-marker{display:none}.ptier>summary b{font-variant-numeric:tabular-nums;padding:0 8px;border-radius:999px;background:color-mix(in srgb,var(--ink) 8%,transparent)}
+.ptier .dot{width:10px;height:10px;border-radius:50%;background:var(--c-done)}.ptier.p-now .dot{background:var(--c-late);box-shadow:0 0 0 4px color-mix(in srgb,var(--c-late) 20%,transparent)}.ptier.p-week .dot{background:var(--c-wait)}
+.ptier.p-now>summary{color:var(--c-late)}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.pc{display:grid;gap:8px;align-content:start;padding:12px 14px;border-radius:12px;background:var(--panel);border:1px solid var(--line);border-top:4px solid var(--c-done);box-shadow:var(--shadow);min-width:0}
+.pc.t-now{border-top-color:var(--c-late);background:color-mix(in srgb,var(--c-late) 5%,var(--panel))}.pc.t-week{border-top-color:var(--c-wait)}
+.pc .ph{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 8px}.pc .ph b{font-size:15.5px}.pc .ph small{color:var(--muted);font-size:12px}
+.pc .vtag{margin-left:auto;font-size:11.5px;font-weight:700;padding:2px 8px;border-radius:999px;background:color-mix(in srgb,var(--c-done) 16%,transparent);color:var(--c-done)}
+.pc .pchips{display:flex;flex-wrap:wrap;gap:5px}.pc .pchips em{font-style:normal;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px}
+.pc .pchips em.r{background:color-mix(in srgb,var(--c-late) 14%,transparent);color:var(--c-late)}.pc .pchips em.w{background:color-mix(in srgb,var(--c-wait) 16%,transparent);color:var(--c-wait)}
+.pc .pact{font-size:13px;line-height:1.5;padding:8px 10px;border-radius:8px;background:color-mix(in srgb,var(--accent) 7%,transparent)}.pc .pact b{color:var(--ink)}
+.pc .pbtn{display:flex;gap:6px;flex-wrap:wrap}.pc .pbtn .btn{white-space:nowrap}
+@media (max-width:600px){.pgrid{grid-template-columns:1fr}}
+
+.mxbar{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;font-size:13px;margin:10px 0}
+.mxbar label{display:inline-flex;align-items:center;gap:6px;color:var(--muted)}
+.mxbar input,.mxbar select{height:32px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:var(--ink);font:inherit;font-size:13px;padding:0 8px;max-width:230px}
+.mxl{padding:10px 12px;border:1px dashed color-mix(in srgb,var(--accent) 45%,var(--line));border-radius:10px;background:color-mix(in srgb,var(--accent) 5%,transparent)}
+.mlt th.ck,.mlt td.ck{width:28px}.mlt td.ck input,.mlt th.ck input{width:16px;height:16px}
+
+/* =====================================================================
+   ĐIỀU PHỐI — giao diện chuyên nghiệp (thanh lệnh · thống kê · bảng)
+   ===================================================================== */
+#viewBoard.dp{display:grid;gap:12px}
+.dp-head{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.dp-title h2{margin:0;font-size:22px;letter-spacing:-.01em}.dp-title .sub{margin:2px 0 0}
+.dp-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+#viewBoard .pend{position:static;margin:0;padding:6px 6px 6px 12px;border-radius:999px;font-size:13px;gap:8px;box-shadow:none}
+#viewBoard .pend .pdot{width:8px;height:8px;border-radius:50%;background:var(--c-wait);box-shadow:0 0 0 4px color-mix(in srgb,var(--c-wait) 25%,transparent)}
+.dp-bar{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px 14px;padding:10px 14px;border:1px solid var(--line);border-radius:var(--r);background:var(--panel);box-shadow:var(--shadow);position:sticky;top:64px;z-index:6;backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px)}
+.dp-f{display:grid;gap:3px}.dp-f .lbl{font-size:11px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--muted)}
+.dp-f select,.dp-f input[type=number],.dp-f input[type=date]{height:34px;border:1px solid var(--line);border-radius:9px;background:var(--bg2,var(--panel));color:var(--ink);font:inherit;font-size:13.5px;padding:0 10px;min-width:0}
+.dp-f select{min-width:140px}.dp-f input[type=number]{width:72px}
+.dp-bar .dayp.seg2{margin:0;gap:0;padding:2px;border:1px solid var(--line);border-radius:10px;background:color-mix(in srgb,var(--ink) 4%,transparent)}
+.dp-bar .dayp.seg2 .btn{border:0;background:none;box-shadow:none;height:28px;padding:0 12px;border-radius:8px;color:var(--muted)}
+.dp-bar .dayp.seg2 .btn.on{background:var(--panel);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.12);font-weight:700}
+.dp-bar .dayp.seg2 input[type=date]{height:28px;border:0;background:none;padding:0 6px}
+.dp-sp{flex:1 1 0}
+.dp-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.dp-tools .btn.ghost{background:none;border-color:transparent;color:var(--muted)}.dp-tools .btn.ghost:hover{color:var(--c-late);background:color-mix(in srgb,var(--c-late) 8%,transparent)}
+.tgl{display:inline-flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);cursor:pointer;user-select:none}
+.tgl input{position:absolute;opacity:0;width:0;height:0}
+.tgl .sw{width:34px;height:20px;border-radius:999px;background:color-mix(in srgb,var(--ink) 18%,transparent);position:relative;transition:background .2s}
+.tgl .sw::after{content:"";position:absolute;top:2px;left:2px;width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.3);transition:transform .2s}
+.tgl input:checked+.sw{background:var(--c-done)}.tgl input:checked+.sw::after{transform:translateX(14px)}.tgl input:focus-visible+.sw{outline:2px solid var(--accent);outline-offset:2px}
+.dp-help{position:relative;margin:0}
+.dp-help>summary{list-style:none;cursor:pointer;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;font-weight:800;border:1px solid var(--line);color:var(--muted);background:var(--panel)}
+.dp-help>summary::-webkit-details-marker{display:none}.dp-help[open]>summary{color:var(--accent);border-color:var(--accent)}
+.dp-help .pop{position:absolute;right:0;top:38px;width:min(420px,86vw);padding:14px 16px;border-radius:12px;background:var(--panel);border:1px solid var(--line);box-shadow:0 18px 40px rgba(0,0,0,.18);font-size:13px;line-height:1.55;z-index:30}
+.dp-help .pop p{margin:6px 0 0;color:var(--muted)}
+/* thống kê */
+.dp-stats{display:grid;grid-template-columns:minmax(220px,1.6fr) repeat(auto-fit,minmax(110px,1fr));gap:8px}
+.dp-stats .st{display:grid;gap:2px;padding:10px 12px;border-radius:12px;background:var(--panel);border:1px solid var(--line)}
+.dp-stats .st b{font-size:20px;line-height:1.1;font-variant-numeric:tabular-nums}.dp-stats .st b small{font-size:13px;color:var(--muted);font-weight:600}
+.dp-stats .st span{font-size:12px;color:var(--muted)}
+.dp-stats .st.bad b{color:var(--c-late)}.dp-stats .st.warn b{color:var(--c-wait)}.dp-stats .st.ok b{color:var(--c-done)}
+.dp-stats .stp{grid-template-columns:auto 1fr;align-items:center;gap:14px}.dp-stats .stp .pt{display:grid}
+.dp-stats .pbar{height:8px;border-radius:999px;background:color-mix(in srgb,var(--ink) 9%,transparent);overflow:hidden}.dp-stats .pbar i{display:block;height:100%;border-radius:999px;background:linear-gradient(90deg,var(--c-done),var(--g2,#06b6d4))}
+/* ưu tiên Clinic: dạng danh sách gọn */
+#viewBoard .mplan{border:1px solid var(--line);border-radius:var(--r);background:var(--panel);box-shadow:var(--shadow)}
+#viewBoard .mplan>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:11px 14px;font-size:14px}
+#viewBoard .mplan>summary::-webkit-details-marker{display:none}
+#viewBoard .mplan>summary::before{content:"";width:4px;height:18px;border-radius:4px;background:var(--c-late)}
+#viewBoard .mplan .mp-tog{margin-left:auto;width:8px;height:8px;border-right:2px solid var(--muted);border-bottom:2px solid var(--muted);transform:rotate(45deg);transition:transform .2s}
+#viewBoard .mplan[open] .mp-tog{transform:rotate(-135deg)}
+#viewBoard .mplan>div{padding:0 14px 12px}
+#viewBoard .mplan .mpbar{margin:0}#viewBoard .mplan .mpbar .seg:empty{display:none}#viewBoard .mplan .mpbar .sub{font-size:12px;margin:0 0 6px}
+#viewBoard .ptier{margin-top:4px}#viewBoard .ptier>summary{font-size:13px;padding:4px 0}
+#viewBoard .pgrid{display:grid;grid-template-columns:1fr;gap:0;border:1px solid var(--line);border-radius:10px;overflow:hidden;max-height:300px;overflow-y:auto}
+#viewBoard .pc{grid-template-columns:minmax(150px,.9fr) minmax(180px,1.2fr) minmax(240px,2fr) auto;align-items:center;gap:12px;padding:8px 12px;border:0;border-radius:0;border-left:3px solid var(--c-done);border-bottom:1px solid var(--line);box-shadow:none;background:var(--panel)}
+#viewBoard .pc:last-child{border-bottom:0}#viewBoard .pc.t-now{border-left-color:var(--c-late);background:var(--panel)}#viewBoard .pc.t-week{border-left-color:var(--c-wait)}
+#viewBoard .pc:hover{background:color-mix(in srgb,var(--accent) 5%,var(--panel))}
+#viewBoard .pc .ph{display:grid;gap:0}#viewBoard .pc .ph b{font-size:13.5px}#viewBoard .pc .vtag{margin:2px 0 0;justify-self:start;font-size:11px;padding:1px 7px}
+#viewBoard .pc .pchips em{font-size:11.5px;padding:1px 7px}
+#viewBoard .pc .pact{background:none;padding:0;font-size:12.5px;line-height:1.45}
+#viewBoard .pc .pbtn{justify-content:flex-end}#viewBoard .pc .pbtn .btn{height:28px;font-size:12px;padding:0 10px}
+/* bảng kéo thả */
+#viewBoard .board{grid-template-columns:320px minmax(0,1fr);gap:12px}
+#viewBoard .pool{top:140px;max-height:calc(100vh - 156px)}
+#viewBoard .col{flex:0 0 272px;max-height:calc(100vh - 156px);border-radius:14px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+#viewBoard .pool>header,#viewBoard .col>header{padding:10px 12px;gap:6px;background:color-mix(in srgb,var(--ink) 2.5%,var(--panel));border-radius:14px 14px 0 0}
+#viewBoard .pool>header b{font-size:14px}
+#viewBoard .pool input,#viewBoard .pool select{height:32px;font-size:13px}
+#viewBoard .col header .nm{align-items:center}#viewBoard .col header .nm .who{min-width:0;font-size:13.5px}
+#viewBoard .col header .nm .who>span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:150px}
+#viewBoard .col header .nm .who small{font-size:11px;font-weight:600;padding:1px 6px;border-radius:6px;background:color-mix(in srgb,var(--ink) 7%,transparent);white-space:nowrap}
+#viewBoard .col header .nm .icon{width:28px;height:28px;padding:0;display:grid;place-items:center;border-radius:8px;flex:none}
+#viewBoard .col header .shf{display:flex;align-items:center;justify-content:space-between;gap:6px;font-size:12px;color:var(--muted)}
+#viewBoard .col header .shf .pill{font-size:11px}
+#viewBoard .cap{height:6px}#viewBoard .hrs{font-size:12px}
+#viewBoard .col .body,#viewBoard .pool .body{padding:8px;gap:8px}
+#viewBoard .grp{border-radius:12px;background:color-mix(in srgb,var(--ink) 2%,var(--panel))}
+#viewBoard .grp>.gh{padding:8px 10px;font-size:12.5px;align-items:center}
+#viewBoard .grp>.gh>span{font-weight:700;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;flex:1 1 auto}
+#viewBoard .grp>.gh .mbadge{margin:0;order:3;flex-basis:100%;justify-self:start;width:max-content}
+#viewBoard .card{margin:0 6px 6px;padding:8px 10px;border-radius:10px;gap:4px;background:var(--panel);box-shadow:0 1px 2px rgba(0,0,0,.05)}
+#viewBoard .card .t{font-size:13px;line-height:1.35;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#viewBoard .card .m{font-size:11.5px;gap:4px}
+#viewBoard .card .pill{font-size:10.5px;padding:1px 6px}
+#viewBoard .card.late7{border-color:color-mix(in srgb,var(--c-late) 55%,var(--line));box-shadow:inset 3px 0 0 var(--c-late)}
+#viewBoard .mhint{font-size:11.5px;padding:6px 8px;border-radius:8px}
+@media (max-width:900px){#viewBoard .pc{grid-template-columns:1fr 1fr}#viewBoard .pc .pact,#viewBoard .pc .pbtn{grid-column:1/-1}#viewBoard .pc .pbtn{justify-content:flex-start}}
+@media (max-width:760px){.dp-bar{position:static;padding:10px}.dp-f{flex:1 1 calc(50% - 8px)}.dp-f select{min-width:0;width:100%}.dp-f:first-child{flex-basis:100%}.dp-sp{display:none}.dp-tools{width:100%;justify-content:space-between}
+  .dp-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.dp-stats .stp{grid-column:1/-1}
+  #viewBoard .board{grid-template-columns:1fr}#viewBoard .pool{position:static;max-height:52vh}#viewBoard .col{flex:0 0 86%;max-height:none}
+  .dp-actions{width:100%}.dp-actions .btn{flex:1}#viewBoard .pc{grid-template-columns:1fr}#viewBoard .pgrid{max-height:360px}}
+
+.dp-bar .dayp.seg2{height:34px;box-sizing:border-box;align-items:center}
+#viewBoard .mplan .mpbar .sub:empty{display:none}
+#viewBoard .pc{padding:7px 12px}#viewBoard .pc .ph{grid-template-columns:auto 1fr;column-gap:8px;align-items:baseline}#viewBoard .pc .ph small{grid-column:1/-1}
+#viewBoard .pc .ph .vtag{grid-column:2;grid-row:1;margin:0;justify-self:start}
+#viewBoard .pc .pchips{flex-wrap:nowrap;overflow:hidden;mask-image:linear-gradient(90deg,#000 88%,transparent)}
+#viewBoard .pc .pchips em{white-space:nowrap}
+#viewBoard .pgrid{max-height:236px}
+#viewBoard .pc{grid-template-columns:minmax(210px,1fr) minmax(200px,1.2fr) minmax(260px,2fr) auto}
+#viewBoard .pc .ph .vtag{white-space:nowrap}
+#viewBoard .grp>.gh{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:2px 8px}
+#viewBoard .grp>.gh .mbadge{grid-column:1/-1;flex:none;justify-self:start;order:0}
+#viewBoard .ptier:first-of-type{margin-top:0}
+@media (max-width:900px){#viewBoard .pc{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}#viewBoard .pc .pact,#viewBoard .pc .pbtn{grid-column:1/-1}#viewBoard .pc .pbtn{justify-content:flex-start}#viewBoard .pc .pchips{flex-wrap:wrap;mask-image:none}}
+@media (max-width:760px){#viewBoard .pc{grid-template-columns:minmax(0,1fr)}#viewBoard .pc .ph b{font-size:14px}
+  .dp-stats{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.dp-stats .st{padding:8px 10px}.dp-stats .st b{font-size:17px}.dp-stats .st span{font-size:11px;line-height:1.25}
+  #viewBoard .pend{border-radius:12px;width:100%}#viewBoard .pend #bPendT{flex:1}}
 </style>
 </head>
 <body>
@@ -623,6 +802,7 @@ body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none
     <button role="tab" id="tabR" aria-selected="false"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M8 17v-5M12 17V7M16 17v-8"/></svg>Report</button>
     <button role="tab" id="tabB" aria-selected="false"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M3 9h18M8 2v4M16 2v4"/></svg>Điều phối</button>
     <button role="tab" id="tabT" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01"/></svg>Task</button>
+    <button role="tab" id="tabM" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.6 2.6-2.4-.6-.6-2.4z"/></svg>Máy Clinic</button>
     <button role="tab" id="tabC" aria-selected="false"><svg viewBox="0 0 24 24"><path d="M12 3v18M5 8l-3 6h6zM19 8l-3 6h6zM5 8h14"/></svg>Cân tải</button>
   </nav>
 </div>
@@ -660,7 +840,7 @@ body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none
       <details class="fbox lvbox" id="dLv" hidden></details>
       <div class="kpis" id="dK"></div>
       <div class="charts">
-        <section class="chart"><h3 id="c1t">Task hạn hôm nay theo Zone</h3><p class="sub" id="c1n"></p><div id="c1"></div><div class="c1x"><h3 id="c1bt">Theo nhóm thiết bị</h3><p class="sub" id="c1bn"></p><div id="c1b"></div></div></section>
+        <section class="chart"><h3 id="c1t">Task hạn hôm nay theo Zone</h3><p class="sub" id="c1n"></p><div id="c1"></div><div class="c1x"><h3 id="c1bt">Theo nhóm thiết bị ưu tiên</h3><p class="sub" id="c1bn"></p><div id="c1b"></div></div></section>
         <section class="chart"><h3 id="c2t">Hạn hôm nay theo nhân viên</h3><p class="sub">Đã xong · chờ xử lý · quá hạn chưa xử lý</p><div id="c2"></div></section>
         <section class="chart"><h3>Hoàn thành theo giờ</h3><p class="sub" id="c3n"></p><div id="c3"></div></section>
         <section class="chart wide"><div class="chd"><h3>Theo nhóm: Hạ tầng · Điện tử · Phòng khám · IT</h3><button class="btn sec sm" id="goRep">Xem report chi tiết →</button></div><p class="sub" id="c6n"></p><div id="c6"></div></section>
@@ -709,22 +889,55 @@ body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none
       <div id="r6"></div>
     </section>
 
-    <!-- ===== ĐIỀU PHỐI NGÀY MAI ===== -->
-    <section id="viewBoard" class="view" hidden>
-      <div class="vhead"><div><h2>Điều phối <b>công việc</b></h2><p class="sub" id="bInfo"></p>
-        <div class="dayp" role="group" aria-label="Ngày điều phối"><button class="btn sec sm" data-dd="0">Hôm nay</button><button class="btn sec sm" data-dd="1">Ngày mai</button><input type="date" id="bDay" aria-label="Chọn ngày điều phối"></div></div>
-        <button class="btn" id="bUpd">Ghi người thực hiện lên Work</button></div>
-      <details class="fbox" open><summary>Zone, nghiệp vụ &amp; gợi ý</summary><div class="filters">
-        <select id="bZone" aria-label="Zone"><option value="">Tất cả Zone</option><option selected>Zone 1</option><option>Zone 2</option><option>Zone 3</option></select>
-        <select id="bSrc" class="srcsel" aria-label="Nguồn task"><option value="">Tất cả bộ phận</option><option value="clinic">Chỉ task Clinic</option><option value="nonclinic">Không gồm Clinic</option></select>
-        <select id="bTr" aria-label="Nghiệp vụ"><option value="KT">Điện / Điện Lạnh</option><option value="IT">IT Helpdesk</option><option value="MM">Bảo trì máy móc</option></select>
-        <label class="chk" title="Giờ tối đa mỗi người; có lịch ca thì lấy theo giờ ca (trừ 1h nghỉ trưa)">Giờ tối đa <input type="number" id="bCap" value="8" min="1" max="14" step="0.5" style="width:70px"></label>
-        <button class="btn sec" id="bAuto">Gợi ý tự động</button>
-        <button class="btn sec" id="bClear">Xoá kế hoạch Zone này</button>
-        <label class="chk" title="Bật: kéo thả là ghi ngay người làm + hạn = ngày điều phối lên Work. Tắt: chỉ lưu trên máy, bấm Ghi ngay để ghi."><input type="checkbox" id="bAutoW" checked> Tự ghi lên Work khi kéo thả</label>
+
+    <!-- ===== LỊCH BẢO TRÌ MÁY CLINIC ===== -->
+    <section id="viewMach" class="view" hidden>
+      <div class="vhead"><div><h2>Lịch bảo trì máy Clinic</h2><p class="sub" id="mSub">Chưa tải danh sách máy.</p>
+        <div class="dayp" role="group" aria-label="Ngày tham chiếu"><button class="btn sec sm" data-md="0">Hôm nay</button><button class="btn sec sm" data-md="1">Ngày mai</button><input type="date" id="mPick" aria-label="Ngày tham chiếu">
+          <select id="mH" aria-label="Sắp đến hạn trong"><option value="7">Sắp đến hạn: 7 ngày</option><option value="14">Sắp đến hạn: 14 ngày</option><option value="30" selected>Sắp đến hạn: 30 ngày</option><option value="60">Sắp đến hạn: 60 ngày</option></select></div></div>
+        <div class="row"><button class="btn" id="mLoad">Tải lại từ Google Sheet</button><a class="btn sec" id="mOpen" target="_blank" rel="noopener">Mở Google Sheet</a></div></div>
+      <details class="fbox" id="mCfg"><summary>Nguồn dữ liệu</summary><div class="filters">
+        <input id="mUrl" aria-label="Link Google Sheet" placeholder="Dán link Google Sheet danh sách máy" style="flex:1 1 420px">
+        <button class="btn sec sm" id="mUrlSave">Lưu link &amp; tải</button>
+        <label class="btn sec sm" style="cursor:pointer">Nhập file CSV<input type="file" id="mFile" accept=".csv,text/csv" hidden></label>
+        <p class="sub" style="flex-basis:100%;margin:0">Sheet cần chia sẻ "Bất kỳ ai có đường liên kết đều xem được". Tool đọc 2 sheet: <b>Máy và số SN</b> (danh sách máy, ngày bảo trì gần nhất / tiếp theo) và <b>Máy và tần suất bảo trì</b> (tần suất theo SKU).</p>
       </div></details>
-      <div class="pend" id="bPend" hidden><span id="bPendT"></span><button class="btn sm" id="bPendGo">Ghi ngay</button></div>
-      <details class="howto"><summary><span>?</span> Cách điều phối</summary><p class="sub">Kéo thả task (hoặc tên chi nhánh để chuyển cả cụm) sang cột nhân viên. Task cần <b>2 người</b>: giữ <b>Ctrl</b> khi thả để <b>thêm người cùng làm</b> (hoặc chạm vào task → "+ Thêm người cùng làm"); bấm × trên thẻ ở cột một người để bỏ riêng người đó. Trên điện thoại: <b>chạm vào task</b> để chọn người. Khi xếp, task được ghi lên Work: <b>người thực hiện</b> và <b>hạn = ngày điều phối 23:59</b>. Bỏ khỏi kế hoạch thì trả lại hạn cũ.</p></details>
+      <div class="kpis rk" id="mK"></div>
+      <div class="rsec"><h3>Chi nhánh cần ghé bảo trì</h3><p class="sub" id="mBrN"></p></div>
+      <div class="mbrs" id="mBr"></div>
+      <div class="rsec"><h3>Danh sách máy</h3><p class="sub" id="mListN"></p><button class="btn sec sm" id="mCsv">Tải CSV</button></div>
+      <div class="mxbar mxl"><b>Xuất Excel tạo task</b> cho các máy đã tick (mặc định: máy đang lọc):<label>Ngày làm <input type="date" id="mxDate"></label><label>Người làm <select id="mxWho1"></select></label><label>+ người 2 <select id="mxWho2"></select></label><button class="btn sm" id="mxGo">Xuất Excel</button></div>
+      <div class="rlf"><div class="seg" id="mSt"></div>
+        <input type="search" id="mQ" placeholder="Tìm máy, SKU, SN, chi nhánh…" aria-label="Tìm máy">
+        <select id="mBrSel" aria-label="Chi nhánh"><option value="">Tất cả chi nhánh</option></select></div>
+      <div id="mList"></div>
+    </section>
+
+    <!-- ===== ĐIỀU PHỐI NGÀY MAI ===== -->
+    <section id="viewBoard" class="view dp" hidden>
+      <div class="dp-head">
+        <div class="dp-title"><h2>Điều phối</h2><p class="sub" id="bInfo"></p></div>
+        <div class="dp-actions"><div class="pend" id="bPend" hidden><span class="pdot"></span><span id="bPendT"></span><button class="btn sm" id="bPendGo">Ghi ngay</button></div>
+          <button class="btn" id="bUpd">Ghi người thực hiện lên Work</button></div>
+      </div>
+      <div class="dp-bar" role="toolbar" aria-label="Bộ lọc điều phối">
+        <div class="dp-f"><span class="lbl">Ngày</span><div class="dayp seg2" role="group" aria-label="Ngày điều phối"><button class="btn sec sm" data-dd="0">Hôm nay</button><button class="btn sec sm" data-dd="1">Ngày mai</button><input type="date" id="bDay" aria-label="Chọn ngày điều phối"></div></div>
+        <div class="dp-f"><span class="lbl">Zone</span><select id="bZone" aria-label="Zone"><option value="">Tất cả Zone</option><option selected>Zone 1</option><option>Zone 2</option><option>Zone 3</option></select></div>
+        <div class="dp-f"><span class="lbl">Nghiệp vụ</span><select id="bTr" aria-label="Nghiệp vụ"><option value="KT">Điện / Điện Lạnh</option><option value="IT">IT Helpdesk</option><option value="MM">Bảo trì máy móc</option></select></div>
+        <div class="dp-f"><span class="lbl">Bộ phận</span><select id="bSrc" class="srcsel" aria-label="Nguồn task"><option value="">Tất cả</option><option value="clinic">Chỉ Clinic</option><option value="nonclinic">Không gồm Clinic</option></select></div>
+        <div class="dp-f" title="Giờ tối đa mỗi người; có lịch ca thì lấy theo giờ ca (trừ 1h nghỉ trưa)"><span class="lbl">Giờ tối đa</span><input type="number" id="bCap" value="8" min="1" max="14" step="0.5"></div>
+        <div class="dp-sp"></div>
+        <div class="dp-tools">
+          <label class="tgl" title="Bật: kéo thả là ghi ngay người làm + hạn = ngày điều phối lên Work. Tắt: chỉ lưu trên máy, bấm Ghi ngay để ghi."><input type="checkbox" id="bAutoW" checked><span class="sw"></span>Tự ghi lên Work</label>
+          <button class="btn sec sm" id="bAuto">Gợi ý tự động</button>
+          <button class="btn sec sm ghost" id="bClear">Xoá kế hoạch</button>
+          <details class="howto dp-help"><summary aria-label="Cách điều phối">?</summary><div class="pop"><b>Cách điều phối</b><p>Kéo thả task (hoặc tên chi nhánh để chuyển cả cụm) sang cột nhân viên. Task cần <b>2 người</b>: giữ <b>Ctrl</b> khi thả để <b>thêm người cùng làm</b> (hoặc chạm vào task → "+ Thêm người cùng làm"); bấm × trên thẻ để bỏ riêng người đó.</p><p>Trên điện thoại: <b>chạm vào task</b> để chọn người.</p><p>Khi xếp, task được ghi lên Work: <b>người thực hiện</b> và <b>hạn = ngày điều phối 23:59</b>. Bỏ khỏi kế hoạch thì trả lại hạn cũ.</p></div></details>
+        </div>
+      </div>
+      <div class="dp-stats" id="bStats"></div>
+      <details class="mplan" id="mPlan" hidden><summary><span id="mPlanT">Ưu tiên Clinic</span><span class="mp-tog"></span></summary>
+        <div class="mpbar"><div class="seg" id="mPlanSeg"></div><p class="sub" id="mPlanN"></p></div>
+        <div id="mPlanB"></div></details>
       <div class="board">
         <aside class="pool" id="pool"><header><b id="poolT">Chưa xếp</b><input type="search" id="bQ" placeholder="Tìm chi nhánh, mã, hạng mục…" aria-label="Tìm trong chưa xếp"><select id="bSort" aria-label="Sắp xếp"><option value="late">Ưu tiên trễ hạn / gấp</option><option value="nv">Theo người đang được giao</option><option value="st">Theo tên chi nhánh</option></select></header><div class="body" id="poolB" data-drop=""></div></aside>
         <div class="cols" id="cols"></div>
@@ -781,6 +994,15 @@ body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none
     <div class="cmdf"><span><kbd>↑</kbd><kbd>↓</kbd> chọn</span><span><kbd>Enter</kbd> mở điều phối</span><span><kbd>Ctrl</kbd>+<kbd>Enter</kbd> mở trên Work</span></div>
   </div>
 </div>
+<div class="modal" id="mDlg" hidden role="dialog" aria-modal="true" aria-labelledby="mdT">
+  <div class="dlg sheet mdlg">
+    <div class="row"><h2 id="mdT">Máy cần bảo trì</h2><button class="x" id="mdX" aria-label="Đóng">×</button></div>
+    <p class="sub" id="mdSub"></p>
+    <div id="mdBody"></div>
+    <div class="mxbar"><label>Ngày làm <input type="date" id="mdDate"></label><label>Người làm <select id="mdWho1"></select></label><label>+ người 2 <select id="mdWho2"></select></label></div>
+    <div class="row" style="justify-content:flex-end;gap:8px;flex-wrap:wrap"><button class="btn sec" id="mdGo">Xem ở tab Máy Clinic</button><button class="btn sec" id="mdCopy">Sao chép nội dung</button><button class="btn" id="mdXlsx">Xuất Excel tạo task</button></div>
+  </div>
+</div>
 <div class="modal" id="pair" hidden role="dialog" aria-modal="true" aria-labelledby="prT">
   <div class="dlg sheet pairdlg">
     <div class="row"><h2 id="prT">Task đang có 2 người làm</h2><button class="x" id="prX" aria-label="Đóng">×</button></div>
@@ -799,7 +1021,7 @@ body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none
 </div>
 <div class="toast" id="toast" hidden></div>
 <script>
-const STATIC={"roster": [{"id": 15936, "name": "Trần Quốc Tỉnh", "zone": "Zone 1", "skill": "Điện"}, {"id": 3414, "name": "Trần Văn Luân", "zone": "Zone 1", "skill": "Điện Lạnh"}, {"id": 9104, "name": "Nguyễn Quốc Thanh Tòng", "zone": "Zone 1", "skill": "Điện Lạnh"}, {"id": 35884, "name": "Huỳnh Lê Tiềm", "zone": "Zone 1", "skill": "Điện Lạnh"}, {"id": 36778, "name": "Trần văn Anh Vũ", "zone": "Zone 1", "skill": "Điện Lạnh"}, {"id": 6411, "name": "Phạm Hải Đăng", "zone": "Zone 1", "skill": "Điện Lạnh"}, {"id": 18282, "name": "Nguyễn Đức Trần Minh Khải", "zone": "Zone 1", "skill": "IT Helpdesk"}, {"id": 13976, "name": "Nguyễn Minh Tâm", "zone": "Zone 1", "skill": "IT Helpdesk"}, {"id": 41554, "name": "Trần Hoài Bão", "zone": "Zone 1", "skill": "IT Helpdesk"}, {"id": 2414, "name": "Nguyễn Bá Trung", "zone": "Zone 2", "skill": "Điện"}, {"id": 40892, "name": "Cao Văn Hoàng", "zone": "Zone 2", "skill": "Điện Lạnh"}, {"id": 18579, "name": "Nguyễn Trung Kiên", "zone": "Zone 2", "skill": "Điện Lạnh"}, {"id": 5088, "name": "Nguyễn Hoàng Minh", "zone": "Zone 2", "skill": "Điện Lạnh"}, {"id": 8428, "name": "Nguyễn Văn Đoàn", "zone": "Zone 2", "skill": "Điện Lạnh"}, {"id": 35387, "name": "Trần Văn Nhanh", "zone": "Zone 2", "skill": "Điện Lạnh"}, {"id": 37147, "name": "Thạch Tô Là", "zone": "Zone 2", "skill": "Điện Lạnh"}, {"id": 36779, "name": "Nguyễn Văn Thành", "zone": "Zone 2", "skill": "Điện Lạnh"}, {"id": 21135, "name": "Tô Lê Trung Hiếu", "zone": "Zone 2", "skill": "IT Helpdesk"}, {"id": 22476, "name": "Nguyễn Trung Hiếu", "zone": "Zone 2", "skill": "IT Helpdesk"}, {"id": 41304, "name": "Trần Bỉnh Tùng", "zone": "Zone 2", "skill": "IT Helpdesk"}, {"id": 2666, "name": "Kim Thành Vinh", "zone": "Zone 3", "skill": "Điện"}, {"id": 5060, "name": "Huỳnh Văn Mến", "zone": "Zone 3", "skill": "Điện Lạnh"}, {"id": 25905, "name": "Tô Việt Cát Duy", "zone": "Zone 3", "skill": "Điện Lạnh"}, {"id": 9426, "name": "Đặng Xuân Khánh", "zone": "Zone 3", "skill": "Điện Lạnh"}, {"id": 387, "name": "Võ Thành Phi", "zone": "Zone 3", "skill": "IT Helpdesk"}, {"id": 24102, "name": "Nguyễn Minh Hảo", "zone": "Zone 3", "skill": "IT Helpdesk"}, {"id": 36362, "name": "Thái Ngọc Lành", "zone": "Toàn quốc", "skill": "Máy móc"}, {"id": 39621, "name": "Lê Đức Tài", "zone": "Toàn quốc", "skill": "Máy móc"}, {"id": 40170, "name": "Lý Ngọc Cường", "zone": "Toàn quốc", "skill": "Máy móc"}, {"id": 42198, "name": "Phạm Thanh Sơn", "zone": "Toàn quốc", "skill": "Máy móc"}, {"id": 42378, "name": "Nguyễn Chí Hùng", "zone": "Toàn quốc", "skill": "Máy móc"}], "zones": {"22 tân thới nhất 13b - hồ chí minh": "Zone 2", "43 tân hải - hồ chí minh": "Zone 2", "130 ấp chánh - tỉnh long an": "Zone 2", "170 quốc lộ 1a - hồ chí minh": "Zone 2", "71 hoàng hoa thám - hồ chí minh": "Zone 2", "555 3 tháng 2 - hồ chí minh": "Zone 1", "176 phan đăng lưu - hồ chí minh": "Zone 1", "94 lê văn việt - hồ chí minh": "Zone 3", "119 nguyễn gia trí - hồ chí minh": "Zone 3", "657 quang trung - hồ chí minh": "Zone 2", "468 nguyễn thị thập - hồ chí minh": "Zone 1", "447 phan văn trị - hồ chí minh": "Zone 2", "6 nguyễn ảnh thủ - hồ chí minh": "Zone 2", "304 lê văn quới - hồ chí minh": "Zone 2", "104 lê trọng tấn - hồ chí minh": "Zone 2", "141 nguyễn trãi - hồ chí minh": "Zone 1", "81 hồ tùng mậu - hồ chí minh": "Zone 1", "48 lê văn sỹ - hồ chí minh": "Zone 1", "15 võ văn ngân - hồ chí minh": "Zone 3", "182 cầu giấy - thành phố hà nội": "Zone 1", "94 hậu giang - hồ chí minh": "Zone 1", "223 khánh hội - hồ chí minh": "Zone 1", "169 thái hà - thành phố hà nội": "Zone 1", "50 phạm văn chiêu - hồ chí minh": "Zone 2", "220 tân hương - hồ chí minh": "Zone 2", "109 nguyễn duy trinh - hồ chí minh": "Zone 3", "28 phan huy ích - hồ chí minh": "Zone 2", "a30 quốc lộ 50 - hồ chí minh": "Zone 2", "56 nguyễn thị tú - hồ chí minh": "Zone 2", "631 tỉnh lộ 10 - hồ chí minh": "Zone 2", "36 nguyễn ảnh thủ - hồ chí minh": "Zone 2", "256 đỗ xuân hợp - hồ chí minh": "Zone 3", "420 huỳnh tấn phát - hồ chí minh": "Zone 1", "1261 phạm hùng - hồ chí minh": "Zone 2", "36 phan văn hớn - hồ chí minh": "Zone 2", "133 hiệp bình - hồ chí minh": "Zone 3", "694 âu cơ - hồ chí minh": "Zone 2", "1519 phạm văn thuận - đồng nai": "Zone 3", "202 nguyễn an ninh - bình dương": "Zone 3", "402 lê đức thọ - hồ chí minh": "Zone 2", "177 ba cu - tỉnh bà rịa-vũng tàu": "Zone 1", "189 30 tháng 4 - thành phố cần thơ": "Zone 3", "219 yersin - bình dương": "Zone 3", "695 phạm văn thuận - đồng nai": "Zone 3", "311 tây thạnh - hồ chí minh": "Zone 2", "11 cách mạng tháng tám - bình dương": "Zone 3", "59 quang trung - hồ chí minh": "Zone 2", "136 phan trung - đồng nai": "Zone 3", "582 nguyễn ái quốc - đồng nai": "Zone 3", "28 lê trọng tấn - bình dương": "Zone 3", "407 nguyễn trung trực - kiên giang": "Zone 3", "167 nguyễn xí - hồ chí minh": "Zone 1", "194 ấp bắc - tỉnh tiền giang": "Zone 3", "296 lãnh binh thăng - hồ chí minh": "Zone 1", "393 lê duẩn - đà nẵng": "Zone 2", "276 xô viết nghệ tĩnh - hồ chí minh": "Zone 1", "96 yjut - đắk lắk": "Zone 2", "75 đồng khởi - bến tre": "Zone 3", "76 bà triệu - tỉnh thừa thiên huế": "Zone 2", "38 phạm thái bường - trà vinh": "Zone 3", "58 lý thánh tôn - khánh hòa": "Zone 2", "96 nguyễn huệ - đồng tháp": "Zone 3", "238 trần phú - bạc liêu": "Zone 3", "1395 trần hưng đạo - an giang": "Zone 3", "1 hai bà trưng - lâm đồng": "Zone 2", "401 trần hưng đạo - bình thuận": "Zone 2", "168 trưng nữ vương - vĩnh long": "Zone 3", "12 nguyễn đình chiểu - long an": "Zone 2", "499 cách mạng tháng tám - tỉnh tây ninh": "Zone 2", "240 tỉnh lộ 825 - tỉnh long an": "Zone 2", "261 lê quang định - hồ chí minh": "Zone 1", "197 trần hưng đạo - tỉnh cà mau": "Zone 3", "7 tỉnh lộ 43 - bình dương": "Zone 3", "224 lê văn việt - hồ chí minh": "Zone 3", "30 phan đình phùng - tỉnh gia lai": "Zone 2", "31 phổ quang - hồ chí minh": "Zone 2", "113 lương khánh thiện - tp. hải phòng": "Zone 1", "39 trần phú - tỉnh hà tĩnh": "Zone 2", "723 cách mạng tháng 8 - tp.hồ chí minh": "Zone 2", "513 phú riềng đỏ - bình phước": "Zone 2", "217 nguyễn văn cừ - nghệ an": "Zone 2", "39 nguyễn văn tăng - hồ chí minh": "Zone 3", "232 phan bội châu - bình định": "Zone 2", "137 nguyễn trãi - thanh hóa": "Zone 2", "112 trần não - hồ chí minh": "Zone 3", "25 nguyễn trãi - thành phố cần thơ": "Zone 3", "1134 kha vạn cân - hồ chí minh": "Zone 3", "219 nguyễn thị thập - hồ chí minh": "Zone 1", "594 nguyễn văn cừ - hà nội": "Zone 1", "40 bạch mai - hà nội": "Zone 1", "1207 nguyễn duy trinh - hồ chí minh": "Zone 3", "4 đường 30 tháng 4 - bình dương": "Zone 3", "517 phú lợi - bình dương": "Zone 3", "246 dương bá trạc - hồ chí minh": "Zone 1", "588 luỹ bán bích - hồ chí minh": "Zone 2", "182 thạch lam - hồ chí minh": "Zone 2", "182 trần hưng đạo - thành phố cần thơ": "Zone 3", "58 hùng vương - thành phố cần thơ": "Zone 3", "392 nguyễn văn quá - hồ chí minh": "Zone 2", "68 bùi văn hòa - đồng nai": "Zone 3", "63 lê hồng phong - lâm đồng": "Zone 2", "953 hà huy giáp - hồ chí minh": "Zone 2", "304 thống nhất - hồ chí minh": "Zone 2", "146 hùng vương - tỉnh thừa thiên huế": "Zone 2", "726 huỳnh tấn phát - hồ chí minh": "Zone 1", "363 tô ngọc vân - hồ chí minh": "Zone 3", "562 thống nhất - ninh thuận": "Zone 2", "34 dt 746 - bình dương": "Zone 3", "361 hồ thị hương - đồng nai": "Zone 3", "136a phan đình phùng - tỉnh quảng ngãi": "Zone 2", "132 nguyễn hữu thọ - tỉnh bà rịa - vũng tàu": "Zone 1", "127 nguyễn trãi - bình dương": "Zone 3", "329 hoàng diệu - đà nẵng": "Zone 2", "122 trần hưng đạo - tỉnh bắc ninh": "Zone 1", "200a cách mạng tháng tám": "Zone 3", "277 trần hưng đạo - tỉnh phú yên": "Zone 2", "194 lương ngọc quyến - tỉnh thái nguyên": "Zone 1", "49 phú lợi - tỉnh sóc trăng": "Zone 3", "212 lê lợi - an giang": "Zone 3", "61 nguyễn an ninh - bình dương": "Zone 3", "1/709 đường 22 tháng 12 - bình dương": "Zone 3", "160 đường 30 tháng 4 - kiên giang": "Zone 3", "422 lê duẫn - đồng nai": "Zone 3", "350 tân sơn nhì - hồ chí minh": "Zone 2", "389 hùng vương - đồng nai": "Zone 3", "104 phan chu trinh - tỉnh quảng nam": "Zone 2", "521 nguyễn tri phương - bình dương": "Zone 3", "225 đường 30 tháng 4 - đồng nai": "Zone 3", "447 kha vạn cân - hồ chí minh": "Zone 3", "166 hùng vương - bình dương": "Zone 3", "95 cách mạng tháng 8 - bình dương": "Zone 3", "89 đường 3/2 - thành phố cần thơ": "Zone 3", "49 mậu thân - thành phố cần thơ": "Zone 3", "68 tỉnh lộ 8 - tp. hồ chí minh": "Zone 2", "105 bà hom - hồ chí minh": "Zone 1", "1030 lê văn lương - tp.hcm": "Zone 1", "346 trần hưng đạo - tỉnh kon tum": "Zone 2", "18 âu cơ - đà nẵng": "Zone 2", "105 phạm ngọc thạch - hà nội": "Zone 1", "477 lê văn thọ - hồ chí minh": "Zone 2", "608 nguyễn duy trinh - hồ chí minh": "Zone 3", "75 ba tháng hai - đồng nai": "Zone 3", "57 trần phú - kiên giang": "Zone 3", "284 bùi thị xuân - lâm đồng": "Zone 2", "141 cách mạng tháng 8 - cần thơ": "Zone 3", "60-62 nguyễn công trứ - hậu giang": "Zone 3", "1838 huỳnh tấn phát - hồ chí minh": "Zone 1", "895 trần hưng đạo - an giang": "Zone 3", "124 đường 30 tháng 4 - tỉnh tiền giang": "Zone 3", "650 nguyễn ảnh thủ - hồ chí minh": "Zone 2", "78 lê lợi - đồng tháp": "Zone 3", "230 âu cơ - hồ chí minh": "Zone 2", "130 ngô quyền - vĩnh long": "Zone 3", "542 quốc lộ 20 - lâm đồng": "Zone 2", "67 đặng thúc vịnh - hồ chí minh": "Zone 2", "366 lê duẩn - đắk lắk": "Zone 2", "479 đường 30 tháng 4 - tỉnh bà rịa - vũng tàu": "Zone 1", "206 nguyễn tất thành - đắk lắk": "Zone 2", "362 đồng khởi - đồng nai": "Zone 3", "225 đình phong phú - hồ chí minh": "Zone 3", "127 đặng văn bi - hồ chí minh": "Zone 3", "c9 võ văn vân - hồ chí minh": "Zone 2", "24 nguyễn văn thoại - đà nẵng": "Zone 2", "348 nguyễn chí công - tiền giang": "Zone 3", "66 trương định - tiền giang": "Zone 3", "224 hùng vương - đồng tháp": "Zone 3", "432 cách mạng tháng 8 - hồ chí minh": "Zone 1", "398 đường 2 tháng 4 - khánh hòa": "Zone 2", "54 phạm hữu lầu - hồ chí minh": "Zone 1", "36 lê văn chí - hồ chí minh": "Zone 3", "57 quang trung - hồ chí minh": "Zone 2", "7 quốc lộ 50 - tỉnh long an": "Zone 2", "199 hùng vương - tỉnh gia lai": "Zone 2", "129 mai thị hồng hạnh - kiên giang": "Zone 3", "151 quốc lộ 9 - quảng trị": "Zone 2", "369 nguyễn văn tăng - hồ chí minh": "Zone 3", "274 gò xoài - hồ chí minh": "Zone 2", "70 lê văn khương - hồ chí minh": "Zone 2", "2203 hùng vương - khánh hòa": "Zone 2", "214 quốc lộ 62 - tỉnh long an": "Zone 2", "179 phan chu trinh - lâm đồng": "Zone 2", "quốc lộ 51 - bà rịa vũng tàu": "Zone 1", "2857 lương định của - bình dương": "Zone 3", "10 hùng vương - lâm đồng": "Zone 2", "113 lê lợi - bình thuận": "Zone 2", "18 võ thị sáu - đồng nai": "Zone 3", "126 tỉnh lộ 8 - hồ chí minh": "Zone 2", "20 nguyễn hữu thọ - tỉnh long an": "Zone 2", "70 trần hưng đạo - bình phước": "Zone 2", "65 dương thị mười - hồ chí minh": "Zone 2", "21 quốc lộ 20 - đồng nai": "Zone 3", "919 hậu giang - hồ chí minh": "Zone 1", "c6 lý thái tổ - đồng nai": "Zone 3", "39 quốc lộ 13 - bình phước": "Zone 2", "29 hoàng việt - hồ chí minh": "Zone 2", "302 nguyễn trãi - hà nội": "Zone 1", "90 nguyễn huệ - vĩnh long": "Zone 3", "83 mạc thiên tích": "Zone 3", "457 nguyễn văn tạo - hồ chí minh": "Zone 1", "191 đỗ tường phong - tỉnh long an": "Zone 2", "106 nguyễn tất thành - đắk nông": "Zone 2", "404 hồ học lãm - hồ chí minh": "Zone 2", "531 đỗ xuân hợp - hồ chí minh": "Zone 3", "125 nguyễn văn cừ nối dài - cần thơ": "Zone 3", "109 hùng vương - đồng tháp": "Zone 3", "268 nguyễn hoàng - hà nội": "Zone 1", "62 võ thị sáu - bà rịa vũng tàu": "Zone 1", "18 man thiện - hồ chí minh": "Zone 3", "219 khâm thiên - hà nội": "Zone 1", "1099 hùng vương - hậu giang": "Zone 3", "2 quốc lộ 22b - tỉnh tây ninh": "Zone 2", "182 phan đăng lưu - đà nẵng": "Zone 2", "193 núi thành - đà nẵng": "Zone 2", "49 ngô mây - bình định": "Zone 2", "1018 quốc lộ 91 - cần thơ": "Zone 3", "59 mai thúc loan - tỉnh thừa thiên huế": "Zone 2", "334 đinh bộ lĩnh - tiền giang": "Zone 3", "78 - 78a đt 835 - long an": "Zone 2", "31 đinh đức thiện - hồ chí minh": "Zone 2", "118 ông ích đường - đà nẵng": "Zone 2", "a26 nguyễn du - tỉnh tây ninh": "Zone 2", "158 trần hưng đạo - quảng bình": "Zone 2", "98 đt 747a - hồ chí minh": "Zone 3", "1488 quốc lộ 30 - đồng tháp": "Zone 3", "443 điện biên phủ - đà nẵng": "Zone 2", "4 tây nam - đồng nai": "Zone 3", "11 quang trung - nghệ an": "Zone 2", "179 trần văn xã - đồng nai": "Zone 3", "442 phạm hùng - cần thơ": "Zone 3", "300 lý thường kiệt - tỉnh quảng nam": "Zone 2", "50 tây lân - hồ chí minh": "Zone 2", "384 nguyễn tất thành - tỉnh bình phước": "Zone 2", "329 tôn đức thắng - tỉnh đắk nông": "Zone 2", "133 biên hòa - hà nam": "Zone 2", "1 nguyễn văn linh - cần thơ": "Zone 3", "136 trung hòa - hà nội": "Zone 1", "254 võ thị sáu - bà rịa vũng tàu": "Zone 1", "1222 tỉnh lộ 10 - hồ chí minh": "Zone 2", "71 trần hưng đạo - tỉnh bình thuận": "Zone 2", "140 lê lợi - bắc giang": "Zone 1", "26 bùi văn hòa - đồng nai": "Zone 3", "553 đường tỉnh 767 - đồng nai": "Zone 3", "108 phùng hưng - đồng nai": "Zone 3", "137 điện biên - hưng yên": "Zone 1", "459 nguyễn đáng - trà vinh": "Zone 3", "29 quốc hương - hồ chí minh": "Zone 3", "276 quang trung - hà nội": "Zone 1", "461 trương định - hà nội": "Zone 1", "49 độc lập - bình dương": "Zone 3", "241 nguyễn tất thành - cà mau": "Zone 3", "67 thú y - hà nội": "Zone 1", "1967 đường tỉnh 768 - đồng nai": "Zone 3", "5 trần hưng đạo - quảng ninh": "Zone 1", "303 hùng vương - bà rịa vũng tàu": "Zone 1", "25 nguyễn văn tiên - đồng nai": "Zone 3", "22 huỳnh minh thạnh - bà rịa vũng tàu": "Zone 1", "251 thới hòa - hồ chí minh": "Zone 2", "142 hai bà trưng - thái bình": "Zone 1", "e4 đường n9 - bình dương": "Zone 3", "104 quang trung - tuyên quang": "Zone 1", "88 trần phú - bắc ninh": "Zone 1", "79 xuân la - hà nội": "Zone 1", "121 bà triệu - thừa thiên huế": "Zone 2", "189 hai bà trưng - hồ chí minh": "Zone 1", "33 lê xoay - vĩnh phúc": "Zone 2", "2184 quốc lộ 20": "Zone 3", "129 phạm ngũ lão - hải dương": "Zone 1", "321 cầu giấy - hà nội": "Zone 1", "1009 trần hưng đạo - ninh bình": "Zone 2", "76a phan văn hớn - hồ chí minh": "Zone 2", "475 quốc lộ 91 - cần thơ": "Zone 3", "635 quoc lo 14 - bình phước": "Zone 2", "349 lê lợi - an giang": "Zone 3", "244 đống đa - đà nẵng": "Zone 2", "32 đường d6 - 5a - bình dương": "Zone 3", "44 nguyễn huy tưởng - đà nẵng": "Zone 2", "22 cao sơn pháo - quảng nam": "Zone 2", "545 trần nhân tông - đà nẵng": "Zone 2", "568 lũy bán bích - hcm": "Zone 2", "269 phạm văn đồng - tây ninh": "Zone 2", "2705 quang trung - bình định": "Zone 2", "174 phan đình phùng - lâm đồng": "Zone 2", "125 trần phú - bình định": "Zone 2", "205 quốc lộ 50 - long an": "Zone 2", "183 trần quý cáp - khánh hòa": "Zone 2", "191 phạm văn đồng - quảng ngãi": "Zone 2", "185 nguyễn trãi - hcm": "Zone 1", "554 lê hồng phong - bình dương": "Zone 3", "98 trần đăng ninh - lạng sơn": "Zone 3", "274a âu cơ - hcm": "Zone 2", "188 hùng vương - đồng nai": "Zone 3", "1 quốc lộ 53 - vĩnh long": "Zone 3", "432 quốc lộ 91 - an giang": "Zone 3", "14 nguyễn du - bình dương": "Zone 3", "248 đồng khởi - bến tre": "Zone 3", "344 võ văn ngân - hcm": "Zone 3", "305 nguyễn nghiêm - quảng ngãi": "Zone 2", "649 30 tháng 4 - tây ninh": "Zone 2", "274 âu cơ - hcm": "Zone 2", "582 hùng vương - đồng nai": "Zone 3", "180 tôn đức thắng - binh thuận": "Zone 2", "34 phan văn hớn - hcm": "Zone 2", "đường đt 824": "Zone 2", "114 ngô gia tự - ninh thuận": "Zone 2", "đường n5 - d9": "Zone 3", "181 khánh hội - hcm": "Zone 1", "342 lê văn sỹ - hcm": "Zone 2", "50 đội cấn - hà nội": "Zone 1", "17 vân đồn - nha trang": "Zone 2", "15 hùng vương - sóc trăng": "Zone 3", "447 quang trung - quảng ngãi": "Zone 2", "76 phan văn hớn - hồ chí minh": "Zone 2", "933 trần hưng đạo - ninh bình": "Zone 2", "295 giải phóng - đắk lắk": "Zone 2", "182 thủ khoa huân - an giang": "Zone 3", "đường db4 - bình dương": "Zone 3", "2b bình chiểu - hồ chí minh": "Zone 3", "78 hai bà trưng - tỉnh gia lai": "Zone 2", "2a dt 743b - bình dương": "Zone 3", "57 thong nhat - bình dương": "Zone 3", "16 hùng vương - tỉnh quảng nam": "Zone 2", "320 tạo lục 5 - bình dương": "Zone 3", "d6 nguyễn thị tú - hồ chí minh": "Zone 2", "384 phan boi chau - đắk lắk": "Zone 2", "12 nguyễn hữu cảnh - an giang": "Zone 3", "815 hà hoàng hổ - an giang": "Zone 3", "168 ấp chánh - long an": "Zone 2", "461 nguyễn bình - hồ chí minh": "Zone 1", "676 điện biên - yên bái": "Zone 3", "62 nguyễn tất thành - đắk nông": "Zone 2", "88 trần đăng ninh - lạng sơn": "Zone 3", "45 nguyễn tất thành - đồng tháp": "Zone 3", "174 nguyễn du - nghiệ an": "Zone 2", "125 nguyễn trung trực - kiên giang": "Zone 3", "231 trần nguyên hãn - hải phòng": "Zone 1", "103 bờ bao tân thắng - hồ chí minh": "Zone 2", "61 an mỹ - bình dương": "Zone 3", "116 quốc lộ 14 - đồng nai": "Zone 3", "1912 quốc lộ 51- đồng nai": "Zone 3", "211 nguyễn ảnh thủ - hồ chí minh": "Zone 2", "14 liêu bình hương - hồ chí minh": "Zone 2", "342 phạm văn thuận - đồng nai": "Zone 3", "355 lê hoàn - thanh hóa": "Zone 2", "833 hà huy giáp - hồ chí minh": "Zone 2", "149 nguyễn duy trinh - hồ chí minh": "Zone 3", "1297 đại lộ hùng vương - phú thọ": "Zone 2", "402 nguyễn thị thập - đồng tháp": "Zone 3"}};
+const STATIC={"roster": [{"id": 15936, "name": "Trần Quốc Tỉnh", "zone": "Zone 1", "skill": "Điện", "code": "232445"}, {"id": 3414, "name": "Trần Văn Luân", "zone": "Zone 1", "skill": "Điện Lạnh", "code": "20532"}, {"id": 9104, "name": "Nguyễn Quốc Thanh Tòng", "zone": "Zone 1", "skill": "Điện Lạnh", "code": "221560"}, {"id": 35884, "name": "Huỳnh Lê Tiềm", "zone": "Zone 1", "skill": "Điện Lạnh", "code": "252951"}, {"id": 36778, "name": "Trần văn Anh Vũ", "zone": "Zone 1", "skill": "Điện Lạnh", "code": "253845"}, {"id": 6411, "name": "Phạm Hải Đăng", "zone": "Zone 1", "skill": "Điện Lạnh", "code": "22224"}, {"id": 18282, "name": "Nguyễn Đức Trần Minh Khải", "zone": "Zone 1", "skill": "IT Helpdesk", "code": "240389"}, {"id": 13976, "name": "Nguyễn Minh Tâm", "zone": "Zone 1", "skill": "IT Helpdesk", "code": "231442"}, {"id": 41554, "name": "Trần Hoài Bão", "zone": "Zone 1", "skill": "IT Helpdesk", "code": "263605"}, {"id": 2414, "name": "Nguyễn Bá Trung", "zone": "Zone 2", "skill": "Điện", "code": "20142"}, {"id": 40892, "name": "Cao Văn Hoàng", "zone": "Zone 2", "skill": "Điện Lạnh", "code": "262943"}, {"id": 18579, "name": "Nguyễn Trung Kiên", "zone": "Zone 2", "skill": "Điện Lạnh", "code": "240688"}, {"id": 5088, "name": "Nguyễn Hoàng Minh", "zone": "Zone 2", "skill": "Điện Lạnh", "code": "21528"}, {"id": 8428, "name": "Nguyễn Văn Đoàn", "zone": "Zone 2", "skill": "Điện Lạnh", "code": "221217"}, {"id": 35387, "name": "Trần Văn Nhanh", "zone": "Zone 2", "skill": "Điện Lạnh", "code": "252454"}, {"id": 37147, "name": "Thạch Tô Là", "zone": "Zone 2", "skill": "Điện Lạnh", "code": "254214"}, {"id": 36779, "name": "Nguyễn Văn Thành", "zone": "Zone 2", "skill": "Điện Lạnh", "code": "253846"}, {"id": 21135, "name": "Tô Lê Trung Hiếu", "zone": "Zone 2", "skill": "IT Helpdesk", "code": "241611"}, {"id": 22476, "name": "Nguyễn Trung Hiếu", "zone": "Zone 2", "skill": "IT Helpdesk", "code": "242060"}, {"id": 41304, "name": "Trần Bỉnh Tùng", "zone": "Zone 2", "skill": "IT Helpdesk", "code": "263355"}, {"id": 2666, "name": "Kim Thành Vinh", "zone": "Zone 3", "skill": "Điện", "code": "20253"}, {"id": 5060, "name": "Huỳnh Văn Mến", "zone": "Zone 3", "skill": "Điện Lạnh", "code": "21514"}, {"id": 25905, "name": "Tô Việt Cát Duy", "zone": "Zone 3", "skill": "Điện Lạnh", "code": "243207"}, {"id": 9426, "name": "Đặng Xuân Khánh", "zone": "Zone 3", "skill": "Điện Lạnh", "code": "221721"}, {"id": 387, "name": "Võ Thành Phi", "zone": "Zone 3", "skill": "IT Helpdesk", "code": "17122"}, {"id": 24102, "name": "Nguyễn Minh Hảo", "zone": "Zone 3", "skill": "IT Helpdesk", "code": "242602"}, {"id": 36362, "name": "Thái Ngọc Lành", "zone": "Toàn quốc", "skill": "Máy móc", "code": "253429"}, {"id": 39621, "name": "Lê Đức Tài", "zone": "Toàn quốc", "skill": "Máy móc", "code": "261672"}, {"id": 40170, "name": "Lý Ngọc Cường", "zone": "Toàn quốc", "skill": "Máy móc", "code": "262221"}, {"id": 42198, "name": "Phạm Thanh Sơn", "zone": "Toàn quốc", "skill": "Máy móc", "code": "264249"}, {"id": 42378, "name": "Nguyễn Chí Hùng", "zone": "Toàn quốc", "skill": "Máy móc", "code": "264429"}], "zones": {"22 tân thới nhất 13b - hồ chí minh": "Zone 2", "43 tân hải - hồ chí minh": "Zone 2", "130 ấp chánh - tỉnh long an": "Zone 2", "170 quốc lộ 1a - hồ chí minh": "Zone 2", "71 hoàng hoa thám - hồ chí minh": "Zone 2", "555 3 tháng 2 - hồ chí minh": "Zone 1", "176 phan đăng lưu - hồ chí minh": "Zone 1", "94 lê văn việt - hồ chí minh": "Zone 3", "119 nguyễn gia trí - hồ chí minh": "Zone 3", "657 quang trung - hồ chí minh": "Zone 2", "468 nguyễn thị thập - hồ chí minh": "Zone 1", "447 phan văn trị - hồ chí minh": "Zone 2", "6 nguyễn ảnh thủ - hồ chí minh": "Zone 2", "304 lê văn quới - hồ chí minh": "Zone 2", "104 lê trọng tấn - hồ chí minh": "Zone 2", "141 nguyễn trãi - hồ chí minh": "Zone 1", "81 hồ tùng mậu - hồ chí minh": "Zone 1", "48 lê văn sỹ - hồ chí minh": "Zone 1", "15 võ văn ngân - hồ chí minh": "Zone 3", "182 cầu giấy - thành phố hà nội": "Zone 1", "94 hậu giang - hồ chí minh": "Zone 1", "223 khánh hội - hồ chí minh": "Zone 1", "169 thái hà - thành phố hà nội": "Zone 1", "50 phạm văn chiêu - hồ chí minh": "Zone 2", "220 tân hương - hồ chí minh": "Zone 2", "109 nguyễn duy trinh - hồ chí minh": "Zone 3", "28 phan huy ích - hồ chí minh": "Zone 2", "a30 quốc lộ 50 - hồ chí minh": "Zone 2", "56 nguyễn thị tú - hồ chí minh": "Zone 2", "631 tỉnh lộ 10 - hồ chí minh": "Zone 2", "36 nguyễn ảnh thủ - hồ chí minh": "Zone 2", "256 đỗ xuân hợp - hồ chí minh": "Zone 3", "420 huỳnh tấn phát - hồ chí minh": "Zone 1", "1261 phạm hùng - hồ chí minh": "Zone 2", "36 phan văn hớn - hồ chí minh": "Zone 2", "133 hiệp bình - hồ chí minh": "Zone 3", "694 âu cơ - hồ chí minh": "Zone 2", "1519 phạm văn thuận - đồng nai": "Zone 3", "202 nguyễn an ninh - bình dương": "Zone 3", "402 lê đức thọ - hồ chí minh": "Zone 2", "177 ba cu - tỉnh bà rịa-vũng tàu": "Zone 1", "189 30 tháng 4 - thành phố cần thơ": "Zone 3", "219 yersin - bình dương": "Zone 3", "695 phạm văn thuận - đồng nai": "Zone 3", "311 tây thạnh - hồ chí minh": "Zone 2", "11 cách mạng tháng tám - bình dương": "Zone 3", "59 quang trung - hồ chí minh": "Zone 2", "136 phan trung - đồng nai": "Zone 3", "582 nguyễn ái quốc - đồng nai": "Zone 3", "28 lê trọng tấn - bình dương": "Zone 3", "407 nguyễn trung trực - kiên giang": "Zone 3", "167 nguyễn xí - hồ chí minh": "Zone 1", "194 ấp bắc - tỉnh tiền giang": "Zone 3", "296 lãnh binh thăng - hồ chí minh": "Zone 1", "393 lê duẩn - đà nẵng": "Zone 2", "276 xô viết nghệ tĩnh - hồ chí minh": "Zone 1", "96 yjut - đắk lắk": "Zone 2", "75 đồng khởi - bến tre": "Zone 3", "76 bà triệu - tỉnh thừa thiên huế": "Zone 2", "38 phạm thái bường - trà vinh": "Zone 3", "58 lý thánh tôn - khánh hòa": "Zone 2", "96 nguyễn huệ - đồng tháp": "Zone 3", "238 trần phú - bạc liêu": "Zone 3", "1395 trần hưng đạo - an giang": "Zone 3", "1 hai bà trưng - lâm đồng": "Zone 2", "401 trần hưng đạo - bình thuận": "Zone 2", "168 trưng nữ vương - vĩnh long": "Zone 3", "12 nguyễn đình chiểu - long an": "Zone 2", "499 cách mạng tháng tám - tỉnh tây ninh": "Zone 2", "240 tỉnh lộ 825 - tỉnh long an": "Zone 2", "261 lê quang định - hồ chí minh": "Zone 1", "197 trần hưng đạo - tỉnh cà mau": "Zone 3", "7 tỉnh lộ 43 - bình dương": "Zone 3", "224 lê văn việt - hồ chí minh": "Zone 3", "30 phan đình phùng - tỉnh gia lai": "Zone 2", "31 phổ quang - hồ chí minh": "Zone 2", "113 lương khánh thiện - tp. hải phòng": "Zone 1", "39 trần phú - tỉnh hà tĩnh": "Zone 2", "723 cách mạng tháng 8 - tp.hồ chí minh": "Zone 2", "513 phú riềng đỏ - bình phước": "Zone 2", "217 nguyễn văn cừ - nghệ an": "Zone 2", "39 nguyễn văn tăng - hồ chí minh": "Zone 3", "232 phan bội châu - bình định": "Zone 2", "137 nguyễn trãi - thanh hóa": "Zone 2", "112 trần não - hồ chí minh": "Zone 3", "25 nguyễn trãi - thành phố cần thơ": "Zone 3", "1134 kha vạn cân - hồ chí minh": "Zone 3", "219 nguyễn thị thập - hồ chí minh": "Zone 1", "594 nguyễn văn cừ - hà nội": "Zone 1", "40 bạch mai - hà nội": "Zone 1", "1207 nguyễn duy trinh - hồ chí minh": "Zone 3", "4 đường 30 tháng 4 - bình dương": "Zone 3", "517 phú lợi - bình dương": "Zone 3", "246 dương bá trạc - hồ chí minh": "Zone 1", "588 luỹ bán bích - hồ chí minh": "Zone 2", "182 thạch lam - hồ chí minh": "Zone 2", "182 trần hưng đạo - thành phố cần thơ": "Zone 3", "58 hùng vương - thành phố cần thơ": "Zone 3", "392 nguyễn văn quá - hồ chí minh": "Zone 2", "68 bùi văn hòa - đồng nai": "Zone 3", "63 lê hồng phong - lâm đồng": "Zone 2", "953 hà huy giáp - hồ chí minh": "Zone 2", "304 thống nhất - hồ chí minh": "Zone 2", "146 hùng vương - tỉnh thừa thiên huế": "Zone 2", "726 huỳnh tấn phát - hồ chí minh": "Zone 1", "363 tô ngọc vân - hồ chí minh": "Zone 3", "562 thống nhất - ninh thuận": "Zone 2", "34 dt 746 - bình dương": "Zone 3", "361 hồ thị hương - đồng nai": "Zone 3", "136a phan đình phùng - tỉnh quảng ngãi": "Zone 2", "132 nguyễn hữu thọ - tỉnh bà rịa - vũng tàu": "Zone 1", "127 nguyễn trãi - bình dương": "Zone 3", "329 hoàng diệu - đà nẵng": "Zone 2", "122 trần hưng đạo - tỉnh bắc ninh": "Zone 1", "200a cách mạng tháng tám": "Zone 3", "277 trần hưng đạo - tỉnh phú yên": "Zone 2", "194 lương ngọc quyến - tỉnh thái nguyên": "Zone 1", "49 phú lợi - tỉnh sóc trăng": "Zone 3", "212 lê lợi - an giang": "Zone 3", "61 nguyễn an ninh - bình dương": "Zone 3", "1/709 đường 22 tháng 12 - bình dương": "Zone 3", "160 đường 30 tháng 4 - kiên giang": "Zone 3", "422 lê duẫn - đồng nai": "Zone 3", "350 tân sơn nhì - hồ chí minh": "Zone 2", "389 hùng vương - đồng nai": "Zone 3", "104 phan chu trinh - tỉnh quảng nam": "Zone 2", "521 nguyễn tri phương - bình dương": "Zone 3", "225 đường 30 tháng 4 - đồng nai": "Zone 3", "447 kha vạn cân - hồ chí minh": "Zone 3", "166 hùng vương - bình dương": "Zone 3", "95 cách mạng tháng 8 - bình dương": "Zone 3", "89 đường 3/2 - thành phố cần thơ": "Zone 3", "49 mậu thân - thành phố cần thơ": "Zone 3", "68 tỉnh lộ 8 - tp. hồ chí minh": "Zone 2", "105 bà hom - hồ chí minh": "Zone 1", "1030 lê văn lương - tp.hcm": "Zone 1", "346 trần hưng đạo - tỉnh kon tum": "Zone 2", "18 âu cơ - đà nẵng": "Zone 2", "105 phạm ngọc thạch - hà nội": "Zone 1", "477 lê văn thọ - hồ chí minh": "Zone 2", "608 nguyễn duy trinh - hồ chí minh": "Zone 3", "75 ba tháng hai - đồng nai": "Zone 3", "57 trần phú - kiên giang": "Zone 3", "284 bùi thị xuân - lâm đồng": "Zone 2", "141 cách mạng tháng 8 - cần thơ": "Zone 3", "60-62 nguyễn công trứ - hậu giang": "Zone 3", "1838 huỳnh tấn phát - hồ chí minh": "Zone 1", "895 trần hưng đạo - an giang": "Zone 3", "124 đường 30 tháng 4 - tỉnh tiền giang": "Zone 3", "650 nguyễn ảnh thủ - hồ chí minh": "Zone 2", "78 lê lợi - đồng tháp": "Zone 3", "230 âu cơ - hồ chí minh": "Zone 2", "130 ngô quyền - vĩnh long": "Zone 3", "542 quốc lộ 20 - lâm đồng": "Zone 2", "67 đặng thúc vịnh - hồ chí minh": "Zone 2", "366 lê duẩn - đắk lắk": "Zone 2", "479 đường 30 tháng 4 - tỉnh bà rịa - vũng tàu": "Zone 1", "206 nguyễn tất thành - đắk lắk": "Zone 2", "362 đồng khởi - đồng nai": "Zone 3", "225 đình phong phú - hồ chí minh": "Zone 3", "127 đặng văn bi - hồ chí minh": "Zone 3", "c9 võ văn vân - hồ chí minh": "Zone 2", "24 nguyễn văn thoại - đà nẵng": "Zone 2", "348 nguyễn chí công - tiền giang": "Zone 3", "66 trương định - tiền giang": "Zone 3", "224 hùng vương - đồng tháp": "Zone 3", "432 cách mạng tháng 8 - hồ chí minh": "Zone 1", "398 đường 2 tháng 4 - khánh hòa": "Zone 2", "54 phạm hữu lầu - hồ chí minh": "Zone 1", "36 lê văn chí - hồ chí minh": "Zone 3", "57 quang trung - hồ chí minh": "Zone 2", "7 quốc lộ 50 - tỉnh long an": "Zone 2", "199 hùng vương - tỉnh gia lai": "Zone 2", "129 mai thị hồng hạnh - kiên giang": "Zone 3", "151 quốc lộ 9 - quảng trị": "Zone 2", "369 nguyễn văn tăng - hồ chí minh": "Zone 3", "274 gò xoài - hồ chí minh": "Zone 2", "70 lê văn khương - hồ chí minh": "Zone 2", "2203 hùng vương - khánh hòa": "Zone 2", "214 quốc lộ 62 - tỉnh long an": "Zone 2", "179 phan chu trinh - lâm đồng": "Zone 2", "quốc lộ 51 - bà rịa vũng tàu": "Zone 1", "2857 lương định của - bình dương": "Zone 3", "10 hùng vương - lâm đồng": "Zone 2", "113 lê lợi - bình thuận": "Zone 2", "18 võ thị sáu - đồng nai": "Zone 3", "126 tỉnh lộ 8 - hồ chí minh": "Zone 2", "20 nguyễn hữu thọ - tỉnh long an": "Zone 2", "70 trần hưng đạo - bình phước": "Zone 2", "65 dương thị mười - hồ chí minh": "Zone 2", "21 quốc lộ 20 - đồng nai": "Zone 3", "919 hậu giang - hồ chí minh": "Zone 1", "c6 lý thái tổ - đồng nai": "Zone 3", "39 quốc lộ 13 - bình phước": "Zone 2", "29 hoàng việt - hồ chí minh": "Zone 2", "302 nguyễn trãi - hà nội": "Zone 1", "90 nguyễn huệ - vĩnh long": "Zone 3", "83 mạc thiên tích": "Zone 3", "457 nguyễn văn tạo - hồ chí minh": "Zone 1", "191 đỗ tường phong - tỉnh long an": "Zone 2", "106 nguyễn tất thành - đắk nông": "Zone 2", "404 hồ học lãm - hồ chí minh": "Zone 2", "531 đỗ xuân hợp - hồ chí minh": "Zone 3", "125 nguyễn văn cừ nối dài - cần thơ": "Zone 3", "109 hùng vương - đồng tháp": "Zone 3", "268 nguyễn hoàng - hà nội": "Zone 1", "62 võ thị sáu - bà rịa vũng tàu": "Zone 1", "18 man thiện - hồ chí minh": "Zone 3", "219 khâm thiên - hà nội": "Zone 1", "1099 hùng vương - hậu giang": "Zone 3", "2 quốc lộ 22b - tỉnh tây ninh": "Zone 2", "182 phan đăng lưu - đà nẵng": "Zone 2", "193 núi thành - đà nẵng": "Zone 2", "49 ngô mây - bình định": "Zone 2", "1018 quốc lộ 91 - cần thơ": "Zone 3", "59 mai thúc loan - tỉnh thừa thiên huế": "Zone 2", "334 đinh bộ lĩnh - tiền giang": "Zone 3", "78 - 78a đt 835 - long an": "Zone 2", "31 đinh đức thiện - hồ chí minh": "Zone 2", "118 ông ích đường - đà nẵng": "Zone 2", "a26 nguyễn du - tỉnh tây ninh": "Zone 2", "158 trần hưng đạo - quảng bình": "Zone 2", "98 đt 747a - hồ chí minh": "Zone 3", "1488 quốc lộ 30 - đồng tháp": "Zone 3", "443 điện biên phủ - đà nẵng": "Zone 2", "4 tây nam - đồng nai": "Zone 3", "11 quang trung - nghệ an": "Zone 2", "179 trần văn xã - đồng nai": "Zone 3", "442 phạm hùng - cần thơ": "Zone 3", "300 lý thường kiệt - tỉnh quảng nam": "Zone 2", "50 tây lân - hồ chí minh": "Zone 2", "384 nguyễn tất thành - tỉnh bình phước": "Zone 2", "329 tôn đức thắng - tỉnh đắk nông": "Zone 2", "133 biên hòa - hà nam": "Zone 2", "1 nguyễn văn linh - cần thơ": "Zone 3", "136 trung hòa - hà nội": "Zone 1", "254 võ thị sáu - bà rịa vũng tàu": "Zone 1", "1222 tỉnh lộ 10 - hồ chí minh": "Zone 2", "71 trần hưng đạo - tỉnh bình thuận": "Zone 2", "140 lê lợi - bắc giang": "Zone 1", "26 bùi văn hòa - đồng nai": "Zone 3", "553 đường tỉnh 767 - đồng nai": "Zone 3", "108 phùng hưng - đồng nai": "Zone 3", "137 điện biên - hưng yên": "Zone 1", "459 nguyễn đáng - trà vinh": "Zone 3", "29 quốc hương - hồ chí minh": "Zone 3", "276 quang trung - hà nội": "Zone 1", "461 trương định - hà nội": "Zone 1", "49 độc lập - bình dương": "Zone 3", "241 nguyễn tất thành - cà mau": "Zone 3", "67 thú y - hà nội": "Zone 1", "1967 đường tỉnh 768 - đồng nai": "Zone 3", "5 trần hưng đạo - quảng ninh": "Zone 1", "303 hùng vương - bà rịa vũng tàu": "Zone 1", "25 nguyễn văn tiên - đồng nai": "Zone 3", "22 huỳnh minh thạnh - bà rịa vũng tàu": "Zone 1", "251 thới hòa - hồ chí minh": "Zone 2", "142 hai bà trưng - thái bình": "Zone 1", "e4 đường n9 - bình dương": "Zone 3", "104 quang trung - tuyên quang": "Zone 1", "88 trần phú - bắc ninh": "Zone 1", "79 xuân la - hà nội": "Zone 1", "121 bà triệu - thừa thiên huế": "Zone 2", "189 hai bà trưng - hồ chí minh": "Zone 1", "33 lê xoay - vĩnh phúc": "Zone 2", "2184 quốc lộ 20": "Zone 3", "129 phạm ngũ lão - hải dương": "Zone 1", "321 cầu giấy - hà nội": "Zone 1", "1009 trần hưng đạo - ninh bình": "Zone 2", "76a phan văn hớn - hồ chí minh": "Zone 2", "475 quốc lộ 91 - cần thơ": "Zone 3", "635 quoc lo 14 - bình phước": "Zone 2", "349 lê lợi - an giang": "Zone 3", "244 đống đa - đà nẵng": "Zone 2", "32 đường d6 - 5a - bình dương": "Zone 3", "44 nguyễn huy tưởng - đà nẵng": "Zone 2", "22 cao sơn pháo - quảng nam": "Zone 2", "545 trần nhân tông - đà nẵng": "Zone 2", "568 lũy bán bích - hcm": "Zone 2", "269 phạm văn đồng - tây ninh": "Zone 2", "2705 quang trung - bình định": "Zone 2", "174 phan đình phùng - lâm đồng": "Zone 2", "125 trần phú - bình định": "Zone 2", "205 quốc lộ 50 - long an": "Zone 2", "183 trần quý cáp - khánh hòa": "Zone 2", "191 phạm văn đồng - quảng ngãi": "Zone 2", "185 nguyễn trãi - hcm": "Zone 1", "554 lê hồng phong - bình dương": "Zone 3", "98 trần đăng ninh - lạng sơn": "Zone 3", "274a âu cơ - hcm": "Zone 2", "188 hùng vương - đồng nai": "Zone 3", "1 quốc lộ 53 - vĩnh long": "Zone 3", "432 quốc lộ 91 - an giang": "Zone 3", "14 nguyễn du - bình dương": "Zone 3", "248 đồng khởi - bến tre": "Zone 3", "344 võ văn ngân - hcm": "Zone 3", "305 nguyễn nghiêm - quảng ngãi": "Zone 2", "649 30 tháng 4 - tây ninh": "Zone 2", "274 âu cơ - hcm": "Zone 2", "582 hùng vương - đồng nai": "Zone 3", "180 tôn đức thắng - binh thuận": "Zone 2", "34 phan văn hớn - hcm": "Zone 2", "đường đt 824": "Zone 2", "114 ngô gia tự - ninh thuận": "Zone 2", "đường n5 - d9": "Zone 3", "181 khánh hội - hcm": "Zone 1", "342 lê văn sỹ - hcm": "Zone 2", "50 đội cấn - hà nội": "Zone 1", "17 vân đồn - nha trang": "Zone 2", "15 hùng vương - sóc trăng": "Zone 3", "447 quang trung - quảng ngãi": "Zone 2", "76 phan văn hớn - hồ chí minh": "Zone 2", "933 trần hưng đạo - ninh bình": "Zone 2", "295 giải phóng - đắk lắk": "Zone 2", "182 thủ khoa huân - an giang": "Zone 3", "đường db4 - bình dương": "Zone 3", "2b bình chiểu - hồ chí minh": "Zone 3", "78 hai bà trưng - tỉnh gia lai": "Zone 2", "2a dt 743b - bình dương": "Zone 3", "57 thong nhat - bình dương": "Zone 3", "16 hùng vương - tỉnh quảng nam": "Zone 2", "320 tạo lục 5 - bình dương": "Zone 3", "d6 nguyễn thị tú - hồ chí minh": "Zone 2", "384 phan boi chau - đắk lắk": "Zone 2", "12 nguyễn hữu cảnh - an giang": "Zone 3", "815 hà hoàng hổ - an giang": "Zone 3", "168 ấp chánh - long an": "Zone 2", "461 nguyễn bình - hồ chí minh": "Zone 1", "676 điện biên - yên bái": "Zone 3", "62 nguyễn tất thành - đắk nông": "Zone 2", "88 trần đăng ninh - lạng sơn": "Zone 3", "45 nguyễn tất thành - đồng tháp": "Zone 3", "174 nguyễn du - nghiệ an": "Zone 2", "125 nguyễn trung trực - kiên giang": "Zone 3", "231 trần nguyên hãn - hải phòng": "Zone 1", "103 bờ bao tân thắng - hồ chí minh": "Zone 2", "61 an mỹ - bình dương": "Zone 3", "116 quốc lộ 14 - đồng nai": "Zone 3", "1912 quốc lộ 51- đồng nai": "Zone 3", "211 nguyễn ảnh thủ - hồ chí minh": "Zone 2", "14 liêu bình hương - hồ chí minh": "Zone 2", "342 phạm văn thuận - đồng nai": "Zone 3", "355 lê hoàn - thanh hóa": "Zone 2", "833 hà huy giáp - hồ chí minh": "Zone 2", "149 nguyễn duy trinh - hồ chí minh": "Zone 3", "1297 đại lộ hùng vương - phú thọ": "Zone 2", "402 nguyễn thị thập - đồng tháp": "Zone 3"}};
 const API='https://wshr.hasaki.vn/api/hr';
 const B2=4416,WF=398,TRAVEL=30;
 const DEFAULT_TOKEN='eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJleHAiOjQxMDI0MTk1OTksImlzcyI6Imh0dHA6Ly93c2hyLmhhc2FraS52bi9hcGkvYXV0aC9sb2dpbiIsImF1ZCI6IndzaHItcHJvZHVjdGlvbiIsImFwcCI6Im9kcyIsInN1YiI6MCwiaWF0IjoxNzc4NTY4NzU1LCJuYmYiOjE3Nzg1Njg3NTUsImp0aSI6InA3bERYNkpJY0pJb1BQeVIifQ.dE1kJ4t7pg04m_C42DZtUK8JroGE5rk4-f6U83Kh1hI';
@@ -931,7 +1153,7 @@ function rebalance(){
 /* ---------- hiển thị ---------- */
 const S={zone:'',nv:'',tr:'',chg:'',q:''};
 const changed=t=>[...t.cur].sort().join()!==[...t.new].sort().join();
-function render(){renderMain();if(!$('viewBoard').hidden)bRender();if(!$('viewDue').hidden)dRender();if(!$('viewRep').hidden)rRender()}
+function render(){renderMain();if(!$('viewBoard').hidden)bRender();if(!$('viewDue').hidden)dRender();if(!$('viewRep').hidden)rRender();if(!$('viewMach').hidden)mRender()}
 function renderMain(){
   const L0=loadOf(t=>t.cur),L1=loadOf(t=>t.new);
   const ch=TASKS.filter(changed).length,outN=Object.values(OUTS).reduce((a,b)=>a+b.n,0);
@@ -1004,11 +1226,13 @@ function chip(t,from){const who=from?t.new.filter(i=>i!=from).map(i=>BYID[i]?.na
   return `<div class="card${t.od>7?' late7':''}" draggable="true" data-tid="${t.tid}" data-from="${from||''}">${from?`<button class="rm" data-unplan="${t.tid}" data-rmfrom="${from}" aria-label="${t.new.length>1?'Bỏ người này khỏi task':'Bỏ khỏi kế hoạch'}" title="${t.new.length>1?'Bỏ '+esc(BYID[from]?.name||'')+' khỏi task (giữ người còn lại)':'Bỏ khỏi kế hoạch'}">×</button>`:''}
   <div class="t">${esc(t.name)}</div><div class="m"><a class="mono tlink" draggable="false" href="https://work.hasaki.vn/tasks?task_id=${t.tid}" target="_blank" rel="noopener" title="Mở task trên Work">${esc(t.code)}</a>${t.pri==3?'<span class="pill p-urg">Gấp</span>':''}${t.od>7?`<span class="pill p-l7">⚠ trễ ${t.od}n</span>`:t.od>0?`<span class="pill p-late">trễ ${t.od}n</span>`:''}${t.lanh?'<span class="pill p-it">Lạnh</span>':''}${t.clinic?'<span class="pill p-cl">Clinic</span>':''}${t.remote?'<span class="pill p-rm">Từ xa</span>':''}${$('bZone').value&&t.zone!==$('bZone').value?`<span class="pill p-it" title="Chi nhánh thuộc ${esc(t.zone)}">${esc(t.zone.replace('Zone ','Z'))}</span>`:''}${from?(WS[t.tid]==='run'?'<span class="pill p-rm">đang ghi…</span>':WS[t.tid]==='er'?`<span class="pill p-urg" title="${esc(WS[t.tid+'m']||'')}">lỗi ghi</span>`:pending(t)?'<span class="pill p-late">chưa ghi</span>':(AUTO[t.tid]&&!changed(t)?'<span class="pill p-kt" title="Task đã có hạn đúng ngày này trên Work">theo hạn</span>':'<span class="pill p-kt">✓ đã ghi</span>')):''}<span>${t.est}′</span>${from?'':dlTag(t)}${from?(who.length?`<span>· cùng ${esc(who.join(', '))}</span>`:''):poolWho(t)}</div></div>`}
 function grpHtml(store,L,from){const m=L.reduce((a,t)=>a+t.est,0);
-  return `<div class="grp"><div class="gh" draggable="true" data-store="${esc(store)}" data-from="${from||''}" title="Kéo cả cụm chi nhánh"><span>${esc(store)}</span><small>${L.length} task · ${(m/60).toFixed(1)}h</small></div>${L.map(t=>chip(t,from)).join('')}</div>`}
+  return `<div class="grp"><div class="gh" draggable="true" data-store="${esc(store)}" data-from="${from||''}" title="Kéo cả cụm chi nhánh"><span>${esc(store)}</span><small>${L.length} task · ${(m/60).toFixed(1)}h</small>${mBadge(store)}</div>${L.map(t=>chip(t,from)).join('')}</div>`}
 function pLoad(id,L){const mine=L.filter(t=>PLAN[t.tid]&&t.new.includes(id));const st=new Set(mine.filter(t=>!t.remote).map(t=>t.store));return {mine,h:(mine.reduce((a,t)=>a+t.est,0)+TRAVEL*st.size)/60,st:st.size}}
 const TMRD=()=>ymd(TMR);
 function capOf(id){const sf=shiftOf(id,TMRD()),c=+$('bCap').value||8;return sf?(sf.off?0:Math.min(c,sf.hours||c)):c}
 function bRender(){
+  try{mPlanRender()}catch(e){console.error(e)}
+  try{bStatsRender()}catch(e){console.error(e)}
   const L=bTasks(),q=nm($('bQ').value);
   const pool=L.filter(t=>!PLAN[t.tid]&&(!q||nm(t.code+' '+t.store+' '+t.full+' '+t.hm).includes(q)));
   let gs=grpStores(pool);const so=$('bSort').value;
@@ -1023,10 +1247,10 @@ function bRender(){
   $('bInfo').textContent=`${TMRL} · đã xếp ${planned}/${L.length} task của ${$('bZone').value||'tất cả Zone'}`;
   const pd=L.filter(t=>pending(t)&&WS[t.tid]!=='run');$('bPend').hidden=!pd.length;$('bPendT').textContent=`${pd.length} task đã xếp chưa ghi lên Work (người làm / hạn ${fmtD(TMRD())})`;$('bPendGo').onclick=()=>writePlanned(pd,'Ghi kế hoạch');
   $('cols').innerHTML=ppl.map(r=>{const o=pLoad(r.id,L),sf=shiftOf(r.id,TMRD()),un=unavailable(sf),cap=capOf(r.id),over=o.h>cap+1e-9;
-    return `<section class="col${un?' offc':''}" data-drop="${r.id}"><header><div class="nm"><span class="who">${AV(r.id)}<span>${esc(r.name)}</span> <small>${SKL(r)}${$('bZone').value?'':' · '+r.zone.replace('Zone ','Z')}</small></span><button class="icon" data-copy="${r.id}" title="Sao chép danh sách việc để gửi Zalo">Sao chép</button></div>
-      <div>Ca ${DLBL()}: ${shiftPill(sf)}</div>
+    return `<section class="col${un?' offc':''}" data-drop="${r.id}"><header><div class="nm"><span class="who">${AV(r.id)}<span>${esc(r.name)}</span> <small>${SKL(r)}${$('bZone').value?'':' · '+r.zone.replace('Zone ','Z')}</small></span><button class="icon" data-copy="${r.id}" title="Sao chép danh sách việc để gửi Zalo" aria-label="Sao chép danh sách việc"><svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="12" height="12" rx="2"/><path d="M5 15V5a2 2 0 0 1 2-2h10"/></svg></button></div>
+      <div class="shf"><span>Ca ${DLBL()}</span>${shiftPill(sf)}</div>
       <div class="cap${over?' over':''}"><i style="width:${cap?Math.min(100,o.h/cap*100):(o.h?100:0)}%"></i></div><div class="hrs${over?' over':''}">${o.h.toFixed(1)}h / ${cap}h · ${o.mine.length} task · ${o.st} chi nhánh${over?(un?(sf.code==='T'?' · đi thi công':' · đang nghỉ'):' · quá giờ'):''}</div></header>
-      <div class="body">${o.mine.length?grpStores(o.mine).map(([s,l])=>grpHtml(s,l,r.id)).join(''):'<div class="hint">Kéo task vào đây</div>'}</div></section>`}).join('')||'<div class="empty">Zone này không có người cho nghiệp vụ đã chọn.</div>';
+      ${r.tr==='MM'?mColHint(o.mine):''}<div class="body">${o.mine.length?grpStores(o.mine).map(([s,l])=>grpHtml(s,l,r.id)).join(''):'<div class="hint">Kéo task vào đây</div>'}</div></section>`}).join('')||'<div class="empty">Zone này không có người cho nghiệp vụ đã chọn.</div>';
 }
 let DRAG=null;
 function dragTids(el){if(el.dataset.tid)return [el.dataset.tid];const g=el.closest('.grp');return [...g.querySelectorAll('.card')].map(c=>c.dataset.tid)}
@@ -1084,8 +1308,8 @@ function confirmTwice(id,msg){const b=$(id);if(b.dataset.arm){delete b.dataset.a
 try{const z=localStorage.getItem('b2zone');if(z!==null&&[...$('bZone').options].some(o=>o.value===z))$('bZone').value=z}catch(e){}
 ['bZone','bTr','bCap','bSort'].forEach(i=>$(i).onchange=bRender);$('bZone').addEventListener('change',()=>{try{localStorage.setItem('b2zone',$('bZone').value)}catch(e){}});$('bQ').oninput=bRender;
 $('bUpd').onclick=()=>{$('mScope').value='plan';$('mZone').value=$('bZone').value;openModal()};
-function tab(v){[['tabD','viewDue','d'],['tabR','viewRep','r'],['tabB','viewBoard','b'],['tabT','viewTbl','t'],['tabC','viewBal','c']].forEach(([a,b,k])=>{$(a).setAttribute('aria-selected',v===k);$(b).hidden=v!==k});try{localStorage.setItem('b2tab',v)}catch(e){}window.scrollTo({top:0});render()}
-$('tabD').onclick=()=>tab('d');$('tabR').onclick=()=>tab('r');$('tabB').onclick=()=>tab('b');$('tabT').onclick=()=>tab('t');$('tabC').onclick=()=>tab('c');
+function tab(v){[['tabD','viewDue','d'],['tabM','viewMach','m'],['tabR','viewRep','r'],['tabB','viewBoard','b'],['tabT','viewTbl','t'],['tabC','viewBal','c']].forEach(([a,b,k])=>{$(a).setAttribute('aria-selected',v===k);$(b).hidden=v!==k});try{localStorage.setItem('b2tab',v)}catch(e){}window.scrollTo({top:0});render()}
+$('tabD').onclick=()=>tab('d');$('tabM').onclick=()=>tab('m');$('tabR').onclick=()=>tab('r');$('tabB').onclick=()=>tab('b');$('tabT').onclick=()=>tab('t');$('tabC').onclick=()=>tab('c');
 try{const a=localStorage.getItem('b2autoW');if(a!==null)$('bAutoW').checked=a==='1'}catch(e){}
 $('bAutoW').onchange=()=>{try{localStorage.setItem('b2autoW',$('bAutoW').checked?'1':'0')}catch(e){}toast($('bAutoW').checked?'Kéo thả sẽ ghi ngay lên Work':'Kéo thả chỉ lưu trên máy; bấm "Ghi ngay" để ghi')};
 try{const v=localStorage.getItem('b2tab');if(v&&v!=='d')setTimeout(()=>tab(v),0)}catch(e){}
@@ -1181,7 +1405,7 @@ function hideTip(){TIP.hidden=true;document.querySelectorAll('.tg.on').forEach(e
 document.addEventListener('mousemove',e=>{const g=e.target.closest&&e.target.closest('.chart .tg');if(g)showTip(g,e.clientX,e.clientY);else if(!TIP.hidden)hideTip()});
 document.addEventListener('click',e=>{const g=e.target.closest&&e.target.closest('.chart .tg');if(!g)hideTip()},true);
 document.addEventListener('click',e=>{const g=e.target.closest&&e.target.closest('.chart .tg');if(!g)return;hideTip();drill(g,e.target)});
-function drill(g,t){const _c=g.closest('.chart div[id]')?.id||'';if(/^r\d$/.test(_c))return rDrill(g,t,_c);if(!DC)return;const {P,T,A}=DC;const c=g.closest('.chart div[id]')?.id,key=g.dataset.key,k=t.dataset&&t.dataset.k!=null?+t.dataset.k:null;
+function drill(g,t){const _c=g.closest('.chart>div[id],.c1x>div[id]')?.id||'';if(/^r\d$/.test(_c))return rDrill(g,t,_c);if(!DC)return;const {P,T,A}=DC;const c=g.closest('.chart>div[id],.c1x>div[id]')?.id,key=g.dataset.key,k=t.dataset&&t.dataset.k!=null?+t.dataset.k:null;
   const KB=['doneA','a','late'],LB={doneA:`Đã xong (hạn ${fmtD(A)})`,a:`Chờ xử lý (hạn ${fmtD(A)})`,late:'Quá hạn chưa xử lý'};
   let title='',groups=[];
   if(c==='c1'||c==='c2'){const ids=c==='c1'?ROSTER.filter(r=>r.zone===key&&P[r.id]).map(r=>r.id):[+key];if(!ids.length||(c==='c2'&&!BYID[+key]))return;const S=dSum(P,ids);
@@ -1712,9 +1936,272 @@ $('rCsv').onclick=()=>{const L=rListRows();if(!L.length)return toast('Không có
 const C1B=[['tt','Thanh toán',t=>itCat(t)?.g==='Thanh toán'],['wf','Mạng wifi',t=>{const c=itCat(t);return !!c&&c.g==='Mạng'}],['pk','Thiết bị Clinic',t=>grpOf(t)==='pk']];
 function c1bRender(T,A,ok){const el=$('c1b');if(!el)return;
   const rows=C1B.map(([k,l,f])=>({label:l,key:k,full:l,vals:[T.doneA.filter(f).length,T.a.filter(f).length,T.late.filter(f).length]}));
-  $('c1bt').textContent=`Theo nhóm thiết bị · hạn ${RL(A)}`;
+  $('c1bt').textContent=`Theo nhóm thiết bị ưu tiên · hạn ${RL(A)}`;
   $('c1bn').textContent=ok?rows.map(r=>`${r.label}: ${r.vals[0]} xong · ${r.vals[1]} chờ · ${r.vals[2]} quá hạn`).join('  |  '):'Đang tải số đã xong…';
   el.innerHTML=hStack(rows.filter(r=>r.vals.some(v=>v)),[['var(--c-done)','Đã xong'],['var(--c-wait)','Chờ xử lý'],['var(--c-late)','Quá hạn chưa xử lý']],{labelW:110,rowH:32,W:cw('c1b')})}
+
+/* ---------- LỊCH BẢO TRÌ MÁY CLINIC ---------- */
+const MSHEET_DEF='https://docs.google.com/spreadsheets/d/1A5r6S1Ocz_g3qt0EDe7a3Q4Rq4bZw98a0GnYqstOSqI/edit';
+const MS1='Máy và số SN',MS2='Máy và tần suất bảo trì';
+let MACH={st:'idle',rows:[],freq:{},at:null,msg:''},MREF=null,MST='due',MBRF='';
+const lsG=k=>{try{return localStorage.getItem(k)}catch(e){return null}},lsS=(k,v)=>{try{localStorage.setItem(k,v)}catch(e){}};
+const mUrl=()=>lsG('b2mUrl')||MSHEET_DEF;
+const mSid=u=>(String(u).match(/\/d\/([a-zA-Z0-9_-]{20,})/)||[])[1]||(/^[a-zA-Z0-9_-]{20,}$/.test(u)?u:'');
+const unacc=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/đ/g,'d').replace(/Đ/g,'D');
+// khoá chi nhánh: "SPA - 555 3 THANG 2" ~ "555 3 Tháng 2 - Hồ Chí Minh" -> "555 3 THANG 2"
+const mKey=s=>unacc(String(s||'').replace(/^\s*(spa|clinic|hasaki)\s*[-–:]\s*/i,'').split(/\s+[-–]\s+/)[0]).toUpperCase().replace(/[^A-Z0-9]+/g,' ').trim();
+function gviz(id,sheet){return new Promise((res,rej)=>{const cb='__gv'+Date.now().toString(36)+Math.random().toString(36).slice(2,7);const s=document.createElement('script');
+  const clean=()=>{clearTimeout(to);try{delete window[cb]}catch(e){window[cb]=undefined}s.remove()};
+  const to=setTimeout(()=>{clean();rej(new Error('Google Sheet không phản hồi'))},25000);
+  window[cb]=r=>{clean();if(!r||r.status==='error')rej(new Error((r&&r.errors&&r.errors[0]&&(r.errors[0].detailed_message||r.errors[0].message))||'Google Sheet báo lỗi (sheet có được chia sẻ công khai không?)'));else res(r.table)};
+  s.onerror=()=>{clean();rej(new Error('Không tải được Google Sheet. Kiểm tra mạng và quyền chia sẻ "Bất kỳ ai có đường liên kết".'))};
+  s.src=`https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:json;responseHandler:${cb}&sheet=${encodeURIComponent(sheet)}`;document.head.appendChild(s)})}
+const gCell=c=>{if(!c)return '';if(typeof c.v==='number')return c.f&&/[a-zA-ZÀ-ỹ]/.test(c.f)?String(c.f):String(c.v);if(typeof c.v==='string'&&/^Date\(/.test(c.v)){const [y,m,d]=c.v.slice(5,-1).split(',').map(Number);return `${String(d).padStart(2,'0')}/${String(m+1).padStart(2,'0')}/${y}`}return c.f!=null?String(c.f):c.v==null?'':String(c.v)};
+const gTable=t=>[t.cols.map(c=>c.label||''),...t.rows.map(r=>(r.c||[]).map(gCell))];
+function csvParse(t){const R=[];let r=[],f='',q=false;for(let i=0;i<t.length;i++){const c=t[i];if(q){if(c=='"'){if(t[i+1]=='"'){f+='"';i++}else q=false}else f+=c}else if(c=='"')q=true;else if(c==','){r.push(f);f=''}else if(c=='\n'){r.push(f);R.push(r);r=[];f=''}else if(c!='\r')f+=c}if(f||r.length){r.push(f);R.push(r)}return R}
+// tìm dòng tiêu đề (gviz có thể gộp các dòng đầu vào nhãn cột) rồi lấy chỉ số cột theo tên
+function hdrIdx(A,names){for(let i=0;i<Math.min(A.length,15);i++){const row=A[i].map(x=>unacc(x).toLowerCase().replace(/\s+/g,' ').trim());const ix={};let ok=0;
+    for(const [k,pats] of Object.entries(names)){const j=row.findIndex(c=>pats.some(p=>c===p||c.endsWith(' '+p)||c.endsWith('. '+p)));if(j>=0){ix[k]=j;ok++}}
+    if(ok>=Object.keys(names).length-1)return {i,ix}}return null}
+const pDate=s=>{const m=String(s||'').match(/(\d{1,2})\/(\d{1,2})\/(\d{4})/);if(m)return `${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`;const m2=String(s||'').match(/(\d{4})-(\d{2})-(\d{2})/);return m2?m2[0]:''};
+const addMon=(d,n)=>{const x=new Date(d+'T12:00:00');x.setMonth(x.getMonth()+n);return ymd(x)};
+function mParse(A1,A2){const H=hdrIdx(A1,{br:['chi nhanh'],name:['may'],sku:['sku'],sn:['sn'],last:['ngay bao tri gan nhat'],next:['ngay bao tri tiep theo'],note:['ghi chu']});
+  if(!H)throw new Error('Không thấy dòng tiêu đề "Chi nhánh | Máy | SKU | SN | Ngày bảo trì…" trong sheet '+MS1);
+  const freq={};const H2=A2&&hdrIdx(A2,{name:['may'],sku:['sku'],f:['tan suat bao tri']});
+  if(H2)A2.slice(H2.i+1).forEach(r=>{const f=r[H2.ix.f]||'',mo=+(String(f).match(/(\d+)/)||[])[1]||0;const v={txt:f,mo};if(r[H2.ix.sku])freq['S'+String(r[H2.ix.sku]).trim()]=v;if(r[H2.ix.name])freq['N'+unacc(r[H2.ix.name]).toUpperCase().trim()]=v});
+  const g=(r,k)=>H.ix[k]!=null?String(r[H.ix[k]]||'').trim():'';const rows=[];
+  A1.slice(H.i+1).forEach(r=>{const br=g(r,'br'),name=g(r,'name');if(!br||!name||/^chi nhanh$/i.test(unacc(br)))return;
+    const sku=g(r,'sku').replace(/\.0$/,''),fq=freq['S'+sku]||freq['N'+unacc(name).toUpperCase()]||null;let last=pDate(g(r,'last')),next=pDate(g(r,'next'));
+    if(!next&&last&&fq&&fq.mo)next=addMon(last,fq.mo);
+    rows.push({br,key:mKey(br),name,sku,sn:g(r,'sn'),last,next,note:g(r,'note'),freq:fq?fq.txt:''})});
+  return {rows,freq}}
+async function mLoad(manual){const id=mSid(mUrl());if(!id){MACH.st='er';MACH.msg='Link Google Sheet không hợp lệ';mRender();return}
+  MACH={...MACH,st:'run',msg:''};mRender();
+  try{const [t1,t2]=await Promise.all([gviz(id,MS1),gviz(id,MS2).catch(()=>null)]);const p=mParse(gTable(t1),t2?gTable(t2):null);
+    if(!p.rows.length)throw new Error('Sheet không có dòng máy nào');
+    MXSEL.clear();MACH={st:'ok',rows:p.rows,freq:p.freq,at:new Date(),msg:'',src:'Google Sheet'};lsS('b2mach',JSON.stringify({rows:p.rows,at:MACH.at.toISOString()}));
+    if(manual)toast(`Đã tải ${p.rows.length} máy từ Google Sheet`)}
+  catch(e){const c=lsG('b2mach');if(c&&!MACH.rows.length){try{const j=JSON.parse(c);MACH={st:'cache',rows:j.rows,at:new Date(j.at),msg:e.message}}catch(_){MACH={st:'er',rows:[],msg:e.message}}}else MACH={...MACH,st:MACH.rows.length?'cache':'er',msg:e.message}}
+  mRender();if(!$('viewBoard').hidden)bRender()}
+(()=>{const c=lsG('b2mach');if(c){try{const j=JSON.parse(c);MACH={st:'cache',rows:j.rows||[],at:new Date(j.at),msg:''}}catch(e){}}})();
+setTimeout(()=>mLoad(false),1500);
+const mH=()=>+($('mH')?.value||30);
+const mRefD=()=>MREF||ymd(new Date());
+function mStat(r,A,h){if(!r.next)return 'none';if(r.next<A)return 'over';const lim=ymd(new Date(new Date(A+'T12:00:00').getTime()+h*864e5));return r.next<=lim?'soon':'ok'}
+const MSL={over:'Quá hạn',soon:'Sắp đến hạn',ok:'Còn hạn',none:'Chưa có lịch'};
+const mDays=(r,A)=>r.next?Math.round((new Date(r.next+'T00:00')-new Date(A+'T00:00'))/864e5):null;
+function mByKey(){const M={};MACH.rows.forEach(r=>(M[r.key]??={br:r.br,rows:[]}).rows.push(r));return M}
+// chi nhánh Work -> khoá máy
+const mStoreKey=s=>mKey(s);
+function mDue(store,A,h){if(!MACH.rows.length)return null;const k=mStoreKey(store);const L=MACH.rows.filter(r=>r.key===k);if(!L.length)return null;
+  const over=L.filter(r=>mStat(r,A,h)==='over'),soon=L.filter(r=>mStat(r,A,h)==='soon');return {k,all:L,over,soon,br:L[0].br}}
+function mBadge(store){const d=mDue(store,TMRD(),mH());if(!d||!(d.over.length+d.soon.length))return '';
+  return `<button class="mbadge${d.over.length?' ov':''}" draggable="false" data-mstore="${esc(store)}" title="Chi nhánh có máy Clinic cần bảo trì định kỳ — bấm để xem và soạn task">BT máy: ${d.over.length?`${d.over.length} quá hạn`:''}${d.over.length&&d.soon.length?' · ':''}${d.soon.length?`${d.soon.length} sắp đến`:''}</button>`}
+function mColHint(mine){const st=[...new Set(mine.map(t=>t.store))].map(s=>[s,mDue(s,TMRD(),mH())]).filter(x=>x[1]&&(x[1].over.length+x[1].soon.length));
+  if(!st.length)return '';return `<div class="mhint">Ghé ${st.length} chi nhánh có máy đến hạn BT: ${st.map(([s,d])=>`<button class="mlink" data-mstore="${esc(s)}">${esc(s.split(' - ')[0])} (${d.over.length+d.soon.length})</button>`).join(', ')}</div>`}
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('[data-mstore]');if(!b)return;e.preventDefault();e.stopPropagation();mOpenDlg(b.dataset.mstore,!$('viewBoard').hidden?TMRD():mRefD())},true);
+function mTaskText(br,L,A){const lines=L.map((r,i)=>`${i+1}. ${r.name}${r.sku?' · SKU '+r.sku:''}${r.sn?' · SN '+r.sn:''} — BT gần nhất ${r.last?fmtD(r.last)+'/'+r.last.slice(0,4):'chưa có'}, đến hạn ${r.next?fmtD(r.next)+'/'+r.next.slice(0,4):'chưa có lịch'}${r.next&&r.next<A?` (quá hạn ${-mDays(r,A)} ngày)`:''}`);
+  return `Bảo trì định kỳ máy Clinic — ${br}\nNgày dự kiến: ${fmtD(A)}/${A.slice(0,4)} · ${L.length} máy\n${lines.join('\n')}`}
+let MDLG=null;
+function mNice(k,fb){const l=Object.values(LOCS||{}).find(l=>mKey(l.name)===k);return l?l.name:String(fb||'').replace(/^SPA\s*-\s*/i,'Clinic ')}
+function mOpenDlg(store,A){const k=mStoreKey(store),L=MACH.rows.filter(r=>r.key===k);if(!L.length){toast('Chưa có danh sách máy cho chi nhánh này');return}
+  const h=mH(),due=L.filter(r=>['over','soon'].includes(mStat(r,A,h))).sort((a,b)=>(a.next||'9').localeCompare(b.next||'9')),rest=L.filter(r=>!due.includes(r));
+  const ot=TASKS.filter(t=>mStoreKey(t.store)===k&&(t.tr==='MM'||grpOf(t)==='pk'));
+  const nice=mNice(k,L[0].br);MDLG={br:nice,due,A,store};
+  $('mdT').textContent=`Máy cần bảo trì · ${nice}`;
+  $('mdSub').innerHTML=`Tính đến ${fmtD(A)} (sắp đến hạn = trong ${h} ngày) · ${due.length}/${L.length} máy cần bảo trì${ot.length?` · đang có ${ot.length} task máy móc mở ở chi nhánh này`:''}. Chọn máy rồi bấm <b>Sao chép nội dung task</b> để tạo task trên Work.`;
+  const row=(r,ck)=>{const s=mStat(r,A,h),dd=mDays(r,A);return `<tr><td><input type="checkbox" class="mck" data-i="${MACH.rows.indexOf(r)}"${ck?' checked':''} aria-label="Chọn máy"></td><td class="what">${esc(r.name)}<small>${esc([r.sku&&'SKU '+r.sku,r.sn&&'SN '+r.sn].filter(Boolean).join(' · '))}</small></td><td class="mono">${r.last?fmtD(r.last):'–'}</td><td class="mono">${r.next?fmtD(r.next):'–'} <span class="pill ms-${s}">${s==='over'?`quá ${-dd}n`:s==='soon'?(dd?`còn ${dd}n`:'hôm nay'):MSL[s]}</span></td></tr>`};
+  $('mdBody').innerHTML=`<div class="tbl" style="max-height:52vh"><table><thead><tr><th></th><th>Máy</th><th>BT gần nhất</th><th>BT tiếp theo</th></tr></thead><tbody>${due.map(r=>row(r,true)).join('')}${rest.length?`<tr class="zh"><td colspan="4">Máy khác ở chi nhánh (${rest.length})</td></tr>`+rest.sort((a,b)=>(a.next||'9').localeCompare(b.next||'9')).map(r=>row(r,false)).join(''):''}</tbody></table></div>`+
+    (ot.length?`<p class="sub" style="margin-top:8px">Task máy móc đang mở: ${ot.slice(0,6).map(t=>`<a class="mono tlink" href="https://work.hasaki.vn/tasks?task_id=${t.tid}" target="_blank" rel="noopener">${esc(t.code)}</a> ${esc(t.name.slice(0,40))} (${esc((t.cur||[]).map(i=>BYID[i]?.name.split(' ').pop()).join(', ')||'chưa giao')}${t.dl?', hạn '+fmtD(t.dl):''})`).join(' · ')}</p>`:'');
+  $('mDlg').hidden=false;$('mdCopy').focus()}
+$('mdX').onclick=()=>{$('mDlg').hidden=true};$('mDlg').onclick=e=>{if(e.target.id==='mDlg')$('mDlg').hidden=true};
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('mDlg').hidden)$('mDlg').hidden=true});
+$('mdCopy').onclick=()=>{if(!MDLG)return;const sel=[...document.querySelectorAll('#mdBody .mck:checked')].map(x=>MACH.rows[+x.dataset.i]).filter(Boolean);if(!sel.length){toast('Chọn ít nhất 1 máy');return}
+  mCopy(mTaskText(MDLG.br,sel,MDLG.A),`Đã sao chép ${sel.length} máy — dán vào mô tả task trên Work`)};
+$('mdGo').onclick=()=>{if(!MDLG)return;MBRF=mStoreKey(MDLG.store);$('mDlg').hidden=true;tab('m')};
+function mCopy(txt,msg){const ok=()=>toast(msg||'Đã sao chép');if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(txt).then(ok,()=>fb());else fb();
+  function fb(){const ta=document.createElement('textarea');ta.value=txt;ta.style.position='fixed';ta.style.opacity='0';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok()}catch(e){toast('Không sao chép được')}ta.remove()}}
+function mRender(){if($('viewMach').hidden)return;const A=mRefD(),h=mH(),td=ymd(new Date());
+  $('mPick').value=A;document.querySelectorAll('#viewMach [data-md]').forEach(b=>b.classList.toggle('on',A===ymd(new Date(Date.now()+(+b.dataset.md)*864e5))));
+  $('mOpen').href=mUrl();if(document.activeElement!==$('mUrl'))$('mUrl').value=mUrl();
+  $('mLoad').disabled=MACH.st==='run';$('mLoad').textContent=MACH.st==='run'?'Đang tải…':'Tải lại từ Google Sheet';
+  const at=MACH.at?`${MACH.at.toLocaleDateString('vi-VN')} ${MACH.at.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'})}`:'';
+  $('mSub').innerHTML=MACH.st==='run'?'Đang tải danh sách máy từ Google Sheet…':MACH.st==='er'?`<span class="er">${esc(MACH.msg)}</span>`:MACH.rows.length?`${MACH.rows.length} máy ở ${new Set(MACH.rows.map(r=>r.key)).size} chi nhánh Clinic · ${MACH.st==='cache'?'bản lưu trên máy':'Google Sheet'} lúc ${at}${MACH.msg?` · <span class="er">không tải lại được: ${esc(MACH.msg)}</span>`:''}`:'Chưa tải danh sách máy.';
+  const R=MACH.rows;if(!R.length){['mK','mBr','mList','mSt'].forEach(i=>$(i).innerHTML='');$('mBrN').textContent='';$('mListN').textContent='';return}
+  const S=R.map(r=>mStat(r,A,h)),cnt=k=>S.filter(s=>s===k).length;
+  const M=mByKey();const LOCK={};Object.values(LOCS||{}).forEach(l=>{const k=mKey(l.name);if(k&&!LOCK[k])LOCK[k]=l});
+  const brs=Object.entries(M).map(([k,g])=>{const st=g.rows.map(r=>mStat(r,A,h));const loc=LOCK[k];const store=loc?loc.name:g.br;
+    const ot=TASKS.filter(t=>mStoreKey(t.store)===k&&(t.tr==='MM'||grpOf(t)==='pk'));
+    const plan=TASKS.filter(t=>mStoreKey(t.store)===k&&t.tr==='MM'&&((PLAN[t.tid]&&TMRD()===A)||t.dl===A)).flatMap(t=>(PLAN[t.tid]&&TMRD()===A?t.new:t.cur)).filter(i=>BYID[i]);
+    return {k,br:g.br,store,zone:loc?(ZONEOF[nm(loc.name)]||''):'',n:g.rows.length,over:st.filter(s=>s==='over').length,soon:st.filter(s=>s==='soon').length,none:st.filter(s=>s==='none').length,ot,who:[...new Set(plan)],nx:g.rows.map(r=>r.next).filter(Boolean).sort()[0]||''}}).sort((a,b)=>(b.over+b.soon>0)-(a.over+a.soon>0)||b.over-a.over||b.soon-a.soon||a.br.localeCompare(b.br));
+  const need=brs.filter(b=>b.over+b.soon);
+  $('mK').innerHTML=[[R.length,'Tổng máy','k-acc'],[cnt('over'),'Quá hạn bảo trì','k-bad'],[cnt('soon'),`Đến hạn trong ${h} ngày`,'k-warn'],[cnt('ok'),'Còn hạn','k-ok'],[cnt('none'),'Chưa có lịch bảo trì',''],[need.length+'/'+brs.length,'Chi nhánh cần ghé','']].map(([b,s,c])=>`<div class="kpi ${c}"><b>${b}</b><span>${esc(s)}</span></div>`).join('');
+  $('mBrN').textContent=`${need.length} chi nhánh có máy quá hạn hoặc đến hạn trong ${h} ngày tính từ ${fmtD(A)} · bấm thẻ để xem máy và soạn task`;
+  $('mBr').innerHTML=brs.map(b=>`<button class="mbr${b.over?' ov':b.soon?' so':''}" data-mstore="${esc(b.store)}"><span class="mt" title="${esc(b.br)}">${esc(b.store!==b.br?b.store.split(' - ')[0]:b.br.replace(/^SPA\s*-\s*/i,''))}</span><span class="ms">${esc(b.zone||'')}${b.zone?' · ':''}${b.n} máy</span>
+    <span class="mc">${b.over?`<em class="o">${b.over} quá hạn</em>`:''}${b.soon?`<em class="s">${b.soon} sắp đến</em>`:''}${!b.over&&!b.soon?`<em class="g">Chưa cần bảo trì</em>`:''}${b.none?`<em class="n">${b.none} chưa có lịch</em>`:''}</span>
+    <span class="mw">${b.who.length?'Thợ máy ghé '+fmtD(A)+': '+esc(b.who.map(i=>BYID[i].name.split(' ').slice(-2).join(' ')).join(', ')):b.ot.length?`${b.ot.length} task máy móc đang mở`:(b.nx?'Máy đến hạn sớm nhất: '+fmtD(b.nx):'')}</span></button>`).join('');
+  // danh sách
+  const SB=[['due','Cần bảo trì'],['over','Quá hạn'],['soon','Sắp đến hạn'],['ok','Còn hạn'],['none','Chưa có lịch'],['all','Tất cả']];const c2={due:cnt('over')+cnt('soon'),over:cnt('over'),soon:cnt('soon'),ok:cnt('ok'),none:cnt('none'),all:R.length};
+  $('mSt').innerHTML=SB.map(([k,l])=>`<button class="${MST===k?'on':''} s-${k==='over'?'late':k==='soon'?'today':k==='ok'?'done':k}" data-ms="${k}">${l} <b>${c2[k]}</b></button>`).join('');
+  $('mSt').querySelectorAll('[data-ms]').forEach(b=>b.onclick=()=>{MST=b.dataset.ms;mRender()});
+  const bo=Object.entries(M).sort((a,b)=>a[1].br.localeCompare(b[1].br));$('mBrSel').innerHTML='<option value="">Tất cả chi nhánh</option>'+bo.map(([k,g])=>`<option value="${esc(k)}"${k===MBRF?' selected':''}>${esc(g.br.replace(/^SPA\s*-\s*/i,''))} (${g.rows.length})</option>`).join('');
+  const q=unacc($('mQ').value).toLowerCase().trim();
+  const L=mRows();
+  $('mListN').textContent=`${L.length} máy${MBRF?' · '+(M[MBRF]?.br||''):''}`;
+  $('mList').innerHTML=L.length?`<div class="tbl mlt" style="max-height:none"><table><thead><tr><th class="ck"><input type="checkbox" id="mCkAll" aria-label="Chọn tất cả"></th><th>Chi nhánh</th><th>Máy</th><th>BT gần nhất</th><th>BT tiếp theo</th><th>Tần suất</th></tr></thead><tbody>${L.map(({r,s})=>{const dd=mDays(r,A);return `<tr class="${s==='over'?'l7':''}"><td class="ck"><input type="checkbox" class="mxck" data-i="${MACH.rows.indexOf(r)}"${MXSEL.has(MACH.rows.indexOf(r))?' checked':''} aria-label="Chọn máy"></td><td class="cn"><button class="mlink" data-mstore="${esc(r.br)}">${esc(r.br.replace(/^SPA\s*-\s*/i,''))}</button></td><td class="what">${esc(r.name)}<small>${esc([r.sku&&'SKU '+r.sku,r.sn&&'SN '+r.sn].filter(Boolean).join(' · '))}${r.note?` · <i>${esc(r.note)}</i>`:''}</small></td><td class="mono">${r.last?fmtD(r.last)+'/'+r.last.slice(2,4):'–'}</td><td class="mono">${r.next?fmtD(r.next)+'/'+r.next.slice(2,4):'–'} <span class="pill ms-${s}">${s==='over'?`quá ${-dd}n`:s==='soon'?(dd?`còn ${dd}n`:'hôm nay'):MSL[s]}</span></td><td>${esc(r.freq||'')}</td></tr>`}).join('')}</tbody></table></div>`:'<p class="sub" style="padding:12px 0">Không có máy khớp bộ lọc.</p>'}
+function mXBind(){const all=$('mCkAll');if(all){const cks=[...document.querySelectorAll('#mList .mxck')];all.checked=cks.length&&cks.every(c=>c.checked);
+    all.onchange=()=>{cks.forEach(c=>{c.checked=all.checked;const i=+c.dataset.i;all.checked?MXSEL.add(i):MXSEL.delete(i)});mXInfo()}}
+  document.querySelectorAll('#mList .mxck').forEach(c=>c.onchange=()=>{const i=+c.dataset.i;c.checked?MXSEL.add(i):MXSEL.delete(i);mXInfo()});mXInfo()}
+function mXInfo(){const n=MXSEL.size,L=mRows().length;$('mxGo').textContent=n?`Xuất Excel ${n} máy đã tick`:`Xuất Excel ${L} máy đang lọc`}
+function mRows(){const A=mRefD(),h=mH(),q=unacc($('mQ').value).toLowerCase().trim();
+  return MACH.rows.map(r=>({r,s:mStat(r,A,h)})).filter(x=>(MST==='all'||(MST==='due'?['over','soon'].includes(x.s):x.s===MST))&&(!MBRF||x.r.key===MBRF)&&(!q||unacc([x.r.br,x.r.name,x.r.sku,x.r.sn,x.r.note].join(' ')).toLowerCase().includes(q)))
+    .sort((a,b)=>(a.r.next||'9999').localeCompare(b.r.next||'9999')||a.r.br.localeCompare(b.r.br))}
+$('mLoad').onclick=()=>mLoad(true);
+$('mH').onchange=()=>{mRender();if(!$('viewBoard').hidden)bRender()};
+$('mPick').onchange=e=>{MREF=e.target.value||null;mRender()};
+document.querySelectorAll('#viewMach [data-md]').forEach(b=>b.onclick=()=>{MREF=ymd(new Date(Date.now()+(+b.dataset.md)*864e5));mRender()});
+let _mq;$('mQ').oninput=()=>{clearTimeout(_mq);_mq=setTimeout(mRender,180)};
+$('mBrSel').onchange=e=>{MBRF=e.target.value;mRender()};
+$('mUrlSave').onclick=()=>{const v=$('mUrl').value.trim();if(!mSid(v)){toast('Link Google Sheet không hợp lệ');return}lsS('b2mUrl',v);mLoad(true)};
+$('mFile').onchange=async e=>{const f=e.target.files[0];if(!f)return;try{const A=csvParse(await f.text());const p=mParse(A,null);MXSEL.clear();MACH={st:'ok',rows:p.rows,freq:{},at:new Date(),msg:'',src:'CSV'};lsS('b2mach',JSON.stringify({rows:p.rows,at:MACH.at.toISOString()}));toast(`Đã nhập ${p.rows.length} máy từ file CSV`)}catch(err){toast(err.message)}e.target.value='';mRender()};
+$('mCsv').onclick=()=>{const L=mRows();if(!L.length)return toast('Không có máy để tải');const A=mRefD();
+  const rows=[['Chi nhánh','Máy','SKU','SN','BT gần nhất','BT tiếp theo','Trạng thái','Số ngày','Tần suất','Ghi chú']].concat(L.map(({r,s})=>[r.br,r.name,r.sku,r.sn,r.last,r.next,MSL[s],r.next?mDays(r,A):'',r.freq,r.note]));
+  const csv='﻿'+rows.map(r=>r.map(v=>'"'+String(v??'').replace(/"/g,'""')+'"').join(',')).join('\r\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`may_clinic_${A}.csv`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)};
+let MPF='need',MPOPEN=null;
+function mPlanRenderOld(){const el=$('mPlan');if(!el)return;if(!MACH.rows.length){el.hidden=true;return}el.hidden=false;
+  if(MPOPEN===null){MPOPEN=$('bTr').value==='MM';el.open=MPOPEN}
+  const D=TMRD(),h=mH(),M=mByKey();
+  const LOCK={};Object.values(LOCS||{}).forEach(l=>{const k=mKey(l.name);if(k&&!LOCK[k])LOCK[k]=l});
+  const city=k=>unacc(LOCK[k]?.city_name||'').toLowerCase().replace(/^(tinh|thanh pho|tp\.?)\s+/,'').trim();
+  // ai (thợ máy móc) đi đâu ngày D: task đã xếp cho D + task đang giữ có hạn D
+  const vis={};TASKS.forEach(t=>{const ids=PLAN[t.tid]?t.new:(t.dl===D?t.cur:[]);ids.forEach(i=>{if(BYID[i]?.tr!=='MM')return;const k=mStoreKey(t.store);((vis[k]??={})[i]??=[]).push(t)})});
+  const mm=ROSTER.filter(r=>r.tr==='MM');
+  const load=id=>TASKS.filter(t=>PLAN[t.tid]&&t.new.includes(id)).reduce((a,t)=>a+t.est,0)/60;
+  const L=Object.entries(M).map(([k,g])=>{const st=g.rows.map(r=>[r,mStat(r,D,h)]);const over=st.filter(x=>x[1]==='over').map(x=>x[0]),soon=st.filter(x=>x[1]==='soon').map(x=>x[0]);
+      if(!over.length&&!soon.length)return null;
+      const oldest=over.length?Math.max(...over.map(r=>-mDays(r,D))):0;const store=LOCK[k]?.name||g.br;
+      const here=Object.keys(vis[k]||{}).map(Number);
+      const open=TASKS.filter(t=>mStoreKey(t.store)===k&&(t.tr==='MM'||grpOf(t)==='pk'));const openUn=open.filter(t=>!PLAN[t.tid]);
+      // gợi ý người: thợ máy đã có việc cùng tỉnh ngày D (đi kèm được), còn làm ca, ít giờ nhất
+      const c=city(k);const sameCity=mm.filter(r=>!here.includes(r.id)&&!unavailable(shiftOf(r.id,D))&&Object.keys(vis).some(k2=>k2!==k&&city(k2)===c&&vis[k2][r.id]));
+      const free=mm.filter(r=>!unavailable(shiftOf(r.id,D))).sort((a,b)=>load(a.id)-load(b.id));
+      const kind=here.length?'kem':openUn.length?'pool':'new';
+      const score=over.length*3+soon.length+Math.min(oldest,180)/30;
+      return {k,store,br:g.br,zone:ZONEOF[nm(store)]||'',cityN:LOCK[k]?.city_name||'',over,soon,oldest,here,open,openUn,sameCity,free,kind,score}}).filter(Boolean)
+    .sort((a,b)=>({kem:0,pool:1,new:2}[a.kind]-{kem:0,pool:1,new:2}[b.kind])||b.score-a.score);
+  const cnt={need:L.length,kem:L.filter(x=>x.kind==='kem').length,pool:L.filter(x=>x.kind==='pool').length,new:L.filter(x=>x.kind==='new').length};
+  $('mPlanT').innerHTML=`Bảo trì máy Clinic cần sắp · <b>${L.length}</b> chi nhánh có máy quá hạn / đến hạn trong ${h} ngày${cnt.kem?` · <em class="g">${cnt.kem} làm kèm được ${fmtD(D)}</em>`:''}`;
+  const SB=[['need','Tất cả'],['kem',`Có thợ ghé ${fmtD(D)} → làm kèm`],['pool','Có task máy chưa xếp'],['new','Chưa ai ghé → cần tạo task']];
+  $('mPlanSeg').innerHTML=SB.map(([k,l])=>`<button class="${MPF===k?'on':''}" data-mpf="${k}">${l} <b>${cnt[k]}</b></button>`).join('');
+  $('mPlanSeg').querySelectorAll('[data-mpf]').forEach(b=>b.onclick=e=>{e.preventDefault();MPF=b.dataset.mpf;mPlanRender()});
+  $('mPlanN').textContent=`Tính theo ngày điều phối ${fmtD(D)}. Ưu tiên: chi nhánh đã có thợ máy ghé (làm kèm, không tốn thêm chuyến) → có task máy chưa xếp → còn lại xếp theo số máy quá hạn.`;
+  const F=L.filter(x=>MPF==='need'||x.kind===MPF);const nmS=i=>BYID[i]?.name.split(' ').slice(-2).join(' ');
+  $('mPlanB').innerHTML=F.length?`<div class="mpl">${F.map(x=>`<div class="mpr k-${x.kind}">
+    <div class="mp1"><b>${esc(x.store===x.br?x.br.replace(/^SPA\s*-\s*/i,''):x.store.split(' - ')[0])}</b><small>${esc([x.zone,x.cityN].filter(Boolean).join(' · '))}</small></div>
+    <div class="mp2">${x.over.length?`<em class="o">${x.over.length} quá hạn${x.oldest?` (lâu nhất ${x.oldest}n)`:''}</em>`:''}${x.soon.length?`<em class="s">${x.soon.length} sắp đến</em>`:''}<small>${esc([...x.over,...x.soon].slice(0,3).map(r=>r.name.split('/')[0].trim()).join(', '))}${x.over.length+x.soon.length>3?'…':''}</small></div>
+    <div class="mp3">${x.kind==='kem'?`<span class="tag g">Làm kèm</span> ${esc(x.here.map(nmS).join(', '))} đã ghé ${fmtD(D)}`:x.kind==='pool'?`<span class="tag w">Task chưa xếp</span> ${x.openUn.length} task máy móc đang chờ ở đây`:`<span class="tag r">Cần tạo task</span> chưa thợ máy nào ghé`}
+      ${x.kind!=='kem'?`<small>Gợi ý: ${x.sameCity.length?esc(x.sameCity.map(r=>nmS(r.id)).join(', '))+' (đã có việc cùng tỉnh)':x.free.length?esc(x.free.slice(0,2).map(r=>`${nmS(r.id)} ${load(r.id).toFixed(1)}h`).join(', '))+' (đang trống nhất)':'không còn thợ máy đi làm ngày này'}</small>`:`<small>${x.open.length?x.open.length+' task máy móc đang mở':''}</small>`}</div>
+    <div class="mp4"><button class="btn sm" data-mstore="${esc(x.store)}">Xem máy · soạn task</button>${x.openUn.length?`<button class="btn sec sm" data-mpq="${esc(x.store)}">Lọc task CN này</button>`:''}</div></div>`).join('')}</div>`:'<p class="sub">Không có chi nhánh nào trong nhóm này.</p>';
+  $('mPlanB').querySelectorAll('[data-mpq]').forEach(b=>b.onclick=()=>{$('bQ').value=b.dataset.mpq.split(' - ')[0];bRender();$('poolB').scrollIntoView({behavior:'smooth',block:'start'})})}
+$('mPlan').addEventListener('toggle',()=>{MPOPEN=$('mPlan').open});
+function mPlanRender(){const el=$('mPlan');if(!el)return;el.hidden=false;
+  if(MPOPEN===null){MPOPEN=true;el.open=true}
+  const D=TMRD(),h=mH(),M=MACH.rows.length?mByKey():{};const d2=ymd(new Date(new Date(D+'T12:00:00').getTime()+2*864e5)),d7=ymd(new Date(new Date(D+'T12:00:00').getTime()+7*864e5));
+  const LOCK={};Object.values(LOCS||{}).forEach(l=>{const k=mKey(l.name);if(k&&!LOCK[k])LOCK[k]=l});
+  const city=k=>unacc(LOCK[k]?.city_name||'').toLowerCase().replace(/^(tinh|thanh pho|tp\.?)\s+/,'').trim();
+  const isCl=t=>t.clinic||grpOf(t)==='pk';
+  const goes=t=>PLAN[t.tid]?t.new:(t.dl===D?t.cur:[]);
+  const vis={};TASKS.forEach(t=>goes(t).forEach(i=>{if(!BYID[i])return;const k=mStoreKey(t.store);((vis[k]??={})[i]??=[]).push(t)}));
+  const keys=new Set([...Object.keys(M),...TASKS.filter(isCl).map(t=>mStoreKey(t.store))]);
+  const mm=ROSTER.filter(r=>r.tr==='MM');const load=id=>TASKS.filter(t=>PLAN[t.tid]&&t.new.includes(id)).reduce((a,t)=>a+t.est,0)/60;
+  const nmS=i=>BYID[i]?.name.split(' ').slice(-2).join(' ');
+  const L=[...keys].map(k=>{const rows=M[k]?.rows||[];const st=rows.map(r=>[r,mStat(r,D,h)]);
+      const mOver=st.filter(x=>x[1]==='over').map(x=>x[0]),mSoon=st.filter(x=>x[1]==='soon').map(x=>x[0]);const oldest=mOver.length?Math.max(...mOver.map(r=>-mDays(r,D))):0;
+      const cl=TASKS.filter(t=>isCl(t)&&mStoreKey(t.store)===k&&srcOK(t));const late=cl.filter(t=>t.dl&&t.dl<D),urg=cl.filter(t=>t.pri==3),due=cl.filter(t=>t.dl&&t.dl>=D&&t.dl<=d2);
+      const un=cl.filter(t=>!goes(t).length);
+      if(!mOver.length&&!mSoon.length&&!late.length&&!urg.length&&!due.length)return null;
+      const store=LOCK[k]?.name||cl[0]?.store||M[k]?.br||k;const nameS=LOCK[k]||cl[0]?store.split(' - ')[0]:String(M[k]?.br||k).replace(/^SPA\s*-\s*/i,'');
+      const visAll=Object.keys(vis[k]||{}).map(Number),visMM=visAll.filter(i=>BYID[i]?.tr==='MM');
+      const lateUn=late.filter(t=>!goes(t).length),urgUn=urg.filter(t=>!goes(t).length);
+      const tier=(lateUn.length||urgUn.length||oldest>30)?'now':(late.length||mOver.length||due.length||mSoon.some(r=>r.next<=d7))?'week':'watch';
+      const c=city(k);const sameCity=mm.filter(r=>!visMM.includes(r.id)&&!unavailable(shiftOf(r.id,D))&&Object.keys(vis).some(k2=>k2!==k&&city(k2)===c&&vis[k2][r.id]));
+      const free=mm.filter(r=>!unavailable(shiftOf(r.id,D))).sort((a,b)=>load(a.id)-load(b.id));
+      const sug=sameCity[0]||free[0]||null;
+      const score=lateUn.length*10+urgUn.length*8+late.length*3+mOver.length*3+Math.min(oldest,180)/15+mSoon.length+due.length;
+      // câu hành động
+      let act;const mN=mOver.length+mSoon.length;
+      if(visMM.length)act=`<b>${esc(visMM.map(nmS).join(', '))}</b> đã ghé ${fmtD(D)} → giao thêm ${un.length?`<b>${un.length} task Clinic</b>`:''}${un.length&&mN?' + ':''}${mN?`bảo trì <b>${mN} máy</b>`:''}${!un.length&&!mN?'kiểm tra việc còn lại':''}`;
+      else if(un.length)act=`Xếp người đi ${fmtD(D)}: <b>${un.length} task Clinic</b> đang chờ${mN?` + bảo trì kèm <b>${mN} máy</b>`:''}${sug?` · gợi ý <b>${esc(nmS(sug.id))}</b>${sameCity.includes(sug)?' (có việc cùng tỉnh)':''}`:''}`;
+      else if(visAll.length&&mN)act=`${esc(visAll.map(nmS).join(', '))} ghé ${fmtD(D)} (không phải thợ máy) · cần tạo task bảo trì <b>${mN} máy</b>${sug?` cho <b>${esc(nmS(sug.id))}</b>`:''}`;
+      else act=`Tạo task bảo trì <b>${mN} máy</b>${sug?` · gợi ý <b>${esc(nmS(sug.id))}</b>${sameCity.includes(sug)?' (có việc cùng tỉnh)':` (${load(sug.id).toFixed(1)}h đã xếp)`}`:' · không còn thợ máy đi làm ngày này'}`;
+      return {k,store,nameS,zone:ZONEOF[nm(store)]||'',cityN:LOCK[k]?.city_name||'',mOver,mSoon,oldest,late,urg,due,un,lateUn,visAll,visMM,tier,score,act}}).filter(Boolean)
+    .sort((a,b)=>({now:0,week:1,watch:2}[a.tier]-{now:0,week:1,watch:2}[b.tier])||(a.visAll.length>0)-(b.visAll.length>0)||b.score-a.score);
+  const T={now:L.filter(x=>x.tier==='now'),week:L.filter(x=>x.tier==='week'),watch:L.filter(x=>x.tier==='watch')};
+  $('mPlanT').innerHTML=`Ưu tiên Clinic ${fmtD(D)}: ${T.now.length?`<em class="r">${T.now.length} xử lý ngay</em>`:'<em class="g">không có việc gấp</em>'} · <em class="w">${T.week.length} trong tuần</em> · ${T.watch.length} theo dõi`;
+  $('mPlanSeg').innerHTML='';$('mPlanN').innerHTML=``;$('mPlan').querySelector('summary').title=`Xử lý ngay: task Clinic trễ hạn / gấp chưa có người đi, hoặc máy quá hạn bảo trì > 30 ngày. Trong tuần: máy quá hạn, task Clinic hạn trong 2 ngày, máy đến hạn trong 7 ngày. Theo dõi: máy đến hạn trong ${h} ngày.`;const _mpn=`<b class="r">Xử lý ngay</b>: task Clinic trễ hạn / gấp chưa có người đi, hoặc máy quá hạn bảo trì &gt; 30 ngày. <b class="w">Trong tuần</b>: máy quá hạn, task Clinic sắp đến hạn (2 ngày), máy đến hạn trong 7 ngày. <b>Theo dõi</b>: máy đến hạn trong ${h} ngày.${MACH.rows.length?'':' <span class="er">Chưa tải danh sách máy (tab Máy Clinic).</span>'}`;
+  const chips=x=>[x.late.length&&`<em class="r">${x.late.length} task trễ${x.lateUn.length<x.late.length?` (${x.late.length-x.lateUn.length} đã xếp)`:''}</em>`,x.urg.length&&`<em class="r">${x.urg.length} gấp</em>`,x.due.length&&`<em class="w">${x.due.length} task hạn ≤ ${fmtD(d2)}</em>`,x.mOver.length&&`<em class="r">${x.mOver.length} máy quá hạn BT${x.oldest?` · ${x.oldest}n`:''}</em>`,x.mSoon.length&&`<em class="w">${x.mSoon.length} máy sắp đến hạn</em>`].filter(Boolean).join('');
+  const card=x=>`<div class="pc t-${x.tier}${x.visAll.length?' vis':''}"><div class="ph"><b>${esc(x.nameS)}</b><small>${esc([x.zone,x.cityN].filter(Boolean).join(' · '))}</small>${x.visAll.length?`<span class="vtag" title="Đã có người ghé ${fmtD(D)}">Có người ghé ${fmtD(D)}</span>`:''}</div>
+    <div class="pchips">${chips(x)}</div><div class="pact">${x.act}</div>
+    <div class="pbtn">${x.mOver.length+x.mSoon.length?`<button class="btn sm" data-mstore="${esc(x.store)}">Máy · soạn task</button>`:''}${x.un.length?`<button class="btn sec sm" data-mpq="${esc(x.store)}">Lọc ${x.un.length} task chờ</button>`:''}</div></div>`;
+  const sec=(k,lab,open)=>T[k].length?`<details class="ptier p-${k}"${open?' open':''}><summary><span class="dot"></span>${lab} <b>${T[k].length}</b></summary><div class="pgrid">${T[k].map(card).join('')}</div></details>`:'';
+  $('mPlanB').innerHTML=(L.length?sec('now','Xử lý ngay',true)+sec('week','Trong tuần',true)+sec('watch','Theo dõi',false):'<p class="sub">Không có chi nhánh Clinic nào cần ưu tiên.</p>');
+  $('mPlanB').querySelectorAll('[data-mpq]').forEach(b=>b.onclick=()=>{$('bZone').value='';$('bQ').value=b.dataset.mpq.split(' - ')[0];bRender();$('poolB').scrollIntoView({behavior:'smooth',block:'start'})})}
+
+const MSVC={"297300314":"910001475","375200004":"910001494","375200005":"910001233","375400003":"910001681","375400008":"910001512","375400009":"910001518","375400013":"910001103,910001243,910001102","375400014":"910001069","375400015":"910001531","414200001":"910001662","422200069":"910001036","422200483":"910001149","422200588":"910001563","422200589":"910001512","422201436":"910001555","422203223":"910001563","422203568":"910001681","422203660":"910001069","422203740":"910001572","422211686":"910001446","422211796":"910001502","422212240":"910001594","422217380":"910001611","422217720":"910001603","422228103":"910001036","422315193":"910002304"};
+const MXSEL=new Set();
+// --- ghi file .xlsx tối giản (zip không nén) ---
+const CRC=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return b=>{let c=0xFFFFFFFF;for(let i=0;i<b.length;i++)c=t[(c^b[i])&255]^(c>>>8);return (c^0xFFFFFFFF)>>>0}})();
+function zip(files){const enc=new TextEncoder(),parts=[],cen=[];let off=0;const dt=new Date(),dosT=(dt.getHours()<<11)|(dt.getMinutes()<<5)|(dt.getSeconds()>>1),dosD=((dt.getFullYear()-1980)<<9)|((dt.getMonth()+1)<<5)|dt.getDate();
+  for(const [name,str] of files){const nb=enc.encode(name),db=enc.encode(str),crc=CRC(db);
+    const lh=new DataView(new ArrayBuffer(30));lh.setUint32(0,0x04034b50,true);lh.setUint16(4,20,true);lh.setUint16(6,0x0800,true);lh.setUint16(8,0,true);lh.setUint16(10,dosT,true);lh.setUint16(12,dosD,true);lh.setUint32(14,crc,true);lh.setUint32(18,db.length,true);lh.setUint32(22,db.length,true);lh.setUint16(26,nb.length,true);lh.setUint16(28,0,true);
+    parts.push(new Uint8Array(lh.buffer),nb,db);
+    const ch=new DataView(new ArrayBuffer(46));ch.setUint32(0,0x02014b50,true);ch.setUint16(4,20,true);ch.setUint16(6,20,true);ch.setUint16(8,0x0800,true);ch.setUint16(10,0,true);ch.setUint16(12,dosT,true);ch.setUint16(14,dosD,true);ch.setUint32(16,crc,true);ch.setUint32(20,db.length,true);ch.setUint32(24,db.length,true);ch.setUint16(28,nb.length,true);ch.setUint32(42,off,true);
+    cen.push(new Uint8Array(ch.buffer),nb);off+=30+nb.length+db.length}
+  const cs=cen.reduce((a,b)=>a+b.length,0),end=new DataView(new ArrayBuffer(22));end.setUint32(0,0x06054b50,true);end.setUint16(8,files.length,true);end.setUint16(10,files.length,true);end.setUint32(12,cs,true);end.setUint32(16,off,true);
+  return new Blob([...parts,...cen,new Uint8Array(end.buffer)],{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})}
+function xlsx(rows,sheet='Sheet1'){const x=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/[\u0000-\u0008\u000b\u000c\u000e-\u001f]/g,'');
+  const col=i=>{let s='';i++;while(i){const m=(i-1)%26;s=String.fromCharCode(65+m)+s;i=(i-m-1)/26}return s};
+  const sd=rows.map((r,ri)=>`<row r="${ri+1}">${r.map((v,ci)=>{const ref=col(ci)+(ri+1);if(v===''||v==null)return '';if(typeof v==='number')return `<c r="${ref}"${ri===0?' s="1"':''}><v>${v}</v></c>`;return `<c r="${ref}" t="inlineStr"${ri===0?' s="1"':''}><is><t xml:space="preserve">${x(v)}</t></is></c>`}).join('')}</row>`).join('');
+  const W=[5,12,11,12,40,5,22,45,6,16,12,12,16,9,9];
+  return zip([['[Content_Types].xml','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>'],
+    ['_rels/.rels','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'],
+    ['xl/workbook.xml',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="${x(sheet)}" sheetId="1" r:id="rId1"/></sheets></workbook>`],
+    ['xl/_rels/workbook.xml.rels','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>'],
+    ['xl/styles.xml','<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts><fills count="2"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill></fills><borders count="1"><border/></borders><cellStyleXfs count="1"><xf/></cellStyleXfs><cellXfs count="2"><xf/><xf fontId="1" applyFont="1"/></cellXfs></styleSheet>'],
+    ['xl/worksheets/sheet1.xml',`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols>${W.map((w,i)=>`<col min="${i+1}" max="${i+1}" width="${w}" customWidth="1"/>`).join('')}</cols><sheetData>${sd}</sheetData></worksheet>`]])}
+function dlBlob(b,name){const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),3000)}
+// --- dòng theo mẫu Orders_Template ---
+const XH=['#','order_desc','location_id','service_sku','service_name','qty','machine_code','note','type','staff_code','date_start','date_end','type00','stock_id','sub_type'];
+function mLocId(r){const l=Object.values(LOCS||{}).find(l=>mKey(l.name)===r.key);return l?l.id:''}
+function mXlsxRows(L,date,ids){const codes=ids.map(i=>BYID[i]?.code).filter(Boolean).join(', ');const miss={loc:0,svc:0};
+  const out=L.map((r,i)=>{const loc=mLocId(r);if(!loc)miss.loc++;const svc=MSVC[r.sku]||'';if(!svc)miss.svc++;const fd=v=>v?`${v.slice(8,10)}/${v.slice(5,7)}/${v.slice(0,4)}`:'chưa có';
+    return [i+1,'Bảo trì',loc===''?'':+loc,svc&&/^\d+$/.test(svc)?+svc:svc,`Bảo trì định kỳ - ${r.name}`,1,r.sn||'',`Bảo trì định kỳ: S/N:${r.sn||'(chưa có SN)'} - ${r.name}${r.sku?' (SKU '+r.sku+')':''} · BT gần nhất ${fd(r.last)}, đến hạn ${fd(r.next)}`,7,codes,date,date,'Bảo trì định kỳ','','']});
+  return {rows:[XH,...out],miss}}
+function mXport(L,date,ids,tag){if(!L.length){toast('Chưa có máy nào để xuất');return}if(!date){toast('Chọn ngày làm');return}
+  if(!ids.length&&!confirm('Chưa chọn người làm — vẫn xuất file (cột staff_code để trống)?'))return;
+  const {rows,miss}=mXlsxRows(L,date,ids);dlBlob(xlsx(rows),`Orders_BaoTri_${tag?tag+'_':''}${date}.xlsx`);
+  toast(`Đã xuất ${L.length} máy${miss.svc?` · ${miss.svc} máy chưa có service_sku`:''}${miss.loc?` · ${miss.loc} máy chưa khớp location`:''}`)}
+function mWhoOpts(sel,def){const D=sel.dataset.d||'';const mm=ROSTER.filter(r=>r.tr==='MM');const oth=ROSTER.filter(r=>r.tr!=='MM');
+  sel.innerHTML='<option value="">—</option>'+`<optgroup label="Bảo trì máy móc">${mm.map(r=>`<option value="${r.id}">${esc(r.name)}${r.code?' · '+r.code:''}</option>`).join('')}</optgroup><optgroup label="Khác">${oth.map(r=>`<option value="${r.id}">${esc(r.name)}${r.code?' · '+r.code:''}</option>`).join('')}</optgroup>`;sel.value=def?String(def):''}
+const mPickIds=(a,b)=>[...new Set([+$(a).value,+$(b).value].filter(Boolean))];
+// popup chi nhánh: mặc định ngày điều phối + thợ máy đang ghé / gợi ý
+{const _o=mOpenDlg;mOpenDlg=function(store,A){_o(store,A);if($('mDlg').hidden)return;const k=mStoreKey(store);
+  const vis=[...new Set(TASKS.filter(t=>mStoreKey(t.store)===k).flatMap(t=>PLAN[t.tid]?t.new:(t.dl===A?t.cur:[])))].filter(i=>BYID[i]?.tr==='MM');
+  const free=ROSTER.filter(r=>r.tr==='MM'&&!unavailable(shiftOf(r.id,A)));
+  $('mdDate').value=A;mWhoOpts($('mdWho1'),vis[0]||free[0]?.id||'');mWhoOpts($('mdWho2'),vis[1]||'')}}
+$('mdXlsx').onclick=()=>{if(!MDLG)return;const sel=[...document.querySelectorAll('#mdBody .mck:checked')].map(x=>MACH.rows[+x.dataset.i]).filter(Boolean);if(!sel.length){toast('Tick ít nhất 1 máy');return}
+  mXport(sel,$('mdDate').value,mPickIds('mdWho1','mdWho2'),mKey(MDLG.store).replace(/\s+/g,''))};
+$('mxGo').onclick=()=>{const L=MXSEL.size?[...MXSEL].map(i=>MACH.rows[i]).filter(Boolean):mRows().map(x=>x.r);mXport(L,$('mxDate').value,mPickIds('mxWho1','mxWho2'),MBRF?MBRF.replace(/\s+/g,''):'')};
+{const _r=mRender;mRender=function(){_r();if($('viewMach').hidden||!MACH.rows.length)return;if(!$('mxDate').value)$('mxDate').value=TMRD();if(!$('mxWho1').options.length){mWhoOpts($('mxWho1'),'');mWhoOpts($('mxWho2'),'')}mXBind()}}
+function bStatsRender(){const el=$('bStats');if(!el)return;const L=bTasks(),D=TMRD();const ppl=ROSTER.filter(r=>zOKr(r)&&r.tr===$('bTr').value);
+  const pl=L.filter(t=>PLAN[t.tid]),un=L.filter(t=>!PLAN[t.tid]);const work=ppl.filter(r=>!unavailable(shiftOf(r.id,D)));
+  const over=ppl.filter(r=>pLoad(r.id,L).h>capOf(r.id)+1e-9).length,hrs=work.reduce((a,r)=>a+pLoad(r.id,L).h,0),cap=work.reduce((a,r)=>a+capOf(r.id),0);
+  const lateU=un.filter(t=>t.od>0).length,urgU=un.filter(t=>t.pri==3).length,pend=L.filter(t=>pending(t)&&WS[t.tid]!=='run').length;const pc=L.length?Math.round(pl.length/L.length*100):0;
+  const it=(v,l,c,tip)=>`<div class="st ${c||''}"${tip?` title="${esc(tip)}"`:''}><b>${v}</b><span>${l}</span></div>`;
+  el.innerHTML=`<div class="st stp"><div class="pt"><b>${pl.length}<small>/${L.length}</small></b><span>task đã xếp · ${pc}%</span></div><div class="pbar"><i style="width:${pc}%"></i></div></div>`+
+    it(un.length,'chưa xếp',un.length?'':'ok')+it(lateU,'trễ hạn chưa xếp',lateU?'bad':'ok')+it(urgU,'gấp chưa xếp',urgU?'bad':'ok')+
+    it(`${work.length}<small>/${ppl.length}</small>`,'người đi làm','',ppl.filter(r=>unavailable(shiftOf(r.id,D))).map(r=>r.name+': '+shiftLabel(shiftOf(r.id,D))).join('\n')||'Tất cả đều có ca')+
+    it(`${hrs.toFixed(0)}<small>/${cap.toFixed(0)}h</small>`,'giờ đã giao / sức chứa',cap&&hrs>cap?'bad':'')+it(over,'người quá giờ',over?'warn':'ok')+(pend?it(pend,'chưa ghi lên Work','warn'):'')}
 if(innerWidth<760)document.querySelectorAll('details.fbox').forEach(d=>d.open=false);
 if(tok())setTimeout(()=>$('load').click(),50);else{$('boot').hidden=true;$('auth').hidden=false;setChip('err','Chưa kết nối')}
 </script>
