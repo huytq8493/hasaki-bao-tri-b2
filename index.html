@@ -1376,7 +1376,7 @@ function dRender(){const P=dBuckets(),A=$('dA').value,B=$('dB').value;repUI();
   DLAB={...DLAB,doneA:`đã xong (hạn ${fmtD(A)})`,a:`chờ xử lý (hạn ${fmtD(A)})`,late:'quá hạn chưa xử lý',hang:'tổng chờ xử lý',done:`đã làm ${fmtD(A)} (mọi hạn)`};
   $('hSA').textContent=`Ca ${fmtD(A)}`;$('hDA').textContent=`Đã xong (hạn ${fmtD(A)})`;$('hA').textContent=`Chờ xử lý (hạn ${fmtD(A)})`;
   $('c1t').textContent=`Task hạn ${RL(A)} theo Zone`;$('c2t').textContent=`Hạn ${RL(A)} theo nhân viên`;
-  $('dLoad').innerHTML=DONEINFO.st==='run'?esc(DONEINFO.msg||'Đang tải task đã hoàn thành…'):DONEINFO.st==='er'?`<span class="er">Không tải được task đã hoàn thành: ${esc(DONEINFO.msg)}</span> <button class="icon" id="dRetry">Thử lại</button>`:DONEINFO.st==='ok'?`Số "đã làm" lấy từ ${DONEINFO.n} đơn (đang mở + tạo trong ${DONE_DAYS} ngày gần nhất), cập nhật lúc ${DONEINFO.at.toLocaleTimeString('vi-VN')}. <button class="icon" id="dRetry">Tải lại số đã làm</button>`:'';
+  $('dLoad').innerHTML=DONEINFO.st==='run'?esc(DONEINFO.msg||'Đang tải task đã hoàn thành…'):DONEINFO.st==='er'?`<span class="er">Không tải được task đã hoàn thành: ${esc(DONEINFO.msg)}</span> <button class="icon" id="dRetry">Thử lại</button>`:DONEINFO.st==='ok'?`Số "đã làm" lấy từ ${DONEINFO.n} đơn (đang mở + tạo trong ${DONE_DAYS} ngày gần nhất), cập nhật lúc ${DONEINFO.at.toLocaleTimeString('vi-VN')}${DONEINFO.part?' · <b>đang tải thêm task đã xong các ngày trước…</b>':''}. <button class="icon" id="dRetry">Tải lại số đã làm</button>`:'';
   $('dLoad').innerHTML+=SCHEDINFO.st==='er'?` · <span class="er">Không tải được lịch ca: ${esc(SCHEDINFO.msg)}</span> <button class="icon" id="sRetry">Thử lại</button>`:SCHEDINFO.st==='run'?' · Đang tải lịch ca…':'';
   if($('dRetry'))$('dRetry').onclick=loadDone;if($('sRetry'))$('sRetry').onclick=loadSched;
   const T=dSum(P,Object.keys(P));const dueA=T.doneA.length,rate=dueA+T.a.length?Math.round(dueA/(dueA+T.a.length)*100):null;
@@ -1606,8 +1606,17 @@ function axGet(){try{return JSON.parse(localStorage.getItem(TMRK+'-x')||'{}')}ca
 function axAdd(k){const x=axGet();x[k]=1;try{localStorage.setItem(TMRK+'-x',JSON.stringify(x))}catch(e){}}
 // Task có hạn (task hoặc bước B2) đúng ngày điều phối và đang có người giữ → tự vào cột người đó (không ghi gì lên Work)
 function autoPlan(){const D=TMRD(),X=axGet();let n=0;TASKS.forEach(t=>{if(PLAN[t.tid]||X[t.tid]||!t.cur.length||!isDue(t,D))return;PLAN[t.tid]=1;AUTO[t.tid]=1;t.new=t.cur.slice();n++});return n}
-const LIM=200,WK=8;
-async function pageAll2(mk,onProg){const rows=[];let i=0,end=Infinity,pg=0;const w=async()=>{while(true){const o=(i++)*LIM;if(o>=end)return;const j=await apiRetry(mk(o));const rr=j.data?.rows||[];rows.push(...rr);pg++;onProg&&onProg(rows.length,pg);if(rr.length<LIM)end=Math.min(end,o+LIM)}};await Promise.all(Array.from({length:WK},w));return rows}
+const LIM=50,WK=8;
+const DAY=864e5,dShift=n=>ymd(new Date(Date.now()+n*DAY)),dPrev=d=>ymd(new Date(new Date(d+'T12:00:00').getTime()-DAY));
+const mkQ=(fr,to,st)=>o=>`/workflows/detail-workflow-task/${WF}?from_date=${fr}&to_date=${to}&search_type=board&wfid=${WF}&workflow_step_id=${B2}${st?'&status[]=0':''}&limit=${LIM}&offset=${o}`;
+function cutRanges(cuts,last){cuts=cuts.filter((d,i)=>i===0||d>cuts[0]);return cuts.map((c,i)=>[c,i<cuts.length-1?dPrev(cuts[i+1]):last])}
+const openRanges=()=>cutRanges([OPEN_FROM,dShift(-180),dShift(-90),dShift(-45),dShift(-21),dShift(-7)],dShift(1));
+const doneRecent=()=>[[dShift(-2),dShift(1)]];
+const doneOld=()=>cutRanges([dShift(-DONE_DAYS),dShift(-45),dShift(-30),dShift(-20),dShift(-12),dShift(-6)],dShift(-3));
+async function pageMulti(ranges,st,wk,onProg){const N=ranges.map(()=>0),P=ranges.map(()=>0);
+  const res=await Promise.all(ranges.map(([a,b],k)=>pageAll2(mkQ(a,b,st),(n,p)=>{N[k]=n;P[k]=p;onProg&&onProg(N.reduce((x,y)=>x+y,0),P.reduce((x,y)=>x+y,0))},wk)));
+  const u=new Map();res.flat().forEach(r=>u.set(r.id,r));return [...u.values()]}
+async function pageAll2(mk,onProg,wk=WK){const rows=[];let i=0,end=Infinity,pg=0;const w=async()=>{while(true){const o=(i++)*LIM;if(o>=end)return;const j=await apiRetry(mk(o));const rr=j.data?.rows||[];rows.push(...rr);pg++;onProg&&onProg(rows.length,pg);if(rr.length<LIM)end=Math.min(end,o+LIM)}};await Promise.all(Array.from({length:wk},w));return rows}
 const KV={_d:null,db(){return this._d||(this._d=new Promise(res=>{try{const r=indexedDB.open('b2cache',1);r.onupgradeneeded=()=>r.result.createObjectStore('kv');r.onsuccess=()=>res(r.result);r.onerror=()=>res(null)}catch(e){res(null)}}))},
   async get(k){const d=await this.db();if(!d)return null;return new Promise(res=>{try{const q=d.transaction('kv').objectStore('kv').get(k);q.onsuccess=()=>res(q.result??null);q.onerror=()=>res(null)}catch(e){res(null)}})},
   async set(k,v){const d=await this.db();if(!d)return;try{d.transaction('kv','readwrite').objectStore('kv').put(v,k)}catch(e){}}};
@@ -1628,7 +1637,7 @@ function applyOpen(rows){build(rows);OPENROWS=rows;rebalance();planRestore();$('
   $('chip').title=`${rows.length} đơn đang mở trong WF398 · ${TASKS.length+Object.values(OUTS).reduce((a,b)=>a+b.n,0)} task đang ở B2`;render()}
 const hm=t=>new Date(t).toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});
 async function loadDone(){DONEINFO={st:'run'};if(!$('viewDue').hidden)dRender();
-  try{const rows=keepDone(await pageAll2(qDone,(n,pg)=>{DONEINFO.msg=`Đang tải task đã hoàn thành… ${n} đơn (${pg} trang)`;const e=$('dLoad');if(e&&!$('viewDue').hidden)e.textContent=DONEINFO.msg}));
+  try{const rows=keepDone(await pageMulti([...doneOld(),...doneRecent()],0,4,(n,pg)=>{DONEINFO.msg=`Đang tải task đã hoàn thành… ${n} đơn (${pg} trang)`;const e=$('dLoad');if(e&&!$('viewDue').hidden)e.textContent=DONEINFO.msg}));
     const n=processDone(rows);DONEINFO={st:'ok',n,at:new Date()};KV.set('v3',{at:Date.now(),locs:LOCS,open:OPENROWS,done:rows})}catch(e){DONEINFO={st:'er',msg:e.message}}
   render()}
 $('load').onclick=async()=>{
@@ -1639,19 +1648,21 @@ $('load').onclick=async()=>{
   if(first){const c=await KV.get('v3');if(c&&c.open&&c.locs&&Date.now()-c.at<7*864e5){try{LOCS=c.locs;applyOpen(c.open);if(c.done){const n=processDone(c.done);DONEINFO={st:'ok',n,at:new Date(c.at)}}loadSched();render();cached=true;setChip('busy',`Dữ liệu lúc ${hm(c.at)} · đang cập nhật…`)}catch(e){cached=false}}
     if(!cached){$('boot').hidden=false;$('bootMsg').textContent='Đang tải dữ liệu…';setChip('busy','Đang tải…')}}
   else setChip('busy','Đang tải…');
-  let nO=0,nD=0,pO=0,pD=0;const prog=()=>{const t=`Đang tải ${nO} đơn mở · ${nD} đơn đã xong…`;if(!cached)setChip('busy',t);if($('bootMsg'))$('bootMsg').textContent=t;setProg('prog',Math.min(.95,.05+(pO+pD)/60))};
+  let nO=0,nD=0,pO=0,pD=0;const prog=()=>{const t=`Đang tải ${nO} đơn mở · ${nD} đơn đã xong…`;if(!cached)setChip('busy',t);if($('bootMsg'))$('bootMsg').textContent=t;setProg('prog',Math.min(.95,.05+(pO+pD)/90))};
   try{
     const pB=api('/staff/base-data');
-    const pOpen=pageAll2(qOpen,(n,pg)=>{nO=n;pO=pg;prog()});
-    loadLeaves();const pDone=pageAll2(qDone,(n,pg)=>{nD=n;pD=pg;prog()}).catch(e=>({err:e}));
+    const pOpen=pageMulti(openRanges(),1,4,(n,pg)=>{nO=n;pO=pg;prog()});let pDoneOld=null;
+    loadLeaves();const pDone=pageMulti(doneRecent(),0,6,(n,pg)=>{nD=n;pD=pg;prog()}).catch(e=>({err:e}));
     const bd=await pB;const L={};(bd.data?.locations||[]).forEach(l=>L[l.id]=cL(l));LOCS=L;
-    const oRows=[...new Map((await pOpen).map(r=>[r.id,cP(r)])).values()];
+    const oRows=[...new Map((await pOpen).map(r=>[r.id,cP(r)])).values()];pDoneOld=pageMulti(doneOld(),0,4,null).catch(e=>({err:e}));
     applyOpen(oRows);if(!cached)loadSched();
     if(!DONEINFO||DONEINFO.st!=='ok'){DONEINFO={st:'run',msg:'Đang tải task đã hoàn thành…'};}
     setChip('busy','Đang tải task đã hoàn thành…');render();
     const d=await pDone;
     if(d&&d.err){DONEINFO={st:'er',msg:d.err.message}}
-    else{const dRows=keepDone(d);const n=processDone(dRows);DONEINFO={st:'ok',n,at:new Date()};KV.set('v3',{at:Date.now(),locs:LOCS,open:oRows,done:dRows})}
+    else{let dRows=keepDone(d);let n=processDone(dRows);DONEINFO={st:'ok',n,at:new Date(),part:true};setChip('busy','Đang tải thêm task đã xong các ngày trước…');render();
+      const d2=await pDoneOld;if(d2&&!d2.err){const m=new Map();[...keepDone(d2),...dRows].forEach(r=>m.set(r.id,r));dRows=[...m.values()];n=processDone(dRows)}
+      DONEINFO={st:'ok',n,at:new Date(),part:!!(d2&&d2.err)};KV.set('v3',{at:Date.now(),locs:LOCS,open:oRows,done:dRows})}
     setProg('prog',1);setTimeout(()=>{$('prog').hidden=true},700);setChip('',`Cập nhật ${hm(Date.now())}`);render();
   }catch(e){$('prog').hidden=true;
     if(cached){setChip('err',`Lỗi cập nhật · đang xem dữ liệu lúc ${$('chip').textContent.match(/\d\d:\d\d/)?.[0]||''}`);toast('Không cập nhật được: '+e.message)}
