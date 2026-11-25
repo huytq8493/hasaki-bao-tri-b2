@@ -618,6 +618,64 @@ body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none
 .grp .gh{flex-wrap:wrap}
 .mhint{font-size:12px;margin-top:4px;padding:6px 8px;border-radius:8px;background:color-mix(in srgb,var(--c-wait) 12%,transparent);color:var(--ink);line-height:1.45}
 .mlink{all:unset;cursor:pointer;color:var(--accent);font-weight:600}.mlink:hover{text-decoration:underline}.mlink:focus-visible{outline:2px solid var(--accent)}
+.mztl{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:8px 12px;margin:6px 0 14px;overflow-x:auto}
+.mzr{display:grid;grid-template-columns:200px minmax(900px,1fr);gap:10px;align-items:center;padding:6px 0;border-top:1px solid var(--line)}.mzr.hd{border-top:0;padding:0 0 2px}.mzr.off{opacity:.55}
+.mzw{min-width:0}.mzw b{display:block;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.mzw small{display:block;font-size:11px;color:var(--muted)}.mzw em{display:block;font-style:normal;font-size:11px;color:var(--c-late);font-weight:600}
+.mzg{position:relative;height:40px;background:var(--panel2);border-radius:8px}.mzr.hd .mzg{height:16px;background:none}.mzr.hd .mzg span{position:absolute;top:0;font-size:10.5px;color:var(--muted);transform:translateX(-50%)}
+.mzg i{position:absolute;top:0;bottom:0;border-left:1px dashed var(--line)}
+.mzb{position:absolute;top:3px;bottom:3px;border-radius:6px;padding:2px 6px;font-size:11px;line-height:1.25;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;background:hsl(var(--hue) 70% 88%);color:hsl(var(--hue) 60% 22%);border:1px solid hsl(var(--hue) 50% 65%)}
+.mzb span{display:block;font-size:10.5px;opacity:.8;overflow:hidden;text-overflow:ellipsis}.mzb.x{outline:2px solid var(--c-late);outline-offset:-1px}
+.mzl{display:grid;gap:10px;margin-bottom:18px}.mzgrp{background:var(--panel);border:1px solid var(--line);border-left:4px solid var(--c-wait);border-radius:var(--r);padding:10px 12px}.mzgrp.ok{border-left-color:var(--c-done)}
+.mzgh{display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between}.mzgh small{display:block;color:var(--muted);font-size:12px}.mzga{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.mzt{width:100%;border-collapse:collapse;margin-top:6px;font-size:13px}.mzt td{padding:5px 6px;border-top:1px solid var(--line);vertical-align:middle}.mzt td.what small{display:block;font-size:11px;color:var(--muted)}.mzt tr.on td{background:color-mix(in srgb,var(--c-done) 7%,transparent)}
+.mzt select,.mzga select{max-width:190px}.mzt{table-layout:fixed}.mzt td:nth-child(2){width:110px}.mzt td:nth-child(3){width:100px}.mzt td:nth-child(4){width:80px}.mzt td.what{overflow:hidden;text-overflow:ellipsis}.mzst{margin:10px 0 0;font-size:13px;display:flex;gap:8px;align-items:center;flex-wrap:wrap}.mzt tr.x td{background:color-mix(in srgb,var(--c-late) 10%,transparent)}.mzt td.what small a{font-size:11px}.mzg u{position:absolute;top:0;bottom:0;background:repeating-linear-gradient(135deg,transparent 0 5px,color-mix(in srgb,var(--muted) 14%,transparent) 5px 7px);text-decoration:none;border-radius:8px}
+@media (max-width:720px){.mzt,.mzt tbody,.mzt tr{display:block}.mzt tr{display:grid;grid-template-columns:1fr auto;gap:4px;padding:6px 0;border-top:1px solid var(--line)}.mzt td{border:0;padding:2px 0}.mzr{grid-template-columns:130px minmax(480px,1fr)}}
+@media (prefers-color-scheme:dark){.mzb{background:hsl(var(--hue) 40% 26%);color:hsl(var(--hue) 70% 88%);border-color:hsl(var(--hue) 40% 40%)}}
+#mzView{display:none}#viewMach.gio>:not(.msub):not(#mzView){display:none!important}#viewMach.gio #mzView{display:block}
+.mz-top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin:6px 0 12px}.mz-top h2{margin:0;font-size:20px}.mz-top .sub{margin:2px 0 0}
+.mz-act{display:flex;gap:6px;flex-wrap:wrap}
+.mz-techs{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:14px}
+.mz-tc{all:unset;box-sizing:border-box;cursor:pointer;position:relative;display:grid;gap:2px;padding:10px 12px 12px;border-radius:12px;background:var(--panel);border:1px solid var(--line)}
+.mz-tc b{font-size:14px;padding-left:14px}.mz-tc small{font-size:11.5px;color:var(--muted)}.mz-tc.on{border-color:var(--accent);box-shadow:0 0 0 2px var(--accent-soft)}
+.mz-dot{position:absolute;left:12px;top:15px;width:8px;height:8px;border-radius:50%;background:var(--muted);opacity:.4}.mz-tc.ok .mz-dot{background:var(--c-done);opacity:1}.mz-tc.todo .mz-dot{background:var(--c-wait);opacity:1}.mz-tc.bad .mz-dot{background:var(--c-late);opacity:1}
+.mz-bar{position:relative;height:5px;border-radius:3px;background:var(--panel2);margin-top:6px;overflow:hidden}.mz-bar i{position:absolute;top:0;bottom:0;background:var(--accent);border-radius:2px}
+.mz-main{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;margin-bottom:18px}
+.mz-hd{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px}.mz-hd h3{margin:0;font-size:17px}.mz-hd small{color:var(--muted)}
+.mz-ag{display:grid;gap:0}
+.mz-it{display:grid;grid-template-columns:64px 1fr auto;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--line)}.mz-ag .mz-it:first-child{border-top:0}
+.mz-tm b{display:block;font-size:16px;font-variant-numeric:tabular-nums}.mz-tm span{font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums}
+.mz-tx{min-width:0}.mz-tx>div{font-size:14px;line-height:1.35}.mz-tx small{display:flex;gap:6px;align-items:center;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.mz-ed{display:flex;gap:6px;align-items:center}.mz-ed select{font-size:13px;padding:4px 6px}.mz-ed .icon{opacity:.5}.mz-ed .icon:hover{opacity:1}
+.mz-it.bad{background:color-mix(in srgb,var(--c-late) 7%,transparent);border-radius:8px;padding-left:8px;padding-right:8px}
+.mz-it.un .mz-tm b{color:var(--muted)}
+.mz-gap{margin:0 0 0 76px;padding:4px 0;font-size:11.5px;color:var(--muted);border-left:2px dashed var(--line);padding-left:10px}.mz-gap.warn{color:var(--c-late);border-color:var(--c-late);font-weight:600}
+.mz-ut{margin:14px 0 2px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--c-wait)}
+.mz-empty{padding:28px 10px;text-align:center;color:var(--muted)}.lnk{all:unset;cursor:pointer;color:var(--accent);font-weight:600;text-decoration:underline}
+@media (max-width:640px){.mz-it{grid-template-columns:54px 1fr}.mz-ed{grid-column:2}.mz-gap{margin-left:66px}}
+.mz-cal{display:grid;grid-template-columns:240px 1fr;gap:14px;align-items:start}
+.mz-pool{position:sticky;top:120px;display:grid;gap:6px;align-content:start;padding:10px;border-radius:10px;background:var(--panel2);border:2px dashed transparent;max-height:70vh;overflow:auto}.mz-pool.over{border-color:var(--accent)}
+.mz-pool .mz-ut{margin:0 0 2px}.mz-hint{font-size:11.5px;color:var(--muted);margin:6px 0 0;line-height:1.4}
+.mz-ch{cursor:grab;padding:7px 9px;border-radius:8px;background:var(--panel);border:1px solid var(--line);border-left:4px solid hsl(var(--hue) 55% 55%);font-size:13px;line-height:1.3}.mz-ch small{display:block;font-size:11px;color:var(--muted)}
+.mz-day{position:relative;border-left:1px solid var(--line);margin-left:0}
+.mz-hr{position:absolute;left:0;right:0;border-top:1px solid var(--line)}.mz-hr span{position:absolute;left:6px;top:-8px;font-size:11px;color:var(--muted);background:var(--panel);padding:0 4px;font-variant-numeric:tabular-nums}
+.mz-hh{position:absolute;left:62px;right:0;border-top:1px dashed color-mix(in srgb,var(--line) 70%,transparent)}
+.mz-off{position:absolute;left:0;right:0;background:repeating-linear-gradient(135deg,transparent 0 6px,color-mix(in srgb,var(--muted) 12%,transparent) 6px 8px)}
+.mz-ev{position:absolute;left:62px;right:6px;box-sizing:border-box;cursor:grab;padding:3px 8px;border-radius:7px;overflow:hidden;font-size:12px;line-height:1.3;background:hsl(var(--hue) 70% 90%);color:hsl(var(--hue) 55% 22%);border:1px solid hsl(var(--hue) 45% 68%);border-left:4px solid hsl(var(--hue) 55% 50%);z-index:2}
+.mz-ev b{font-variant-numeric:tabular-nums}.mz-ev .st{font-weight:600}.mz-ev .nm{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;opacity:.9}
+.mz-ev.bad{outline:2px solid var(--c-late);outline-offset:-1px}.mz-ev.sel{box-shadow:0 0 0 3px var(--accent-soft),0 4px 14px rgba(0,0,0,.15);z-index:3}.mz-ev.drag,.mz-ch.drag{opacity:.35}
+.mz-rs{position:absolute;left:0;right:0;bottom:0;height:7px;cursor:ns-resize}.mz-rs:hover{background:hsl(var(--hue) 45% 68% / .6)}
+.mz-trv{position:absolute;left:62px;right:6px;display:flex;align-items:center;justify-content:flex-end;font-size:10.5px;color:var(--muted);z-index:1;pointer-events:none}.mz-trv span{background:var(--panel);padding:0 4px;border-radius:4px}.mz-trv.bad{color:var(--c-late);font-weight:700}
+.mz-ghost{position:absolute;left:62px;right:6px;border:2px dashed var(--accent);border-radius:7px;background:var(--accent-soft);z-index:4;pointer-events:none;font-size:12px;font-weight:700;padding:2px 8px;color:var(--accent-ink,var(--accent))}
+.mz-edb{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:10px 12px;margin-bottom:12px;border-radius:10px;background:var(--accent-soft)}.mz-edb small{display:block;font-size:12px;color:var(--muted)}
+@media (max-width:760px){.mz-cal{grid-template-columns:1fr}.mz-pool{position:static;max-height:none}}
+.mz-side{display:grid;gap:10px;align-content:start;position:sticky;top:120px;max-height:calc(100vh - 140px);overflow:auto}.mz-side .mz-pool{position:static;max-height:none;overflow:visible}
+.mz-oppool input{width:100%;box-sizing:border-box;margin:2px 0 4px;font-size:13px;padding:6px 8px}.mz-ut.mz-op{color:var(--accent)}
+.mz-sg{font-size:12px;font-weight:700;margin:8px 0 2px;display:flex;gap:6px;align-items:center;flex-wrap:wrap}.mz-sg .mbadge{font-size:10.5px;padding:1px 6px}
+.mz-ch.op{border-left-style:dashed}.mz-tc.over{border-color:var(--accent);background:var(--accent-soft)}
+.mz-day-p{align-items:center}.mz-day-p .on{background:var(--accent);color:#fff;border-color:var(--accent)}.mz-day-p input[type=date]{font-size:13px;padding:5px 8px}
+.mz-cal{grid-template-columns:280px 1fr}
+@media (max-width:760px){.mz-side{position:static;max-height:none}}
+.mdlg{max-width:920px;width:min(920px,calc(100vw - 24px))}.mdlg td small.msrc{display:block;font-size:10.5px;color:var(--mut,#888);font-family:inherit}.mdlg td small.msrc.w{color:#0f8a5f}.mdlg td.mtk{white-space:nowrap}.mdlg td.mtk small{display:block;color:var(--mut,#888);font-size:10.5px}.mdlg td.mtk .mwait{color:#b7791f}.mdlg td.mtk .pill{font-size:10.5px;padding:1px 6px;margin-left:4px}.mdlg td.mtk small.mprev{margin-top:6px}
 .mdlg{max-width:760px;width:min(760px,calc(100vw - 24px))}.mdlg .tbl td input{width:16px;height:16px}
 #mCfg .filters input{height:34px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:inherit;padding:0 10px;font:inherit;font-size:13px}
 #viewMach .dayp select{height:32px;border:1px solid var(--line);border-radius:8px;background:var(--panel);color:inherit;font:inherit;font-size:13px;padding:0 8px}
@@ -910,7 +968,8 @@ body::before{content:"";position:fixed;inset:-20%;z-index:-1;pointer-events:none
 
     <!-- ===== LỊCH BẢO TRÌ MÁY CLINIC ===== -->
     <section id="viewMach" class="view" hidden>
-      <div class="msub" role="tablist" aria-label="Loại máy"><button role="tab" data-msub="clinic" aria-selected="true">Máy Clinic <b id="msCntC"></b></button><button role="tab" data-msub="lanh" aria-selected="false">Máy lạnh <b id="msCntL"></b></button></div>
+      <div class="msub" role="tablist" aria-label="Loại máy"><button role="tab" data-msub="clinic" aria-selected="true">Máy Clinic <b id="msCntC"></b></button><button role="tab" data-msub="lanh" aria-selected="false">Máy lạnh <b id="msCntL"></b></button><button role="tab" data-msub="gio" aria-selected="false">Điều phối giờ</button></div>
+      <div id="mzView"></div>
       <div class="vhead"><div><h2 id="mTitle">Lịch bảo trì máy Clinic</h2><p class="sub" id="mSub">Chưa tải danh sách máy.</p>
         <div class="dayp" role="group" aria-label="Ngày tham chiếu"><button class="btn sec sm" data-md="0">Hôm nay</button><button class="btn sec sm" data-md="1">Ngày mai</button><input type="date" id="mPick" aria-label="Ngày tham chiếu">
           <select id="mH" aria-label="Sắp đến hạn trong"><option value="7">Sắp đến hạn: 7 ngày</option><option value="14">Sắp đến hạn: 14 ngày</option><option value="30" selected>Sắp đến hạn: 30 ngày</option><option value="60">Sắp đến hạn: 60 ngày</option></select>
@@ -2078,8 +2137,8 @@ function mOpenDlg(store,A){const k=mStoreKey(store),L=MACH.rows.filter(r=>r.key=
   const nice=mNice(k,L[0].br);MDLG={br:nice,due,A,store};
   $('mdT').textContent=`Máy cần bảo trì · ${nice}`;
   $('mdSub').innerHTML=`Tính đến ${fmtD(A)} (sắp đến hạn = trong ${h} ngày) · ${due.length}/${L.length} máy cần bảo trì${ot.length?` · đang có ${ot.length} task máy móc mở ở chi nhánh này`:''}. Chọn máy rồi bấm <b>Sao chép nội dung task</b> để tạo task trên Work.`;
-  const row=(r,ck)=>{const s=mStat(r,A,h),dd=mDays(r,A);return `<tr><td><input type="checkbox" class="mck" data-i="${MACH.rows.indexOf(r)}"${ck?' checked':''} aria-label="Chọn máy"></td><td class="what">${esc(r.name)}<small>${esc([r.sku&&'SKU '+r.sku,r.sn&&'SN '+r.sn].filter(Boolean).join(' · '))}</small></td><td class="mono">${r.last?fmtD(r.last):'–'}</td><td class="mono">${r.next?fmtD(r.next):'–'} <span class="pill ms-${s}">${s==='over'?`quá ${-dd}n`:s==='soon'?(dd?`còn ${dd}n`:'hôm nay'):MSL[s]}</span></td></tr>`};
-  $('mdBody').innerHTML=`<div class="tbl" style="max-height:52vh"><table><thead><tr><th class="ck"><input type="checkbox" id="mdAll" aria-label="Chọn tất cả máy" title="Chọn / bỏ chọn tất cả"></th><th>Máy</th><th>BT gần nhất</th><th>BT tiếp theo</th></tr></thead><tbody>${due.map(r=>row(r,true)).join('')}${rest.length?`<tr class="zh"><td colspan="4">Máy khác ở chi nhánh (${rest.length})</td></tr>`+rest.sort((a,b)=>(a.next||'9').localeCompare(b.next||'9')).map(r=>row(r,false)).join(''):''}</tbody></table></div>`+
+  const row=(r,ck)=>{const s=mStat(r,A,h),dd=mDays(r,A);return `<tr><td><input type="checkbox" class="mck" data-i="${MACH.rows.indexOf(r)}"${ck?' checked':''} aria-label="Chọn máy"></td><td class="what">${esc(r.name)}<small>${esc([r.sku&&'SKU '+r.sku,r.sn&&'SN '+r.sn].filter(Boolean).join(' · '))}</small></td><td class="mono">${r.last?fmtD(r.last)+'/'+r.last.slice(2,4):'–'}${r.wt&&r.wt.d===r.last?'<small class="msrc w">đóng task Work</small>':r.last?'<small class="msrc">theo sheet</small>':''}</td><td class="mono">${r.next?fmtD(r.next)+'/'+r.next.slice(2,4):'–'} <span class="pill ms-${s}">${s==='over'?`quá ${-dd}n`:s==='soon'?(dd?`còn ${dd}n`:'hôm nay'):MSL[s]}</span></td><td class="mtk">${mTkCell(r)}</td></tr>`};
+  $('mdBody').innerHTML=`<div class="tbl" style="max-height:52vh"><table><thead><tr><th class="ck"><input type="checkbox" id="mdAll" aria-label="Chọn tất cả máy" title="Chọn / bỏ chọn tất cả"></th><th>Máy</th><th>BT gần nhất</th><th>BT tiếp theo</th><th>Task BT gần nhất</th></tr></thead><tbody>${due.map(r=>row(r,true)).join('')}${rest.length?`<tr class="zh"><td colspan="5">Máy khác ở chi nhánh (${rest.length})</td></tr>`+rest.sort((a,b)=>(a.next||'9').localeCompare(b.next||'9')).map(r=>row(r,false)).join(''):''}</tbody></table></div>`+
     (ot.length?`<p class="sub" style="margin-top:8px">Task máy móc đang mở: ${ot.slice(0,6).map(t=>`<a class="mono tlink" href="https://work.hasaki.vn/tasks?task_id=${t.tid}" target="_blank" rel="noopener">${esc(t.code)}</a> ${esc(t.name.slice(0,40))} (${esc((t.cur||[]).map(i=>BYID[i]?.name.split(' ').pop()).join(', ')||'chưa giao')}${t.dl?', hạn '+fmtD(t.dl):''})`).join(' · ')}</p>`:'');
   $('mDlg').hidden=false;$('mdCopy').focus()}
 $('mdX').onclick=()=>{$('mDlg').hidden=true};$('mDlg').onclick=e=>{if(e.target.id==='mDlg')$('mDlg').hidden=true};
@@ -2344,6 +2403,195 @@ function mdAllSync(){const a=$('mdAll');if(!a)return;const c=[...document.queryS
   const b=$('mdXlsx');if(b)b.textContent=n?`Xuất Excel tạo task (${n} máy)`:'Xuất Excel tạo task'}
 $('mdBody').addEventListener('change',e=>{if(e.target.id==='mdAll'){document.querySelectorAll('#mdBody .mck').forEach(x=>x.checked=e.target.checked)}mdAllSync()});
 {const _o=mOpenDlg;mOpenDlg=function(st,A){_o(st,A);mdAllSync()}}
+
+/* ---------- BT gần nhất lấy từ task Work đã đóng (tra theo S/N) ---------- */
+let MWL={};try{MWL=JSON.parse(lsG('b2mwl2')||'{}')||{}}catch(e){MWL={}}
+const MWL_TTL=6*36e5,mSnK=s=>String(s||'').trim().toUpperCase();
+const mSnOK=s=>{s=mSnK(s);return s.length>=4&&!/^(KHONG|N\/A|NA|CHUA|-)/.test(unacc(s))};
+function mWLSave(){try{lsS('b2mwl2',JSON.stringify(MWL))}catch(e){}}
+function mIsBT(n){return /b[ảa]o tr[ìi] đ[ịi]nh k[ỳy]|b[ảa]o d[ưu][ỡo]ng/i.test(n)}
+function mSnIn(name,sn){const N=String(name||'').toUpperCase();let i=N.indexOf(sn);while(i>=0){const c=N[i+sn.length]||'';if(!/[A-Z0-9]/.test(c))return true;i=N.indexOf(sn,i+1)}return false}
+async function mWLFetch(sn){const S=mSnK(sn);const to=ymd(new Date(Date.now()+864e5));
+  const j=await apiRetry(`/workflows/detail-workflow-task/${WF}?from_date=${OPEN_FROM}&to_date=${to}&search_type=board&wfid=${WF}&workflow_step_id=${B2}&limit=50&offset=0&keyword=${encodeURIComponent(sn.trim())}`);
+  let best=null;(j.data?.rows||[]).forEach(p=>{if(!mIsBT(p.name||'')||!mSnIn(p.name,S))return;
+    (p.subtasks||[]).forEach(s=>{if(s.workflow_step_id!=B2)return;let f=s.status==2&&s.finished_at?s.finished_at:'';
+      if(!f)(s.staff||[]).forEach(x=>{if(x.status==2&&x.finished_at&&x.finished_at>f)f=x.finished_at});
+      if(s.status!=2&&!(s.staff||[]).length)f='';
+      if(f&&(!best||f>best.f))best={f,d:f.slice(0,10),tid:s.id,code:p.code,nm:String(p.name||'').replace(/^.*?_(?=B[ảa]o)/i,'').slice(0,90)}})});
+  let op=null;(j.data?.rows||[]).forEach(p=>{if(!mIsBT(p.name||'')||!mSnIn(p.name,S))return;
+    (p.subtasks||[]).forEach(s=>{if(s.workflow_step_id!=B2||s.status==2||s.status==3||s.status==4)return;const c=s.created_at||p.created_at||'';
+      if(!op||s.id>op.tid)op={tid:s.id,code:p.code,st:s.status,dl:String(s.date_end||p.date_end||'').slice(0,10),nm:String(p.name||'').replace(/^.*?_(?=B[ảa]o)/i,'').slice(0,90)}})});
+  MWL[S]={at:Date.now(),...(best||{d:''}),op};return MWL[S]}
+const mFreqMo=r=>{const m=String(r.freq||'').match(/(\d+)\s*(tháng|thang|th|m)?/i);return m?+m[1]:0};
+function mApplyWL(rows){(rows||[]).forEach(r=>{if(!('l0' in r)){r.l0=r.last||'';r.n0=r.next||''}
+  const w=mSnOK(r.sn)&&MWL[mSnK(r.sn)];r.last=r.l0;r.next=r.n0;r.wt=null;r.wo=w&&w.op||null;r.wq=mSnOK(r.sn)?(w?'ok':'wait'):'nosn';
+  if(w&&w.d){r.wt=w;{r.last=w.d;const mo=mFreqMo(r);
+      if(mo)r.next=addMon(w.d,mo);else if(r.l0&&r.n0){const gap=Math.round((new Date(r.n0+'T12:00')-new Date(r.l0+'T12:00'))/864e5);if(gap>0)r.next=ymd(new Date(new Date(w.d+'T12:00').getTime()+gap*864e5))}}}})}
+function mApplyAll(){mApplyWL(MACH.rows);if(typeof LANH!=='undefined'&&LANH&&LANH.rows)mApplyWL(LANH.rows)}
+let MWLQ=null,MWLRUN=false,MWLN={d:0,n:0};
+async function mWLRun(list,onEach,wk=4){let i=0;const w=async()=>{while(i<list.length){const sn=list[i++];try{await mWLFetch(sn)}catch(e){if(/Token/.test(e.message))return}onEach&&onEach()}};await Promise.all(Array.from({length:wk},w));mWLSave()}
+const mWLStale=sn=>{const w=MWL[mSnK(sn)];return !w||Date.now()-w.at>MWL_TTL};
+let _mwlT=null;function mWLRefresh(){clearTimeout(_mwlT);_mwlT=setTimeout(()=>{mApplyAll();mcRender();if(!$('viewBoard').hidden&&typeof bRender==='function')bRender();if(!$('mDlg').hidden&&MDLG)mReopen()},400)}
+function mReopen(){const ck=new Set([...document.querySelectorAll('#mdBody .mck')].filter(x=>x.checked).map(x=>x.dataset.i)),o=MDLG,sc=document.querySelector('#mdBody .tbl')?.scrollTop||0;mOpenDlg(o.store,o.A);if(MDLG){MDLG.wl=true;MDLG.touched=o.touched}if(o.touched)document.querySelectorAll('#mdBody .mck').forEach(x=>x.checked=ck.has(x.dataset.i));const t=document.querySelector('#mdBody .tbl');if(t)t.scrollTop=sc;if(typeof mdAllSync==='function')mdAllSync()}
+async function mWLSweep(){if(MWLRUN||!tok())return;const all=[...(MACH.rows||[]),...((typeof LANH!=='undefined'&&LANH&&LANH.rows)||[])];
+  const list=[...new Set(all.filter(r=>mSnOK(r.sn)).map(r=>r.sn.trim()))].filter(mWLStale);if(!list.length)return;
+  MWLRUN=true;MWLN={d:0,n:list.length};try{await mWLRun(list,()=>{MWLN.d++;if(MWLN.d%15===0)mWLRefresh()},3)}finally{MWLRUN=false;mWLRefresh()}}
+// chờ tải task xong rồi mới quét nền để không tranh băng thông
+var MWLBOOT=Date.now();
+setTimeout(function mWLWait(){const ready=!$('main').hidden&&MACH.rows.length&&((DONEINFO&&DONEINFO.st==='ok'&&!DONEINFO.part)||Date.now()-MWLBOOT>90e3);if(ready)mWLSweep();else setTimeout(mWLWait,3000)},3000);
+{const _o=mcRender;mcRender=function(){mApplyAll();return _o.apply(this,arguments)}}
+{const _o=bRender;bRender=function(){mApplyAll();return _o.apply(this,arguments)}}
+{const _o=mOpenDlg;mOpenDlg=function(store,A){mApplyAll();_o(store,A);if($('mDlg').hidden||!MDLG)return;
+  const ds=MDLG.ds,src=ds==='lanh'?LANH:MACH,k=mStoreKey(store);const need=[...new Set((src.rows||[]).filter(r=>r.key===k&&mSnOK(r.sn)).map(r=>r.sn.trim()))].filter(mWLStale);
+  if(need.length&&!MDLG.wl){MDLG.wl=true;const id=MDLG;mWLRun(need,null,6).then(()=>{if(MDLG===id&&!$('mDlg').hidden){mApplyAll();mReopen()}mcRender()})}}}
+
+$('mdBody').addEventListener('change',()=>{if(MDLG)MDLG.touched=true});
+
+function mTkCell(r){const td=ymd(new Date()),a=(t,c)=>`<a class="mono tlink" href="https://work.hasaki.vn/tasks?task_id=${t.tid}" target="_blank" rel="noopener" title="${esc(t.nm||'')}">${esc(t.code)}</a>`;let s='';
+  if(r.wo){const late=r.wo.dl&&r.wo.dl<td;s+=`${a(r.wo)} <span class="pill ${late?'ms-over':'ms-soon'}">Còn treo</span><small>${r.wo.dl?(late?'trễ hạn ':'hạn ')+fmtD(r.wo.dl)+'/'+r.wo.dl.slice(2,4):'chưa có hạn'}</small>`}
+  if(r.wt)s+=(s?'<small class="mprev">Task đã đóng trước đó: </small>':'')+`${a(r.wt)} <span class="pill ms-ok">Đã đóng</span><small>đóng ${fmtD(r.wt.d)}/${r.wt.d.slice(2,4)}</small>`;
+  if(s)return s;return r.wq==='wait'?'<small class="mwait">đang tra Work…</small>':r.wq==='nosn'?'<small>không có SN</small>':'<small>chưa có task</small>'}
+
+/* ---------- ĐIỀU PHỐI MÁY MÓC THEO KHUNG GIỜ (từ task đã xếp ngày ở tab Điều phối) ---------- */
+let MPT={};try{MPT=JSON.parse(lsG('b2mpt')||'{}')||{}}catch(e){MPT={}}
+let MPCFG={s:8,e:17};try{MPCFG={...MPCFG,...JSON.parse(lsG('b2mpcfg')||'{}')}}catch(e){}
+const mpSave=()=>{lsS('b2mpt',JSON.stringify(MPT));lsS('b2mpcfg',JSON.stringify({s:MPCFG.s,e:MPCFG.e}))};
+const mpD=()=>TMRD();
+const mpDay=c=>{const d=mpD();if(c)MPT[d]??={};return MPT[d]||{}};
+const hh=h=>{const H=Math.floor(h+1e-9),m=Math.round((h-H)*60);return `${String(H).padStart(2,'0')}:${String(m).padStart(2,'0')}`};
+const mpShort=s=>String(s||'').replace(/^SPA\s*-\s*/i,'').split(' - ')[0];
+const mpDur=t=>{const a=mpDay()[t.tid];return a&&a.d?+a.d:Math.max(.5,Math.round(t.est/15)/4)};
+const TRV=()=>TRAVEL/60;
+function mpTechs(){return ROSTER.filter(r=>mTech(r))}
+function mpStart(id){try{const s=shiftOf(id,mpD());const m=s&&String(s.hi||'').match(/(\d{1,2}):(\d{2})/);if(m)return +m[1]+(+m[2])/60}catch(e){}return MPCFG.s}
+function mpEnd(id){try{const s=shiftOf(id,mpD());const m=s&&String(s.ho||'').match(/(\d{1,2}):(\d{2})/);if(m)return +m[1]+(+m[2])/60}catch(e){}return MPCFG.e}
+function mpOff(id){try{const s=shiftOf(id,mpD());return s&&(s.leave||s.off)?(s.leave?'nghỉ phép':'nghỉ'):''}catch(e){return ''}}
+function mpMine(id){return TASKS.filter(t=>PLAN[t.tid]&&t.new.includes(id))}
+function mpBlocks(id){const P=mpDay();return mpMine(id).map(t=>({t,h:P[t.tid]?.h,d:mpDur(t),key:mStoreKey(t.store)})).filter(b=>b.h!=null).sort((a,b)=>a.h-b.h)}
+function mpWarn(id){const L=mpBlocks(id),all=mpMine(id),W=[],bad=new Set(),off=mpOff(id);
+  if(off&&all.length)W.push(`Thợ ${off} ngày này`);
+  const un=all.length-L.length;if(un)W.push(`${un} task chưa có giờ`);
+  for(let i=0;i<L.length;i++)for(let j=i+1;j<L.length;j++){const a=L[i],b=L[j];if(b.h<a.h+a.d-1e-9){bad.add(a.t.tid);bad.add(b.t.tid)}}
+  if(bad.size)W.push(`Trùng giờ ${bad.size} task`);
+  let mv=0;for(let i=1;i<L.length;i++){const a=L[i-1],b=L[i];if(a.key!==b.key&&!b.t.remote&&b.h>=a.h+a.d-1e-9&&b.h<a.h+a.d+TRV()-1e-9)mv++}
+  if(mv)W.push(`${mv} lần đổi chi nhánh không chừa ${TRAVEL}' di chuyển`);
+  const s=mpStart(id),e=mpEnd(id);if(L.some(b=>b.h<s-1e-9||b.h+b.d>e+1e-9))W.push(`Có task ngoài ca (${hh(s)}–${hh(e)})`);
+  const end=L.length?Math.max(...L.map(b=>b.h+b.d)):0;return {W,bad,L,all,end,off}}
+// tự xếp giờ: gom theo chi nhánh, nối tiếp, chừa giờ di chuyển; giữ nguyên task đã có giờ
+function mpAutoTech(id,force){const P=mpDay(true),all=mpMine(id);if(!all.length)return 0;
+  if(force)all.forEach(t=>{if(P[t.tid])delete P[t.tid].h});
+  const fixed=all.filter(t=>P[t.tid]?.h!=null),todo=all.filter(t=>P[t.tid]?.h==null);if(!todo.length)return 0;
+  const G={};todo.forEach(t=>(G[mStoreKey(t.store)]??=[]).push(t));
+  // ưu tiên chi nhánh có task gấp / trễ trước, chi nhánh đã có giờ thì nối vào sau cụm đó
+  const gs=Object.entries(G).map(([k,l])=>[k,l.sort((a,b)=>pScore(b)-pScore(a))]).sort((a,b)=>Math.max(...b[1].map(pScore))-Math.max(...a[1].map(pScore)));
+  let busy=fixed.map(t=>({h:P[t.tid].h,e:P[t.tid].h+mpDur(t),k:mStoreKey(t.store)})).sort((a,b)=>a.h-b.h);
+  let cur=mpStart(id),last=null;let n=0;
+  const free=(h,d)=>!busy.some(b=>h<b.e-1e-9&&h+d>b.h+1e-9);
+  gs.forEach(([k,l])=>{const same=busy.filter(b=>b.k===k);if(same.length){cur=Math.max(...same.map(b=>b.e));last=k}
+    l.forEach(t=>{const d=mpDur(t);let h=cur+(last&&last!==k&&!t.remote?TRV():0);h=Math.ceil(h*2-1e-9)/2;
+      let g=0;while(!free(h,d)&&g++<60)h+=.5;
+      P[t.tid]={...(P[t.tid]||{}),h};busy.push({h,e:h+d,k});cur=h+d;last=k;n++})});
+  mpSave();return n}
+function mpHue(k){let x=0;for(const c of String(k))x=(x*31+c.charCodeAt(0))%360;return x}
+function mpCopy(id){const w=mpWarn(id),P=mpDay();const L=[...w.all].sort((a,b)=>(P[a.tid]?.h??99)-(P[b.tid]?.h??99));
+  const txt=`Lịch ${fmtD(mpD())} – ${BYID[id]?.name||''}\n`+L.map(t=>{const a=P[t.tid];return `${a&&a.h!=null?hh(a.h)+'–'+hh(a.h+mpDur(t)):'(chưa có giờ)'} · ${mpShort(t.store)} · ${t.name} (${t.code})`}).join('\n');mCopy(txt,'Đã sao chép lịch theo giờ')}
+document.addEventListener('change',e=>{const t=e.target;if(!t.closest||!t.closest('#viewMach'))return;
+  if(t.dataset.tid&&t.dataset.f){const P=mpDay(true),k=t.dataset.tid;P[k]??={};if(t.dataset.f==='h'){if(t.value==='')delete P[k].h;else P[k].h=+t.value}else P[k].d=+t.value;mpSave();mzRender();return}
+  if(t.id==='mpS'||t.id==='mpE'){MPCFG[t.id==='mpS'?'s':'e']=+t.value;if(MPCFG.e<=MPCFG.s)MPCFG.e=MPCFG.s+1;mpSave();mcRender()}});
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#viewMach [data-mpa],#viewMach [data-mpr],#viewMach [data-mpc],#mpAuto,#mpClr,#mpGo');if(!b)return;
+  if(b.id==='mpGo'){tab('b');return}
+  inL(tabL(),()=>{
+    if(b.dataset.mpc)return mpCopy(+b.dataset.mpc);
+    if(b.id==='mpClr'){const P=mpDay();if(!Object.keys(P).length){toast('Ngày này chưa xếp giờ task nào');return}if(!confirm(`Xóa toàn bộ khung giờ đã xếp ngày ${fmtD(mpD())}?`))return;MPT[mpD()]={};mpSave();return}
+    if(b.id==='mpAuto'){const n=mpTechs().reduce((a,r)=>a+mpAutoTech(r.id,false),0);toast(n?`Đã xếp giờ ${n} task`:'Không còn task nào chưa có giờ');return}
+    const n=mpAutoTech(+(b.dataset.mpa||b.dataset.mpr),!!b.dataset.mpr);toast(n?`Đã xếp giờ ${n} task`:'Không còn task nào chưa có giờ')});
+  mzRender()});
+
+
+/* ---------- ĐIỀU PHỐI GIỜ — giao diện gọn ---------- */
+let MZSEL=+(lsG('b2mzsel')||0)||0;
+function mzInfo(id){const w=mpWarn(id),P=mpDay(),iss={};
+  const L=w.L;for(let i=0;i<L.length;i++)for(let j=i+1;j<L.length;j++){const a=L[i],b=L[j];if(b.h<a.h+a.d-1e-9){(iss[b.t.tid]??=[]).push('Trùng giờ với '+a.t.code);(iss[a.t.tid]??=[]).push('Trùng giờ với '+b.t.code)}}
+  const s=mpStart(id),e=mpEnd(id);L.forEach(b=>{if(b.h<s-1e-9||b.h+b.d>e+1e-9)(iss[b.t.tid]??=[]).push(`Ngoài ca ${hh(s)}–${hh(e)}`)});
+  const st=!w.all.length?'none':w.W.length?((w.bad.size||w.W.some(x=>/ngoài ca|đổi chi nhánh|nghỉ/.test(x)))?'bad':'todo'):'ok';
+  return {...w,iss,st,s,e,un:w.all.filter(t=>P[t.tid]?.h==null)}}
+let MZED=null,MZQ='';const MZPX=56;// px mỗi giờ
+function mzRender(){const host=$('mzView');if(!host||MSUB!=='gio')return;
+  const D=mpD(),dn=['CN','T2','T3','T4','T5','T6','T7'][new Date(D+'T12:00').getDay()];
+  if(!TASKS.length){host.innerHTML='<div class="mz-empty">Đang chờ tải task từ Work…</div>';return}
+  const T=mpTechs().map(r=>({r,i:mzInfo(r.id)}));
+  if(!T.some(x=>x.r.id===MZSEL))MZSEL=(T.find(x=>x.i.all.length)||T[0]||{r:{id:0}}).r.id;
+  const card=({r,i})=>`<button class="mz-tc ${i.st}${r.id===MZSEL?' on':''}" data-mz="${r.id}"><span class="mz-dot"></span><b>${esc(r.name.split(' ').slice(-2).join(' '))}</b>
+    <small>${i.all.length?`${i.all.length} task${i.un.length?` · <span style="color:var(--c-wait)">${i.un.length} chưa có giờ</span>`:i.end?' · xong '+hh(i.end):''}`:(i.off||'Không có task')}</small></button>`;
+  const cur=T.find(x=>x.r.id===MZSEL),i=cur?cur.i:null;
+  const td=ymd(new Date()),q=nm(MZQ||'');const OP=TASKS.filter(t=>mTaskTech(t)&&!PLAN[t.tid]&&(!q||nm(t.code+' '+t.store+' '+t.name).includes(q)));
+  const OG=grpStores(OP).sort((a,b)=>Math.max(...b[1].map(pScore))-Math.max(...a[1].map(pScore)));
+  const opH=`<div class="mz-ut mz-op">Task máy móc còn treo (${OP.length})</div><input type="search" id="mzQ" value="${esc(MZQ||'')}" placeholder="Tìm chi nhánh, mã, tên task…" aria-label="Tìm task còn treo">`+
+    (OG.length?OG.map(([s,l])=>`<div class="mz-sg">${esc(mpShort(s))} ${mBadge(s)}</div>`+l.sort((a,b)=>pScore(b)-pScore(a)).map(t=>{const late=t.dl&&t.dl<td?Math.round((new Date(td)-new Date(t.dl))/864e5):0;
+      return `<div class="mz-ch op" draggable="true" data-ev="${t.tid}" data-op="1" style="--hue:${mpHue(mStoreKey(t.store))}"><div>${esc(t.name)}</div><small><span class="mono">${esc(t.code)}</span> · ${t.est}'${late?` · <span class="er">trễ ${late}n</span>`:t.dl?' · hạn '+fmtD(t.dl):''}${t.cur.length?' · đang giữ: '+esc(t.cur.map(x=>BYID[x]?.name.split(' ').pop()||'#'+x).join(', ')):''}</small></div>`}).join('')).join(''):'<p class="mz-hint">Không còn task máy móc nào chưa xếp.</p>');
+  let body='';
+  if(!cur)body='<div class="mz-empty">Không có thợ máy.</div>';
+  else{const L=i.L;let S=Math.min(7,Math.floor(i.s)),E=Math.max(19,Math.ceil(i.e));L.forEach(b=>{S=Math.min(S,Math.floor(b.h));E=Math.max(E,Math.ceil(b.h+b.d))});
+    const H=(E-S)*MZPX,y=h=>(h-S)*MZPX;
+    const grid=Array.from({length:E-S},(_,k)=>`<div class="mz-hr" style="top:${k*MZPX}px"><span>${hh(S+k)}</span></div><div class="mz-hh" style="top:${k*MZPX+MZPX/2}px"></div>`).join('');
+    const off=`<div class="mz-off" style="top:0;height:${Math.max(0,y(i.s))}px"></div><div class="mz-off" style="top:${y(i.e)}px;height:${Math.max(0,H-y(i.e))}px"></div>`;
+    // cột: task trùng giờ chia đôi bề ngang
+    const lane={},ov=(a,b)=>a.h<b.h+b.d-1e-9&&b.h<a.h+a.d-1e-9;L.forEach((b,k)=>{const used=new Set(L.slice(0,k).filter(a=>ov(a,b)).map(a=>lane[a.t.tid]));let n=0;while(used.has(n))n++;lane[b.t.tid]=n});const nlOf=b=>1+Math.max(lane[b.t.tid],...L.filter(o=>ov(o,b)).map(o=>lane[o.t.tid]));
+    let trv='';for(let k=1;k<L.length;k++){const a=L[k-1],b=L[k];const gap=b.h-(a.h+a.d);if(a.key!==b.key&&!b.t.remote&&gap>=-1e-9){const bad=gap<TRV()-1e-9;trv+=`<div class="mz-trv${bad?' bad':''}" style="top:${y(a.h+a.d)}px;height:${Math.max(14,gap*MZPX)}px"><span>${bad?`⚠ chỉ ${Math.round(gap*60)}' di chuyển`:`🚗 sang ${esc(mpShort(b.t.store))}`}</span></div>`}}
+    const blocks=L.map(b=>{const is=i.iss[b.t.tid]||[],ln=lane[b.t.tid],nl=nlOf(b),multi=nl>1;
+      return `<div class="mz-ev${is.length?' bad':''}${MZED===b.t.tid?' sel':''}" draggable="true" data-ev="${b.t.tid}" style="top:${y(b.h)}px;height:${Math.max(20,b.d*MZPX-2)}px;--hue:${mpHue(b.key)};${multi?`left:calc(62px + (100% - 68px) * ${ln} / ${nl});right:auto;width:calc((100% - 68px) / ${nl} - 3px);`:''}" title="${esc(hh(b.h)+'–'+hh(b.h+b.d)+' · '+b.t.store+' · '+b.t.name+(is.length?' · '+is.join(', '):''))}">
+        <b>${hh(b.h)}–${hh(b.h+b.d)}</b> <span class="st">${esc(mpShort(b.t.store))}</span><div class="nm">${esc(b.t.name)}</div><i class="mz-rs" data-rs="${b.t.tid}" title="Kéo để đổi thời lượng"></i></div>`}).join('');
+    const un=i.un.map(t=>`<div class="mz-ch" draggable="true" data-ev="${t.tid}" style="--hue:${mpHue(mStoreKey(t.store))}"><small>${esc(mpShort(t.store))} · ${t.est}'</small><div>${esc(t.name)}</div></div>`).join('');
+    const ed=MZED&&i.all.find(t=>t.tid==MZED);let edH='';
+    if(ed){const a=mpDay()[ed.tid]||{},d=mpDur(ed);edH=`<div class="mz-edb"><div><b>${esc(ed.name)}</b><small>${esc(ed.store)} · <a class="mono tlink" href="https://work.hasaki.vn/tasks?task_id=${ed.tid}" target="_blank" rel="noopener">${esc(ed.code)}</a>${(i.iss[ed.tid]||[]).length?` · <span class="er">${esc(i.iss[ed.tid].join(' · '))}</span>`:''}</small></div>
+      <div class="mz-ed"><select data-tid="${ed.tid}" data-f="h" aria-label="Giờ bắt đầu"><option value="">Chưa có giờ</option>${Array.from({length:57},(_,k)=>6+k/4).map(x=>`<option value="${x}"${a.h!=null&&Math.abs(a.h-x)<1e-9?' selected':''}>${hh(x)}</option>`).join('')}</select>
+      <select data-tid="${ed.tid}" data-f="d" aria-label="Thời lượng">${[...new Set([.25,.5,.75,1,1.25,1.5,2,2.5,3,4,d])].sort((p,q)=>p-q).map(x=>`<option value="${x}"${Math.abs(d-x)<1e-9?' selected':''}>${x<1?Math.round(x*60)+' phút':Math.floor(x)+' giờ'+(x%1?' '+Math.round(x%1*60):'')}</option>`).join('')}</select><button class="btn sec sm" id="mzEdX">Đóng</button></div></div>`}
+    body=`<div class="mz-hd"><div><h3>${esc(cur.r.name)}${i.off?` <span class="pill ms-over">${esc(i.off)}</span>`:''}</h3><small>Ca ${hh(i.s)}–${hh(i.e)} · ${i.all.length} task${i.end?' · xong lúc '+hh(i.end):''}${i.W.length?` · <span class="er">${esc(i.W.join(' · '))}</span>`:''}</small></div>
+      <div class="mz-act"><button class="btn sm" data-mpr="${MZSEL}">Tự xếp giờ</button><button class="btn sec sm" data-mpc="${MZSEL}">Sao chép lịch</button></div></div>${edH}
+      <div class="mz-cal"><aside class="mz-side"><div class="mz-pool" data-pool="1"><div class="mz-ut">Của ${esc(cur.r.name.split(' ').pop())} – chưa có giờ (${i.un.length})</div>${un||'<p class="mz-hint">Kéo task trên lịch về đây để bỏ giờ.</p>'}</div>
+        <div class="mz-pool mz-oppool" data-pool="op">${opH}</div><p class="mz-hint">Kéo task thả vào lịch để giao cho ${esc(cur.r.name.split(' ').pop())} và đặt giờ · thả vào thẻ thợ khác để giao không cần giờ · kéo task trên lịch về "còn treo" để bỏ khỏi kế hoạch · kéo mép dưới để đổi thời lượng.</p></aside>
+      <div class="mz-day" data-day="1" data-s="${S}" style="height:${H}px">${off}${grid}${trv}${blocks}<div class="mz-ghost" hidden></div></div></div>`}
+  const nBad=T.filter(x=>x.i.st==='bad').length,nTodo=T.filter(x=>x.i.st==='todo').length;
+  host.innerHTML=`<div class="mz-top"><div><h2>Điều phối giờ · ${dn} ${fmtD(D)}</h2><p class="sub">Dùng chung kế hoạch với tab Điều phối${nBad?` · <span class="er">${nBad} thợ cần xem lại</span>`:''}${nTodo?` · ${nTodo} thợ còn task chưa có giờ`:''}</p></div>
+      <div class="mz-act mz-day-p"><button class="btn sec sm${D===ymd(new Date())?' on':''}" data-mzd="0">Hôm nay</button><button class="btn sec sm${D===ymd(new Date(Date.now()+864e5))?' on':''}" data-mzd="1">Ngày mai</button><input type="date" id="mzDate" value="${D}" min="${ymd(new Date())}" aria-label="Ngày điều phối"><button class="btn sec sm" id="mpAuto">Tự xếp giờ cho tất cả</button></div></div>
+    <div class="mz-techs">${T.map(card).join('')}</div><div class="mz-main">${body}</div>`}
+// ---- kéo thả
+let MZDRAG=null;
+const mzSnap=(day,clientY,off)=>{const r=day.getBoundingClientRect(),S=+day.dataset.s;let h=S+(clientY-r.top-(off||0))/MZPX;return Math.max(S,Math.round(h*4)/4)};
+document.addEventListener('dragstart',e=>{const ev=e.target.closest&&e.target.closest('#mzView [data-ev]');if(!ev)return;
+  const r=ev.getBoundingClientRect();MZDRAG={tid:ev.dataset.ev,off:ev.classList.contains('mz-ev')?e.clientY-r.top:0};try{e.dataTransfer.setData('text/plain',MZDRAG.tid);e.dataTransfer.effectAllowed='move'}catch(_){}setTimeout(()=>ev.classList.add('drag'),0)});
+document.addEventListener('dragend',()=>{MZDRAG=null;document.querySelectorAll('#mzView .drag').forEach(x=>x.classList.remove('drag'));const g=document.querySelector('#mzView .mz-ghost');if(g)g.hidden=true;document.querySelectorAll('#mzView .over').forEach(x=>x.classList.remove('over'))});
+document.addEventListener('dragover',e=>{if(!MZDRAG)return;const day=e.target.closest&&e.target.closest('#mzView [data-day]'),pool=e.target.closest&&e.target.closest('#mzView [data-pool]');
+  const c=e.target.closest&&e.target.closest('#mzView [data-mz]');if(c){e.preventDefault();c.classList.add('over');return}
+  if(pool){e.preventDefault();pool.classList.add('over');return}document.querySelectorAll('#mzView .mz-pool.over,#mzView .mz-tc.over').forEach(x=>x.classList.remove('over'));
+  if(!day)return;e.preventDefault();const t=TASKS.find(x=>x.tid==MZDRAG.tid);const h=mzSnap(day,e.clientY,MZDRAG.off),d=t?mpDur(t):1,S=+day.dataset.s;
+  const g=day.querySelector('.mz-ghost');g.hidden=false;g.style.top=(h-S)*MZPX+'px';g.style.height=d*MZPX+'px';g.textContent=hh(h)+'–'+hh(h+d)});
+const mzDo=(d,to)=>{try{doDrop(d,to,'move')}catch(err){console.error(err)}};
+document.addEventListener('drop',e=>{if(!MZDRAG)return;const c=e.target.closest&&e.target.closest('#mzView [data-mz]'),day=e.target.closest&&e.target.closest('#mzView [data-day]'),pool=e.target.closest&&e.target.closest('#mzView [data-pool]');if(!day&&!pool&&!c)return;e.preventDefault();
+  const P=mpDay(true),k=MZDRAG.tid,off=MZDRAG.off,t=TASKS.find(x=>x.tid==k);MZDRAG=null;if(!t)return;const mine=!!PLAN[k]&&t.new.includes(MZSEL);
+  if(c){const to=+c.dataset.mz;if(!(PLAN[k]&&t.new.includes(to))){if(P[k])delete P[k].h;mpSave();mzDo({tids:[k],from:mine?MZSEL:0},to)}mzRender();return}
+  if(pool&&pool.dataset.pool==='op'){if(PLAN[k]){delete P[k];mpSave();mzDo({tids:[k],from:0},0)}mzRender();return}
+  P[k]??={};if(pool)delete P[k].h;else P[k].h=mzSnap(day,e.clientY,off);mpSave();
+  if(day&&!mine)mzDo({tids:[k],from:PLAN[k]?(t.new[0]||0):0},MZSEL);mzRender()});
+// kéo mép dưới đổi thời lượng
+document.addEventListener('pointerdown',e=>{const rs=e.target.closest&&e.target.closest('#mzView [data-rs]');if(!rs)return;e.preventDefault();e.stopPropagation();
+  const ev=rs.parentElement,k=rs.dataset.rs,t=TASKS.find(x=>x.tid==k);if(!t)return;const top=ev.getBoundingClientRect().top;ev.draggable=false;let d=mpDur(t);
+  const mv=m=>{d=Math.max(.25,Math.round((m.clientY-top)/MZPX*4)/4);ev.style.height=(d*MZPX-2)+'px';ev.querySelector('b').textContent=hh(mpDay()[k].h)+'–'+hh(mpDay()[k].h+d)};
+  const up=()=>{document.removeEventListener('pointermove',mv);document.removeEventListener('pointerup',up);const P=mpDay(true);P[k]??={};P[k].d=d;mpSave();mzRender()};
+  document.addEventListener('pointermove',mv);document.addEventListener('pointerup',up)},true);
+// chọn ngày + tìm
+document.addEventListener('click',e=>{const b=e.target.closest&&e.target.closest('#mzView [data-mzd]');if(!b)return;setDay(ymd(new Date(Date.now()+(+b.dataset.mzd)*864e5)));MZED=null;mzRender()});
+document.addEventListener('change',e=>{if(e.target.id==='mzDate'){setDay(e.target.value);MZED=null;mzRender()}});
+document.addEventListener('input',e=>{if(e.target.id!=='mzQ')return;MZQ=e.target.value;const pos=e.target.selectionStart;clearTimeout(window.__mzq);window.__mzq=setTimeout(()=>{mzRender();const n=$('mzQ');if(n){n.focus();try{n.setSelectionRange(pos,pos)}catch(_){}}},250)});
+// bấm task để chỉnh
+document.addEventListener('click',e=>{if(e.target.closest&&e.target.closest('#mzEdX')){MZED=null;mzRender();return}
+  const ev=e.target.closest&&e.target.closest('#mzView [data-ev]');if(!ev||ev.dataset.op||e.target.closest('a,[data-rs]'))return;MZED=MZED===ev.dataset.ev?null:ev.dataset.ev;mzRender()});
+document.addEventListener('click',e=>{const c=e.target.closest&&e.target.closest('[data-mz]');if(c){MZSEL=+c.dataset.mz;MZED=null;lsS('b2mzsel',String(MZSEL));mzRender();return}
+  const x=e.target.closest&&e.target.closest('#mzView [data-f="x"]');if(x){const P=mpDay(true);if(P[x.dataset.tid])delete P[x.dataset.tid].h;mpSave();mzRender()}});
+
+{const _r=mcRender;mcRender=function(){const g=MSUB==='gio';$('viewMach').classList.toggle('gio',g);if(g){if(!$('viewMach').hidden){document.querySelectorAll('#viewMach [data-msub]').forEach(b=>b.setAttribute('aria-selected',b.dataset.msub===MSUB));mzRender()}return}return _r.apply(this,arguments)}}
+try{if(localStorage.getItem('b2msub')==='gio')MSUB='gio'}catch(e){}
+{const _r=render;render=function(){const x=_r.apply(this,arguments);if(MSUB==='gio'&&!$('viewMach').hidden)mzRender();return x}}
 </script>
 </body>
 </html>
