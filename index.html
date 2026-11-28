@@ -2885,7 +2885,7 @@ const wAdd=(d,n)=>{const x=new Date(d.slice(0,10)+'T12:00');x.setDate(x.getDate(
 const wMon=(d,m)=>{const x=new Date(d.slice(0,10)+'T12:00');const day=x.getDate();x.setDate(1);x.setMonth(x.getMonth()+m);x.setDate(Math.min(day,new Date(x.getFullYear(),x.getMonth()+1,0).getDate()));return ymd(x)};
 const wBr=()=>weq().branches.slice().sort((a,b)=>a.name.localeCompare(b.name));
 const wBN=loc=>{const b=weq().branches.find(x=>x.loc==loc);return b?b.name:(LOCS[loc]?LOCS[loc].name.split(' - ')[0]:'#'+loc)};
-const WGM=/^máy(?!.*(lạnh|in |tính|pos|xay|hút bụi|đọc mã|chấm công|lọc))/i,WGT=/^(tay cầm|đầu (?!ghi)|bảng dẫn|bộ nguồn|dụng cụ máy)/i;
+const WGM=/^máy(?!\s*(lạnh|in\b|in |tính|pos|xay|hút bụi|hút ẩm|đọc|chấm công|lọc|giặt|sấy|nấu|nước|bơm|phát điện|hủy|photo|fax|ép|cắt ép|scan|quét|đếm|ảnh|chiếu|khoan|mài|hàn))/i,WGT=/^(tay cầm|đầu (?!ghi)|bảng dẫn|bộ nguồn|dụng cụ máy)/i;
 const wMach=n=>WGM.test(n)||WGT.test(n);
 function wRanges(){const out=[];let d=new Date((OPEN_FROM||'2025-06-01')+'T12:00:00');const end=new Date(Date.now()+864e5);while(d<end){const n=new Date(d);n.setMonth(n.getMonth()+3);const e=new Date(Math.min(n.getTime()-864e5,end.getTime()));out.push([ymd(d),ymd(e)]);d=n}return out}
 function wCompact(p,loc){const c=(p.data&&!Array.isArray(p.data)&&p.data.configs)||{};const b2=(p.subtasks||[]).filter(s=>s.workflow_step_id==B2).sort((a,b)=>b.id-a.id)[0]||null;
@@ -2965,9 +2965,9 @@ function wRepHTML(all,A,B){const loc=WS.rep,units=wUnits(loc),D=weq();
 /* ---------- kế hoạch ---------- */
 let WPLAN=null;
 function wPlanHTML(all){const loc=WS.plan,D=weq();const pl=WPL[loc]=WPL[loc]||{date:wAdd(ymd(new Date()),7),who:[],pick:{},note:''};
-  let U=wUnits(loc);if(WS.only)U=U.filter(u=>wMach(u.name));
+  let U=wUnits(loc);if(WS.only)U=U.filter(u=>WGM.test(u.name));
   const key=mKey(LOCS[loc]?LOCS[loc].name:wBN(loc));const MR=(typeof MACH!=='undefined'&&MACH.rows)?MACH.rows.filter(r=>r.key===key):[];
-  const D0=pl.date||ymd(new Date());
+  const D0=ymd(new Date());
   const rows=U.map(u=>{const ids=[u.sn,u.code].filter(wSnOK);
     const bt=all.filter(t=>t.st==2&&t.fin&&wIsBT(t.name)&&ids.some(x=>wSnK(t.sn)===wSnK(x)||wSnIn(t.full,x))).sort((a,b)=>b.fin.localeCompare(a.fin))[0]||null;
     const svs=(D.ps[u.sku]||[]).map(k=>D.services[k]).filter(Boolean);
@@ -2991,24 +2991,18 @@ function wPlanHTML(all){const loc=WS.plan,D=weq();const pl=WPL[loc]=WPL[loc]||{d
   const stl={need:['Cần bảo trì','todo'],soon:['Sắp đến hạn','run'],ok:['Chưa đến hạn','ok']};
   const nNeed=rows.filter(r=>r.st==='need').length,nSoon=rows.filter(r=>r.st==='soon').length;
   const estH=P.reduce((a,r)=>a+60,0)/60;
-  return `<div class="kpis"><div class="kpi"><span class="sub">Máy tại chi nhánh</span><b style="font-size:26px">${rows.length}</b><span class="sub" style="font-size:12px">${WS.only?'máy móc PK & tay cầm':'tất cả tài sản'} (WMS)</span></div>
+  return `<div class="kpis"><div class="kpi"><span class="sub">Máy tại chi nhánh</span><b style="font-size:26px">${rows.length}</b><span class="sub" style="font-size:12px">${WS.only?'máy móc phòng khám':'tất cả tài sản'} (WMS)</span></div>
     <div class="kpi"><span class="sub">Cần bảo trì</span><b style="font-size:26px;color:var(--urg)">${nNeed}</b><span class="sub" style="font-size:12px">quá hạn hoặc chưa có lần nào</span></div>
-    <div class="kpi"><span class="sub">Sắp đến hạn</span><b style="font-size:26px;color:var(--late)">${nSoon}</b><span class="sub" style="font-size:12px">trong 30 ngày sau ngày đi</span></div>
-    <div class="kpi"><span class="sub">Đưa vào chuyến</span><b style="font-size:26px">${P.length}</b><span class="sub" style="font-size:12px">≈ ${estH.toFixed(estH%1?1:0)} giờ (60 phút/máy)</span></div>
-    <div class="kpi"><span class="sub">Task đang treo</span><b style="font-size:26px">${openAll.length}</b><span class="sub" style="font-size:12px">xử lý kết hợp trong chuyến</span></div></div>
-   <section class="panel"><h3>Thông tin chuyến bảo trì</h3>
-    <div class="row" style="gap:14px;flex-wrap:wrap;align-items:flex-end"><label class="wlab">Ngày đi dự kiến<input type="date" id="wDate" value="${esc(pl.date||'')}"></label>
-     <label class="wlab" style="flex:1 1 260px">Ghi chú<input type="text" id="wNote" value="${esc(pl.note||'')}" placeholder="VD: đi xe công ty, mang theo vật tư…"></label></div>
-    <div><div class="sub" style="margin:6px 0 4px">Người phụ trách (bảo trì máy móc)</div><div class="wwho">${MM.map(r=>{const c=[...cov.entries()].find(([n])=>nmK(n)===nmK(r.name));return `<button class="wchip${pl.who.includes(r.id)?' on':''}" data-wwho="${r.id}" aria-pressed="${pl.who.includes(r.id)}">${esc(r.name)}${c?` <small>skill ${c[1]}/${P.length} máy</small>`:''}</button>`}).join('')}</div></div>
-    ${covL.length?`<details><summary class="sub">Người có skill bảo trì các máy đã chọn (${covL.length})</summary><div class="wcov">${covL.map(([n,c])=>`<span>${esc(n)} <b>${c}/${P.length}</b></span>`).join('')}</div></details>`:''}
-   </section>
+    <div class="kpi"><span class="sub">Sắp đến hạn</span><b style="font-size:26px;color:var(--late)">${nSoon}</b><span class="sub" style="font-size:12px">trong 30 ngày tới</span></div>
+    <div class="kpi"><span class="sub">Đã chọn bảo trì</span><b style="font-size:26px">${P.length}</b><span class="sub" style="font-size:12px">≈ ${estH.toFixed(estH%1?1:0)} giờ (60 phút/máy)</span></div>
+    <div class="kpi"><span class="sub">Task đang treo</span><b style="font-size:26px">${openAll.length}</b><span class="sub" style="font-size:12px">ở chi nhánh</span></div></div>
    <section class="panel"><div class="row" style="justify-content:space-between;flex-wrap:wrap;gap:8px"><h3>Máy cần bảo trì</h3>
-     <div class="row" style="gap:10px;flex-wrap:wrap"><label class="chk"><input type="checkbox" id="wOnly"${WS.only?' checked':''}> Chỉ máy móc PK & tay cầm</label>
+     <div class="row" style="gap:10px;flex-wrap:wrap"><label class="chk"><input type="checkbox" id="wOnly"${WS.only?' checked':''}> Chỉ máy móc phòng khám</label>
       <label class="sub">Tần suất khi chưa có: <select id="wDeff">${[1,2,3,6,12].map(m=>`<option value="${m}"${WS.deff==m?' selected':''}>${m} tháng</option>`).join('')}</select></label>
       <button class="btn sec sm" data-wsel="need">Chọn máy cần BT</button><button class="btn sec sm" data-wsel="all">Chọn tất cả</button><button class="btn sec sm" data-wsel="none">Bỏ chọn</button></div></div>
     <p class="sub" style="font-size:12.5px">Lần bảo trì gần nhất lấy từ task Work đã hoàn thành có S/N máy; nếu không có thì theo task bảo trì cùng loại máy ở chi nhánh, sau đó tới Google Sheet. Hạn tiếp theo = lần gần nhất + tần suất (sheet "Máy và tần suất bảo trì", nếu chưa có dùng mặc định).</p>
     <div class="tbl"><table class="wtb"><thead><tr><th></th><th>Máy</th><th>Mã / S/N</th><th>BT gần nhất</th><th>Tần suất</th><th>Hạn tiếp theo</th><th>Tình trạng</th><th>Dịch vụ bảo trì · skill</th><th>Task đang mở</th></tr></thead><tbody>
-    ${rows.map(r=>{const s=stl[r.st];return `<tr class="${r.pick?'':'woff'}"><td><input type="checkbox" data-wpick="${r.u.id}"${r.pick?' checked':''} aria-label="Đưa ${esc(r.u.name)} vào chuyến"></td>
+    ${rows.map(r=>{const s=stl[r.st];return `<tr class="${r.pick?'':'woff'}"><td><input type="checkbox" data-wpick="${r.u.id}"${r.pick?' checked':''} aria-label="Chọn bảo trì ${esc(r.u.name)}"></td>
       <td><b>${esc(r.u.name.split('/')[0].replace(/\s*\(.*$/,'').slice(0,70))}</b><small>SKU ${esc(r.u.sku)}${r.u.st&&r.u.st!=='In-BIN'?' · '+esc(r.u.st):''}</small></td><td>${esc(r.u.code||'')}${r.u.sn&&r.u.sn!==r.u.code?`<small>${esc(r.u.sn)}</small>`:''}</td>
       <td>${r.last?`<b>${wDY(r.last)}</b>`:'<span class="wlate">Chưa có</span>'}${r.bt?`<small><a class="wcode" href="https://work.hasaki.vn/tasks?task_id=${r.bt.tid}" target="_blank" rel="noopener">${esc(r.bt.code)}</a> · ${r.src}</small>`:r.src?`<small>${r.src}</small>`:''}</td>
       <td>${r.freq} tháng${r.fqKnown?'':'<small>mặc định</small>'}</td><td>${r.next?wDY(r.next):'Ngay'}</td><td><span class="wst ${s[1]}">${s[0]}</span></td>
@@ -3018,9 +3012,9 @@ function wPlanHTML(all){const loc=WS.plan,D=weq();const pl=WPL[loc]=WPL[loc]||{d
 /* ---------- xuất ---------- */
 function wExport(){const R=[['Mã task','Loại','Task','Máy','Trạng thái','Trễ hạn','Tạo','Hạn','Hoàn thành','Người làm','Kết quả','Số ảnh','Link']];
   (WREP?WREP.L:[]).forEach(t=>R.push([t.code,t.mach?'Máy móc':'Khác',t.name,t.u?(t.u.name.split('/')[0]+' · '+(t.u.code||t.u.sn)):'',wStL(t)[0],wLate(t)?'Có':'',t.cr,t.dl,t.fin,t.staff.join(', '),t.res,t.img.length,'https://work.hasaki.vn/tasks?task_id='+t.tid]));
-  const P=[['Đưa vào chuyến','Máy','SKU','Mã máy','S/N','BT gần nhất','Nguồn','Task BT gần nhất','Tần suất (tháng)','Hạn tiếp theo','Tình trạng','Dịch vụ bảo trì','Số người có skill','Task đang mở']];
+  const P=[['Chọn bảo trì','Máy','SKU','Mã máy','S/N','BT gần nhất','Nguồn','Task BT gần nhất','Tần suất (tháng)','Hạn tiếp theo','Tình trạng','Dịch vụ bảo trì','Số người có skill','Task đang mở']];
   (WPLAN?WPLAN.rows:[]).forEach(r=>P.push([r.pick?'x':'',r.u.name,r.u.sku,r.u.code,r.u.sn,r.last,r.src,r.bt?r.bt.code:'',r.freq,r.next,{need:'Cần bảo trì',soon:'Sắp đến hạn',ok:'Chưa đến hạn'}[r.st],r.bsv.map(s=>s.name).join('; '),r.ppl.size,r.open.map(t=>t.code+(t.staff.length?' ('+t.staff.join(', ')+')':' (chưa giao)')).join('; ')]));
-  const pl=WPLAN?WPLAN.pl:{};const I=[['Báo cáo chi nhánh',wBN(WS.rep)],['Kỳ',wDY(WREP?WREP.A:'')+' – '+wDY(WREP?WREP.B:'')],['Kế hoạch bảo trì',wBN(WS.plan)],['Ngày đi dự kiến',pl.date||''],['Người phụ trách',(pl.who||[]).map(i=>BYID[i]?BYID[i].name:i).join(', ')],['Ghi chú',pl.note||'']];
+  const pl=WPLAN?WPLAN.pl:{};const I=[['Báo cáo chi nhánh',wBN(WS.rep)],['Kỳ',wDY(WREP?WREP.A:'')+' – '+wDY(WREP?WREP.B:'')],['Kế hoạch bảo trì',wBN(WS.plan)],['Ngày lập',wDY(ymd(new Date()))]];
   const sr=WS.sub!=='plan';const b=WXL(sr?[{name:'Thong tin',rows:I.slice(0,2)},{name:'Task '+wBN(WS.rep).slice(0,20),rows:R}]:[{name:'Thong tin',rows:I.slice(2)},{name:'Ke hoach '+wBN(WS.plan).slice(0,18),rows:P}]);
   const a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=(sr?`Bao_cao_task_${unacc(wBN(WS.rep)).replace(/[^A-Za-z0-9]+/g,'_')}_${WREP?WREP.A+'_'+WREP.B:''}`:`Ke_hoach_bao_tri_${unacc(wBN(WS.plan)).replace(/[^A-Za-z0-9]+/g,'_')}_${ymd(new Date())}`)+'.xlsx';document.body.appendChild(a);a.click();a.remove()}
 /* ---------- sự kiện ---------- */
